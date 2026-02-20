@@ -83,7 +83,7 @@
                 <div class="font-weight-normal fs-15 mb-2 mt-5">Charity Collaboration for Sumatera</div>
                 <div class="row mt-2 mb-5">
                     <div class="col-12">
-                        <a class="btn btn btn-white" href="{{ url('charity') }}"><i class="fe fe-sunrise"></i> Donate</a>
+                        <a class="btn btn btn-white" href="{{ url('greenbeans') }}"><i class="fe fe-sunrise"></i> Green Bean</a>
                     </div>
                 </div>
             </div>
