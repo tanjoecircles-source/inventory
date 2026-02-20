@@ -1,0 +1,1 @@
+Layanan ini hanya Bisa diakses melalui browser mobile

@@ -1,0 +1,1 @@
+<a href="#" class="mt-3 px-2"><i class="fe fe-bell fs-20 action-bar font-weight-semibold {{$notifstyle ?? 'text-white'}}"></i><span id="notifCountMobile"></span></a>

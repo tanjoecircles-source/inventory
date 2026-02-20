@@ -1,0 +1,110 @@
+<x-layouts.app>
+<x-header-white-3column>
+    @slot('back')
+    <x-back backstyle="text-dark" urlback="{{url('report-store')}}"></x-back>
+    @endslot
+    @slot('notif')
+    <x-notification notifstyle="text-dark"></x-notification>
+    @endslot
+</x-header-white-3column>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-8 mx-auto">
+            <form id="report-store-form" name="report-store-form" action="{{url('report-store-create')}}" method="POST" enctype="multipart/form-data" >
+            @csrf
+            <div class="card no-border shadow-none custom-square mt-4 mb-3">
+                <div class="card-body px-2 py-4">
+                    <div class="form-group">
+                        <label class="form-label">Tanggal</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><i class="fe fe-calendar"></i></div>
+                            </div>
+                            <input class="form-control fc-datepicker" name="date" value="{{$date}}" type="text" placeholder="dd-mm-yyyy">
+                        </div>
+                        @error('date')<div class="text-danger">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Waktu Shift</label>
+                        <select class="form-control @error('shift_id') is-invalid @enderror" name="shift_id" id="shift_id" placeholder="Pilih Shift">
+                            <option value="">Pilih Shift</option>
+                            @foreach($shift as $value)
+                                <option value="{{ $value->id }}" @if(old('shift_id') == $value->id) selected @endif >{{ $value->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('shift_id') <div class="text-primary fs-11">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nama Barista</label>
+                        <select class="form-control @error('employee_id') is-invalid @enderror" name="employee_id" id="employee_id" placeholder="Pilih Barista">
+                            @foreach($employee as $value)
+                                @if(old('employee_id') == $value->id)
+                                    <option value="{{ $value->id }}" selected>{{ $value->name }}</option>
+                                @endif
+                            @endforeach
+                        </select>
+                        @error('employee_id') <div class="text-primary fs-11">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Pemasukan</label>
+                        <div class="row">
+                            <div class="col-6">
+                                <label>Cash/Tunai</label>
+                                <div class="input-icon mb-3">
+                                    <span class="input-icon-addon fs-15">Rp</span>
+                                    <input type="text" class="form-control masked @error('cash') is-invalid @enderror" name="cash" value="0" placeholder="Cash">
+                                </div>
+                                @error('cash')<div class="text-danger">{{ $message }}</div>@enderror
+                            </div>
+                            <div class="col-6">
+                                <label>QRIS/Online</label>
+                                <div class="input-icon mb-3">
+                                    <span class="input-icon-addon fs-15">Rp</span>
+                                    <input type="text" class="form-control masked @error('qris') is-invalid @enderror" name="qris" value="0" placeholder="QRIS/Online">
+                                </div>
+                                @error('qris')<div class="text-danger">{{ $message }}</div>@enderror
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card text-center no-border shadow-none custom-square mb-7">
+                <div class="card-body p-2">
+                    <button type="submit" class="btn btn-primary btn-block" id="btn-add" name="btn-add">Simpan</button>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function () {
+    $('.masked').inputmask({
+        rightAlign:false,
+        radixPoint: ',',
+        groupSeparator: ".",
+        alias: "numeric",
+        autoGroup: true,
+        digits: 0
+    });
+
+    $('#employee_id').select2({
+        "ajax" : {
+            "url" : "{{url('employee-combo')}}",
+            "type" : "POST",
+            "dataType" : "json",
+            "data": function (params) {
+                var query = {
+                    _token: "{{ csrf_token() }}",
+                    search: params.term,
+                    type: "public"
+                }
+                return query;
+            }
+        },
+        placeholder: 'Cari Barista',
+    });
+    
+});
+</script>
+</x-layouts.app>
