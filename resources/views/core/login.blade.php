@@ -80,7 +80,7 @@
                 {{-- <div class="font-weight-normal fs-15 mb-2">Kamu belum punya akun?</div>
                 <a class="btn btn-block btn-lg btn-outline-primary font-weight-normal" href="{{ url('register') }}"><i class="fe fe-edit-3"></i> Daftar Sekarang</a>
                  --}}
-                <div class="font-weight-normal fs-15 mb-2 mt-5">Aceh Gayo Coffee Price List</div>
+                <div class="font-weight-semibold fs-15 mb-2 mt-5">Aceh Gayo Coffee Price List</div>
                 <div class="row mt-2 mb-5">
                     <div class="col-12">
                         <a class="btn btn-lg btn-white btn-block mb-2" href="{{ url('greenbeans') }}">Green Beans</a>
