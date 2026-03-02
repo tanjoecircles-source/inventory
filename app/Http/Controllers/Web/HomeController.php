@@ -32,14 +32,14 @@ class HomeController extends Controller
                     ->select('p.id', 'p.name AS name', 'p.price AS price', 'stock AS qty')
                     ->leftJoin('ref_satuan as rs', 'rs.id', '=', 'p.satuan')
                     ->where(['p.type' => '2', 'p.status' => 'Active'])
-                    ->orderByDesc('p.name')
+                    ->orderBy('p.name', 'asc')
                     ->get();
         
         $stok_rss = DB::table('product as p')
                     ->select('p.id', 'p.name AS name', 'stock AS qty')
                     ->leftJoin('ref_satuan as rs', 'rs.id', '=', 'p.satuan')
                     ->where(['p.type' => '3', 'p.status' => 'Active'])
-                    ->orderByDesc('p.name')
+                    ->orderBy('p.name', 'asc')
                     ->get();
             
         // if(!empty($stok_gb)){
