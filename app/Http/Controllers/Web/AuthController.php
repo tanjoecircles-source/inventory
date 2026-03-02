@@ -660,6 +660,7 @@ class AuthController extends Controller
                             'p.process',
                             'p.processor',
                             'p.harvest',
+                            'p.order_pricelist',
                             'p.desc',
                             'p.price as price',
                             'p.price_grosir15 as price_grosir15',
@@ -680,6 +681,7 @@ class AuthController extends Controller
             $value->stock_lable = ($value->stock > 0) ? 'Ready' : 'Pre Order';
             $value->stock_icon = ($value->stock > 0) ? 'fe-check-circle' : 'fe-thumbs-up';
             $value->stock_color = ($value->stock > 0) ? 'success' : 'warning';
+            $value->order_pricelist = empty($value->order_pricelist) ? 0 : $value->order_pricelist;
         }
 
         $data = [
