@@ -146,7 +146,7 @@
                                 @error('summary')<div class="text-primary fs-11">{{ $message }}</div>@enderror
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Deskripsi Invoice</label>
+                                <label class="form-label">Deskripsi Pricelist</label>
                                 <textarea class="form-control" name="desc" placeholder="Tulis Deskripsi yang tampil di Price List" rows="6">{{$detail->desc}}</textarea>
                                 @error('desc')<div class="text-primary fs-11">{{ $message }}</div>@enderror
                             </div>
