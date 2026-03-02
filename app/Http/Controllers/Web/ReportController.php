@@ -15,6 +15,8 @@ use App\Models\Purchasing;
 use App\Models\StorePurchasing;
 use App\Models\StoreOperational;
 use App\Models\ReportStore;
+use App\Exports\SalesExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -168,6 +170,11 @@ class ReportController extends Controller
         return $pdf->stream('product_report.pdf', array("Attachment" => false));
         
         //return view('web.admin.sales.print', $data);
+    }
+
+    public function productExport()
+    {
+        return Excel::download(new SalesExport, 'sales.xlsx');
     }
 
     public function purchasingList(Request $request)

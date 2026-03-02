@@ -372,7 +372,7 @@ Route::middleware(['auth:web'])->group(function(){
 
     Route::get('report', 'ReportController@index')->name('report-index');
     Route::get('report-bean-list', 'ReportController@beanList')->name('report-bean-list');
-    
+    Route::get('report-product-export', 'ReportController@productExport');
     Route::get('report-product-print', 'ReportController@productPrint');
     Route::get('report-store-income', 'ReportController@storeIncome')->name('report-store-income');
     Route::get('report-purchasing-list', 'ReportController@purchasingList')->name('report-purchasing-list');

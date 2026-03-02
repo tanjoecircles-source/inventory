@@ -57,7 +57,7 @@
                                         Download Laporan <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu" role="menu">
-                                        <li><a href="#"><i class="fa fa-file-excel-o"></i> Berdasarkan Invoice</a></li>
+                                        <li><a href="{{url('report-product-export')}}"><i class="fa fa-file-excel-o"></i> Berdasarkan Invoice</a></li>
                                         <li class="divider"></li>
                                         <li><a href="{{url('report-product-print')}}"><i class="fa fa-file-excel-o"></i> Berdasarkan Produk</a></li>
                                         <li class="divider"></li>
