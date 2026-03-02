@@ -624,6 +624,7 @@ class AuthController extends Controller
                             'p.process',
                             'p.processor',
                             'p.harvest',
+                            'p.order_pricelist',
                             'p.desc',
                             'p.price as price',
                             'p.price_grosir15 as price_grosir15',
