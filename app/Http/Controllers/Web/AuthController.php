@@ -645,6 +645,7 @@ class AuthController extends Controller
             $value->stock_lable = ($value->stock > 0) ? 'Ready' : 'Sold Out';
             $value->stock_icon = ($value->stock > 0) ? 'fe-check-circle' : 'fe-x-circle';
             $value->stock_color = ($value->stock > 0) ? 'success' : 'danger';
+            $value->order_pricelist = empty($value->order_pricelist) ? 0 : $value->order_pricelist;
         }
 
         $stok_spro = DB::table('product as p')
