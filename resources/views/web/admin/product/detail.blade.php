@@ -136,7 +136,12 @@
                             <p class="mb-1 font-weight-semibold">Hilangkan Favorit</p>
                         </a>
                         @endif
-                        
+                        @if($info['kategori'] == 'Green Beans')
+                        <a href="{{(url('product-print/'.$id_produk))}}" class="d-flex p-4 border-bottom">
+                            <i class="fe fe-printer fs-16 mr-2"></i>
+                            <p class="mb-1 font-weight-semibold">Cetak Info</p>
+                        </a>
+                        @endif
                         <a href="{{(url('product-edit/'.$id_produk))}}" class="d-flex p-4 border-bottom">
                             <i class="fe fe-edit fs-16 mr-2"></i>
                             <p class="mb-1 font-weight-semibold">Ubah Data</p>
