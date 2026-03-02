@@ -471,6 +471,7 @@ class ProductController extends Controller
                                 'p.created_at AS created_date')
                         ->where(['p.id' => $id])
                         ->first();
+        $data['detail']->order_pricelist = empty($data['detail']->order_pricelist) ? 0 : $data['detail']->order_pricelist;
         $data['parent_list'] = ProductParent::where('status', 'Aktif')->get();
         $data['satuan_list'] = RefSatuan::all();
         $data['type_list'] = RefProductType::all();
@@ -604,6 +605,7 @@ class ProductController extends Controller
             'process' => $data['process'],
             'processor' => $data['processor'],
             'harvest' => $data['harvest'],
+            'order_pricelist' => $data['order_pricelist'],
             'editor' => Auth::user()->id,
             'updated_at' => Carbon::now()->toDateTimeString()
         ]);

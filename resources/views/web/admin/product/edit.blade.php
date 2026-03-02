@@ -151,6 +151,11 @@
                                 @error('desc')<div class="text-primary fs-11">{{ $message }}</div>@enderror
                             </div>
                             <div class="form-group">
+                                <label class="form-label">Order Number</label>
+                                <input type="number" class="form-control" name="order_pricelist" id="order_pricelist" value="{{$detail->order_pricelist}}" placeholder="Order Number">
+                                @error('order_pricelist')<div class="text-primary fs-11">{{ $message }}</div>@enderror
+                            </div>
+                            <div class="form-group">
                                 <label class="form-label">Produk Baru</label>
                                 <div class="row">
                                     <div class="col">
