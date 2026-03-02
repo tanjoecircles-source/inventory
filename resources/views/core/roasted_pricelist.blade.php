@@ -52,7 +52,8 @@
                                 </div>
                                 <div class="ml-auto text-right">
                                     <p class="mb-2"><b>Rp {{str_replace(",", ".", number_format($value->price))}}</b></p>
-                                    <span class="badge badge-pill badge-{{$value->stock_color}} ml-auto mr-0 py-1 mb-2 my-1"><i class="fe {{$value->stock_icon}}"></i> {{$value->stock_lable}}</span>
+                                    <span class="badge badge-pill badge-{{$value->stock_color}} ml-auto mr-0 py-1 mb-2 my-1"><i class="fe {{$value->stock_icon}}"></i> {{$value->stock_lable}}</span><br>
+                                    <span class="badge badge badge-white mb-1"><i class="fa fa-sort"></i> {{$value->order_pricelist}}</span>
                                 </div>
                             </div>
                         </div>
