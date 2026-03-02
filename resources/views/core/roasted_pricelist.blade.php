@@ -47,7 +47,7 @@
                             <div class="d-flex title-bar">
                                 <div class="mr-auto text-left">
                                     <h6 class="mb-1">{{$value->name}} <span class="text-warning fs-11 font-weight-normal"><i>{{$value->is_new}}</i></span></h6>
-                                    <p class="mb-2"><span class="text-muted fs-12"><i>Gayo {{$value->process}}</i></span></p>
+                                    <p class="mb-2"><span class="text-muted fs-12"><i>{{$value->origin}} {{$value->process}}</i></span></p>
                                     <a class="mb-1 btn btn-dark btn-sm text-white" role="button" data-toggle="collapse" data-parent="#accordion1" href="#collapse{{$value->id}}" aria-expanded="true" aria-controls="collapseOne1"><i class="fe fe-info"></i> More Info</a>
                                 </div>
                                 <div class="ml-auto text-right">
@@ -148,7 +148,7 @@
                                                 <td class="text-right font-weight-semibold">Rp {{str_replace(",", ".", number_format($value->price_grosir15))}}/Pack</td>
                                             </tr>
                                         </table>
-                                        <a class="btn btn-success btn-block" href="https://wa.me/6281330998147?text=Halo,%20Saya%20Ingin%20Menanyakan%20Produk%20Green%20Beans%20Kopi%20Gayo%20{{$value->name}}." target="_blank"><i class="fa fa-whatsapp"></i> WhatsApp Order</a>
+                                        <a class="btn btn-success btn-block" href="https://wa.me/6285974607547?text=Halo,%20Saya%20Ingin%20Menanyakan%20Produk%20Roasted%20Beans%20Kopi%20Gayo%20{{$value->name}}." target="_blank"><i class="fa fa-whatsapp"></i> WhatsApp Order</a>
                                     </div>
                                 </div>
                             </div>
@@ -267,7 +267,7 @@
                                                     <td class="text-right font-weight-semibold">Rp {{str_replace(",", ".", number_format($value->price_grosir15))}}/Pack</td>
                                                 </tr>
                                             </table>
-                                            <a class="btn btn-success btn-block" href="https://wa.me/6281330998147?text=Halo,%20Saya%20Ingin%20Menanyakan%20Produk%20Green%20Beans%20Kopi%20Gayo%20{{$value->name}}." target="_blank"><i class="fa fa-whatsapp"></i> WhatsApp Order</a>
+                                            <a class="btn btn-success btn-block" href="https://wa.me/6285974607547?text=Halo,%20Saya%20Ingin%20Menanyakan%20Produk%20Roasted%20Beans%20Espresso%20Based%20Kopi%20Gayo%20{{$value->name}}." target="_blank"><i class="fa fa-whatsapp"></i> WhatsApp Order</a>
                                         </div>
                                     </div>
                                 </div>

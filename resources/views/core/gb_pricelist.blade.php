@@ -135,7 +135,7 @@
                                         <tr>
                                             <td>Retail</td>
                                             <td class="text-center">1-15kg</td>
-                                            <td class="text-right font-weight-semibold">Rp Rp {{str_replace(",", ".", number_format($value->price))}}</td>
+                                            <td class="text-right font-weight-semibold">Rp {{str_replace(",", ".", number_format($value->price))}}</td>
                                         </tr>
                                         <tr>
                                             <td>Wholesale</td>
@@ -145,10 +145,10 @@
                                         <tr>
                                             <td>Wholesale</td>
                                             <td class="text-center">>50kg</td>
-                                            <td class="text-right font-weight-semibold">Rp Rp {{str_replace(",", ".", number_format($value->price_grosir50))}}</td>
+                                            <td class="text-right font-weight-semibold">Rp {{str_replace(",", ".", number_format($value->price_grosir50))}}</td>
                                         </tr>
                                     </table>
-                                    <a class="btn btn-success btn-block" href="https://wa.me/6281330998147?text=Halo,%20Saya%20Ingin%20Menanyakan%20Produk%20Green%20Beans%20Kopi%20Gayo%20{{$value->name}}." target="_blank"><i class="fa fa-whatsapp"></i> WhatsApp Order</a>
+                                    <a class="btn btn-success btn-block" href="https://wa.me/6285974607547?text=Halo,%20Saya%20Ingin%20Menanyakan%20Produk%20Green%20Beans%20Kopi%20Gayo%20{{$value->name}}." target="_blank"><i class="fa fa-whatsapp"></i> WhatsApp Order</a>
                                 </div>
                             </div>
                         </div>
