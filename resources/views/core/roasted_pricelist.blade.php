@@ -47,7 +47,7 @@
                             <div class="d-flex title-bar">
                                 <div class="mr-auto text-left">
                                     <h6 class="mb-1">{{$value->name}} <span class="text-warning fs-11 font-weight-normal"><i>{{$value->is_new}}</i></span></h6>
-                                    <p class="mb-2"><span class="text-muted fs-12"><i>{{$value->origin}} {{$value->process}}</i></span></p>
+                                    <p class="mb-2"><span class="text-muted fs-12"><i>{{$value->origin}} - {{$value->process}}</i></span></p>
                                     <a class="mb-1 btn btn-dark btn-sm text-white" role="button" data-toggle="collapse" data-parent="#accordion1" href="#collapse{{$value->id}}" aria-expanded="true" aria-controls="collapseOne1"><i class="fe fe-info"></i> More Info</a>
                                 </div>
                                 <div class="ml-auto text-right">
