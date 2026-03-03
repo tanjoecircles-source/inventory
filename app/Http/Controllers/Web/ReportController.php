@@ -64,7 +64,6 @@ class ReportController extends Controller
                     ->leftJoin('customer AS c', 'c.id', '=', 's.inv_cust')
                     ->select('s.*', 'c.name AS cust_name')
                     ->where([
-                        's.inv_category' => 'Offline',
                         's.inv_status' => 'publish', 
                         ['s.inv_date', '>=', $report_period->report_date_start],
                         ['s.inv_date', '<=', $report_period->report_date_end],
@@ -77,7 +76,6 @@ class ReportController extends Controller
                     ->leftJoin('customer AS c', 'c.id', '=', 's.inv_cust')
                     ->select('s.inv_id')
                     ->where([
-                        's.inv_category' => 'Offline',
                         's.inv_status' => 'publish', 
                         ['s.inv_date', '>=', $report_period->report_date_start],
                         ['s.inv_date', '<=', $report_period->report_date_end],
