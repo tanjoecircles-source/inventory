@@ -7,6 +7,7 @@
     <x-notification notifstyle="text-dark"></x-notification>
     @endslot
 </x-header-white-3column>
+@section('meta_description', '{{$invoice->dtlabel}} | {{$invoice->cust_name}} | {{$invoice->inv_status}} | {{$invoice->inv_author}}')
 <div class="container">
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-8 mx-auto">
