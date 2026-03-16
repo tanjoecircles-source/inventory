@@ -73,6 +73,16 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
+                                    <label class="col-md-2 col-sm-12 form-label" for="example-email">Status</label>
+                                    <div class="col-md-10 col-sm-12">
+                                        <select class="form-control @error('status') is-invalid @enderror" name="status" id="status" placeholder="Pilih Status">
+                                            <option value="" @if($status_filtered == '') selected @endif>Semua Author</option>
+                                            <option value="Draft" {{!empty($status_filtered) && $status_filtered == 'Draft' ? 'selected' : ''}}>Draft</option>
+                                            <option value="Publish" {{!empty($status_filtered) && $status_filtered == 'Publish' ? 'selected' : ''}}>Publish</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
                                     <div class="col-md-10 col-sm-12">
                                         <button type="submit" class="btn btn-primary br-tr-7 br-br-7">
                                             Filter

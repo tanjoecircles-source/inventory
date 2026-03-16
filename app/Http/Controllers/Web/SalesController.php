@@ -22,6 +22,7 @@ class SalesController extends Controller
         $startdate = (isset($_GET['startdate'])) ? $_GET['startdate'] : "";
         $enddate = (isset($_GET['enddate'])) ? $_GET['enddate'] : "";
         $author = (isset($_GET['author'])) ? $_GET['author'] : "";
+        $status = (isset($_GET['status'])) ? $_GET['status'] : "";
         $contents = DB::table('sales AS s')
                     ->leftJoin('customer AS c', 'c.id', '=', 's.inv_cust')
                     ->leftJoin('users AS u', 'u.id', '=', 's.author')
@@ -39,6 +40,9 @@ class SalesController extends Controller
         }
         if(!empty($author)){
             $contents = $contents->where(['s.author' => $author]);
+        }
+        if(!empty($status)){
+            $contents = $contents->where(['s.inv_status' => $status]);
         }
         if (Gate::denies('isAdmin')){
             $contents = $contents->where(['s.author' => Auth::user()->id]);
@@ -63,6 +67,9 @@ class SalesController extends Controller
         if(!empty($author)){
             $counts = $counts->where(['s.author' => $author]);
         }
+        if(!empty($status)){
+            $counts = $counts->where(['s.inv_status' => $status]);
+        }
         if (Gate::denies('isAdmin')){
             $counts = $counts->where(['s.author' => Auth::user()->id]);
         }
@@ -83,6 +90,7 @@ class SalesController extends Controller
             'author_filtered' => $author,
             'startdate_filtered' => $startdate,
             'enddate_filtered' => $enddate,
+            'status_filtered' => $status,
             'limit' => $limit,
             'contents' => $contents,
             'contents_count' => $counts,
