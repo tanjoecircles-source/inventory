@@ -153,15 +153,16 @@
             var startdate = '{{$startdate_filtered}}';
             var enddate = '{{$enddate_filtered}}';
             var author = '{{$author_filtered}}';
+            var status = '{{$status_filtered}}';
             if ($(window).scrollTop() >= $(document).height() - $(window).height() - 1){
                 page++;
-                loadMoreData(page, key, startdate, enddate, author);
+                loadMoreData(page, key, startdate, enddate, author, status);
             }
         });
     
-        function loadMoreData(page, key, startdate, enddate, author){
+        function loadMoreData(page, key, startdate, enddate, author, status){
             $.ajax({
-                url:'?page=' + page + '&keyword=' + key + '&startdate=' + startdate + '&enddate=' + enddate + '&author=' + author,
+                url:'?page=' + page + '&keyword=' + key + '&startdate=' + startdate + '&enddate=' + enddate + '&author=' + author + '&status=' + status,
                 type:'get',
                 beforeSend: function(){
                     $('.ajax-load').show();
