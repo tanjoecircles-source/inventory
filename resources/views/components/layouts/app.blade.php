@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-<meta name="description" content="Curating Gayo’s Finest, Distributing with Purpose">
+<meta name="description" content="@yield('meta_description','Curating Gayo’s Finest, Distributing with Purpose')">
 <meta name="keywords" content="Gayo Coffee, Green Bean Gayo, Roasted Bean Gayo, Specialty Coffee Gayo, Kopi Gayo Single Origin, Kopi Arabika Aceh, Kopi Proses Natural, Kopi Proses Anaerobik, Honey Process Coffee, Thermal Washed Gayo, Distribusi Kopi Gayo, Supplier Kopi Gayo, Distributor Green Bean, Green Bean Ready Stock, Jual Kopi Green Bean Jawa, Kurasi Kopi Gayo, Biji Kopi Wholesale, Toko Kopi Tanjoe, Kedai Kopi Gayo, Showroom Kopi Gayo, Tanjoe Coffee Shop, Tanjoe Coffee Indonesia, Tanjoe Coffee Export, Kopi Gayo untuk Roastery, Kopi Gayo untuk Coffee Shop, Kopi Gayo untuk Export, Biji Kopi Gayo Terbaik, Kopi Gayo Internasional">
 <meta name="author" content="tanjoecoffee.com">
 <!-- Google / Search Engine Tags -->
