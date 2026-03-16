@@ -37,6 +37,8 @@
                     
                     @if($invoice->inv_status == 'Draft')
                     <div class="form-group">
+                    <a href="https://wa.me/?text=Invoice%20Penjualan%0ATanggal%20:%20{{$invoice->dtlabel}}%0ACustomer%20:%20{{$invoice->cust_name}}%0AAuthor%20:%20{{$invoice->inv_author}}%0A{{ urlencode(url('sales-detail/'.$invoice->id.'&cust='.$invoice->csurl.'&date='.$invoice->dturl.'&author='.$invoice->authurl)) }}" target="_blank" class="btn btn-dark btn-sm mr-1 px-2 py-1"><i class="fe fe-share"></i></a>
+                    <a id="copyurl" class="btn btn-white btn-sm mr-1 px-2 py-1"><i class="fe fe-copy"></i></a>
                     <a href="{{(url('sales-edit/'.$invoice->id))}}" class="btn btn-outline-dark btn-sm mr-1 px-2 py-1"><i class="fe fe-edit"></i> Ubah</a>
                     <a href="{{(url('sales-delete/'.$invoice->id))}}" data-title="{{$invoice->inv_code}}" class="btn btn-outline-danger btn-sm btn-confirm px-2 py-1"><i class="fe fe-trash"></i> Hapus</a>
                     </div>
@@ -269,5 +271,20 @@ function loadMoreData(page, key){
         $('.ajax-load').html("server error");
     });
 }
+document.getElementById('copyurl').addEventListener('click', async () => {
+    try {
+        await navigator.clipboard.writeText("{!!url('sales-detail/'.$invoice->id.'&cust='.$invoice->csurl.'&date='.$invoice->dturl.'&author='.$invoice->authurl)!!}");
+        $(function () {
+            notif({
+                msg: "URL Invoice Berhasil Disalin.",
+                type: "success",
+                position: "center"
+            });
+        });
+    } catch (err) {
+        alert('Gagal menyalin URL.');
+        console.error(err);
+    }
+});
 </script>
 </x-layouts.app>

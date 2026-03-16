@@ -1,6 +1,6 @@
 
 @foreach ($contents as $content)
-    <a href="{{ url('sales-detail/'.$content->id) }}" class="card mb-2">
+    <a href="{{ url('sales-detail/'.$content->id.'&cust='.$content->csurl.'&date='.$content->dturl.'&author='.$content->authurl) }}" class="card mb-2">
         <div class="card-body px-2 py-2">
             <div class="d-flex title-bar">
                 <div class="mr-auto text-left">

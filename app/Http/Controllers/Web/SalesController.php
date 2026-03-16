@@ -12,6 +12,7 @@ use App\Models\SalesItem;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class SalesController extends Controller
 {
@@ -83,6 +84,9 @@ class SalesController extends Controller
                 }else{
                     $value->status_payment = '';
                 }
+                $value->csurl = Str::slug($value->cust_name);
+                $value->dturl = Str::slug($value->inv_date);
+                $value->authurl = Str::slug($value->inv_author);
             }
         }
         $data = [
@@ -166,6 +170,10 @@ class SalesController extends Controller
                     $value->inv_status_color = 'danger';
                     $value->inv_status_label = 'Unpaid'; 
                 }
+                
+                $value->csurl = Str::slug($value->cust_name);
+                $value->dturl = Str::slug($value->inv_date);
+                $value->authurl = Str::slug($value->inv_author);
             }
         }
         $data = [
@@ -284,11 +292,19 @@ class SalesController extends Controller
         }
         $detail = DB::table('sales AS s')
             ->leftJoin('customer AS c', 'c.id', '=', 's.inv_cust')
+            ->leftJoin('users AS u', 'u.id', '=', 's.author')
             ->select('s.*',
-                    'c.name AS cust_name')
+                    'c.name AS cust_name',
+                    'u.name AS inv_author')
             ->where(['s.id' => $id])
             ->first();
         $detail->must_pay = (INT)$detail->inv_total - (INT)$detail->inv_payment;
+        
+        $detail->csurl = Str::slug($detail->cust_name);
+        $detail->dturl = Str::slug(date('d M Y', strtotime($detail->inv_date)));
+        $detail->authurl = Str::slug($detail->inv_author);
+        
+        $detail->dtlabel = date('d M Y', strtotime($detail->inv_date));
         
         $data = [
             'invoice' => $detail,
