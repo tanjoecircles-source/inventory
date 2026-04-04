@@ -109,13 +109,11 @@ class StoreRecapController extends Controller
 
         $shift_long = ReportStore::where('date', '>=', $start_period)
                         ->where('date', '<=', $end_period)
-                        ->where('status', 'verified')
                         ->whereIn('shift_id', [2, 3])
                         ->count();
 
         $shift_short = ReportStore::where('date', '>=', $start_period)
                         ->where('date', '<=', $end_period)
-                        ->where('status', 'verified')
                         ->whereIn('shift_id', [1, 4])
                         ->count();
 
