@@ -107,6 +107,18 @@ class StoreRecapController extends Controller
 
         $outcome_total = (INT)$outcome_cash + (INT)$outcome_purchasing + (INT)$outcome_operational + (INT)$outcome_barista;
 
+        $shift_long = ReportStore::where('date', '>=', $start_period)
+                        ->where('date', '<=', $end_period)
+                        ->where('status', 'verified')
+                        ->whereIn('shift_id', [2, 3])
+                        ->count();
+
+        $shift_short = ReportStore::where('date', '>=', $start_period)
+                        ->where('date', '<=', $end_period)
+                        ->where('status', 'verified')
+                        ->whereIn('shift_id', [1, 4])
+                        ->count();
+
         $data = [
             'income_cash' => $income_cash,
             'income_qris' => $income_qris,
@@ -116,7 +128,9 @@ class StoreRecapController extends Controller
             'outcome_operational' => $outcome_operational,
             'outcome_barista' => $outcome_barista,
             'outcome_total' => $outcome_total,
-            'profit' => (INT)$income_total - (INT)$outcome_total
+            'profit' => (INT)$income_total - (INT)$outcome_total,
+            'shift_long' => $shift_long,
+            'shift_short' => $shift_short
         ];
         
         return response()->json($data);

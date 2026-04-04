@@ -24,6 +24,21 @@
                         </select>
                         @error('periode_id') <div class="text-primary fs-11">{{ $message }}</div> @enderror
                     </div>
+                    <h5 class="mt-6">Shift</h5>
+                    <div class="form-group">
+                        <div class="row ">
+                            <div class="col-6">
+                                <label class="form-label">Long</label>
+                                <input type="text" class="form-control masked @error('shift_long') is-invalid @enderror" name="shift_long" id="shift_long" value="{{ old('shift_long') }}" readonly >
+                                @error('shift_long')<div class="text-danger">{{ $message }}</div>@enderror
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Short</label>
+                                <input type="text" class="form-control masked @error('shift_short') is-invalid @enderror" name="shift_short" id="shift_short" value="{{ old('shift_short') }}" readonly >
+                                @error('shift_short')<div class="text-danger">{{ $message }}</div>@enderror
+                            </div>
+                        </div>
+                    </div>
                     <h5 class="mt-6">Pemasukan</h5>
                     <div class="form-group">
                         <div class="row ">
@@ -122,6 +137,8 @@ $(document).ready(function () {
                 $("#outcome_operational").val(data.outcome_operational.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
                 $("#outcome_barista").val(data.outcome_barista.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
                 $("#outcome_total").val(data.outcome_total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+                $("#shift_long").val(data.shift_long.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+                $("#shift_short").val(data.shift_short.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
                 $("#profit").val(data.profit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
             }
         }); 
