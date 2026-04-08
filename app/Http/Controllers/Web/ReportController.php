@@ -538,6 +538,7 @@ class ReportController extends Controller
             )
             ->whereBetween('s.inv_date', [$start, $end])
             ->groupBy('label')
+            ->orderBy(DB::raw('YEAR(s.inv_date)'))
             ->orderBy(DB::raw('MONTH(s.inv_date)'))
             ->get();
 
