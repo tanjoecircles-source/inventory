@@ -40,6 +40,7 @@ Route::get('gb-pricelist', 'AuthController@gb_pricelist')->middleware('guest')->
 Route::get('roasted-pricelist', 'AuthController@roasted_pricelist')->middleware('guest')->name('roasted_pricelist');
 Route::get('greenbeans', 'AuthController@gb_pricelist')->middleware('guest')->name('greenbeans');
 Route::get('roastedbeans', 'AuthController@roasted_pricelist')->middleware('guest')->name('roastedbeans');
+Route::get('roasted-b2b', 'AuthController@roastedb2b_pricelist')->middleware('guest')->name('roastedb2b');
 
 Route::post('auth-process', 'AuthController@auth_process');
 Route::get('charity', 'CharityController@index')->middleware('guest');

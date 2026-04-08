@@ -691,6 +691,82 @@ class AuthController extends Controller
         return view('core.roasted_pricelist', $data);
     }
 
+    public function roastedb2b_pricelist(){
+        $stok_filter = DB::table('product as p')
+                    ->select(
+                            'p.id as id',
+                            'p.name_pl as name',
+                            'p.origin',
+                            'p.elevation',
+                            'p.varietal',
+                            'p.process',
+                            'p.processor',
+                            'p.harvest',
+                            'p.order_pricelist',
+                            'p.desc',
+                            'p.price_grosir50 as price',
+                            'p.is_new as is_new',
+                            'p.stock as stock',
+                            'p.photo_thumbnail as photo'
+                            )
+                    ->where([
+                        'p.type' => '2',
+                        'p.status' => 'Active',
+                        'p.is_pricelist' => 'true'
+                    ])
+                    ->orderBy('order_pricelist', 'ASC')
+                    ->get();
+        
+        foreach ($stok_filter as $key => $value) {
+            $value->is_new = ($value->is_new == 'true') ? 'New' : '';
+            $value->stock_lable = ($value->stock > 0) ? 'Ready' : 'Sold Out';
+            $value->stock_icon = ($value->stock > 0) ? 'fe-check-circle' : 'fe-x-circle';
+            $value->stock_color = ($value->stock > 0) ? 'success' : 'danger';
+            $value->price = empty($value->price) ? 0 : $value->price;
+            $value->order_pricelist = empty($value->order_pricelist) ? 0 : $value->order_pricelist;
+        }
+
+        $stok_spro = DB::table('product as p')
+                    ->select(
+                            'p.id as id',
+                            'p.name_pl as name',
+                            'p.category as category',
+                            'p.origin',
+                            'p.elevation',
+                            'p.varietal',
+                            'p.process',
+                            'p.processor',
+                            'p.harvest',
+                            'p.order_pricelist',
+                            'p.desc',
+                            'p.price_grosir50 as price',
+                            'p.is_new as is_new',
+                            'p.stock as stock',
+                            'p.photo_thumbnail as photo'
+                            )
+                    ->where([
+                        'p.type' => '3',
+                        'p.status' => 'Active',
+                        'p.is_pricelist' => 'true'
+                    ])
+                    ->orderBy('order_pricelist', 'ASC')
+                    ->get();
+        foreach ($stok_spro as $key => $value) {
+            $value->is_new = ($value->is_new == 'true') ? 'New' : '';
+            $value->stock_lable = ($value->stock > 0) ? 'Ready' : 'Pre Order';
+            $value->stock_icon = ($value->stock > 0) ? 'fe-check-circle' : 'fe-thumbs-up';
+            $value->stock_color = ($value->stock > 0) ? 'success' : 'warning';
+            $value->price = empty($value->price) ? 0 : $value->price;
+            $value->order_pricelist = empty($value->order_pricelist) ? 0 : $value->order_pricelist;
+        }
+
+        $data = [
+            'stok_filter' => $stok_filter,
+            'stok_spro' => $stok_spro
+        ];
+        return view('core.roastedb2b_pricelist', $data);
+    }
+
     // public function upload_condition($path, $code, $filedata){
     //     $fpath = $path;
     //     $fname = $code.'-'.Str::random(12).'-'.date('ymdhis').'.jpg';
