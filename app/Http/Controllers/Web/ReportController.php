@@ -473,8 +473,8 @@ class ReportController extends Controller
                         DB::raw("
                             CASE
                                 WHEN DAY(s.inv_date) >= 5
-                                    THEN DATE_FORMAT(DATE(s.inv_date), '%M')
-                                ELSE DATE_FORMAT(DATE_SUB(DATE(s.inv_date), INTERVAL 1 MONTH), '%M')
+                                    THEN DATE_FORMAT(DATE(s.inv_date), '%M %Y')
+                                ELSE DATE_FORMAT(DATE_SUB(DATE(s.inv_date), INTERVAL 1 MONTH), '%M %Y')
                             END as month
                         "),
                         'rp.name as category',
@@ -529,8 +529,8 @@ class ReportController extends Controller
                 DB::raw("
                     CASE
                         WHEN DAY(s.inv_date) >= 5
-                            THEN DATE_FORMAT(DATE(s.inv_date), '%M')
-                        ELSE DATE_FORMAT(DATE_SUB(DATE(s.inv_date), INTERVAL 1 MONTH), '%M')
+                            THEN DATE_FORMAT(DATE(s.inv_date), '%M %Y')
+                        ELSE DATE_FORMAT(DATE_SUB(DATE(s.inv_date), INTERVAL 1 MONTH), '%M %Y')
                     END as label
                 "),
                 DB::raw('SUM(s.inv_total - s.inv_expedition) as total_income'),
