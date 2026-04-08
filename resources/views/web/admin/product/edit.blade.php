@@ -104,7 +104,7 @@
                             </div>
                             @if($detail->type == '1' || $detail->type == '2' || $detail->type == '3')
                             <div class="form-group">
-                                <label class="form-label">Harga @if($detail->type == '1') Grosir >15kg @else Bundling Min 2Pcs @endif </label>
+                                <label class="form-label">Harga @if($detail->type == '1') Grosir >= 15kg @else Bundling Min 2Pcs @endif </label>
                                 <div class="input-icon mb-3">
                                     <span class="input-icon-addon fs-15">Rp</span>
                                     <input type="text" class="form-control masked" name="price_grosir15" id="price_grosir15" value="{{$detail->price_grosir15}}" @if(Auth::user()->id != 1 && Auth::user()->id != 3) readonly @endif >
@@ -112,9 +112,9 @@
                                 @error('price_grosir15')<div class="text-primary fs-11">{{ $message }}</div>@enderror
                             </div>
                             @endif
-                            @if($detail->type == '1')
+                            @if($detail->type == '1' || $detail->type == '2' || $detail->type == '3')
                             <div class="form-group">
-                                <label class="form-label">Harga Grosir >50kg </label>
+                                <label class="form-label">Harga @if($detail->type == '1') Grosir >= 50kg @else B2B @endif</label>
                                 <div class="input-icon mb-3">
                                     <span class="input-icon-addon fs-15">Rp</span>
                                     <input type="text" class="form-control masked" name="price_grosir50" id="price_grosir50" value="{{$detail->price_grosir50}}" @if(Auth::user()->id != 1 && Auth::user()->id != 3) readonly @endif >
