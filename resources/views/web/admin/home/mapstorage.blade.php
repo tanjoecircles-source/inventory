@@ -80,13 +80,13 @@
                                         <h3 class="card-title fs-13">Tengah Kiri</3>
                                     </div>
                                     <div class="card-body pt-1 px-2 pb-2 fs-12" style="min-height:125px">
-                                        @foreach ($map_tengah_kiri as $v)
+                                        @foreach ($map_tengah_kiri as $mtk)
                                         <div class="d-flex title-bar">
                                             <div class="mr-auto text-left">
-                                                <p class="mb-1">{{$v->name}}</p>
+                                                <p class="mb-1">{{$mtk->name}}</p>
                                             </div>
                                             <div class="ml-auto text-right">
-                                                <a href="{{(url('gb-map-delete/'.$v->id))}}" class="mx-1 btn-confirm" data-title="{{$mbk->name}}"><i class="fe fe-trash fs-11"></i></a>
+                                                <a href="{{(url('gb-map-delete/'.$mtk->id))}}" class="mx-1 btn-confirm" data-title="{{$mtk->name}}"><i class="fe fe-trash fs-11"></i></a>
                                             </div>
                                         </div>
                                         @endforeach
@@ -108,7 +108,7 @@
                                                 <p class="mb-1">{{$v->name}}</p>
                                             </div>
                                             <div class="ml-auto text-right">
-                                                <a href="{{(url('gb-map-delete/'.$v->id))}}" class="mx-1 btn-confirm" data-title="{{$mbk->name}}"><i class="fe fe-trash fs-11"></i></a>
+                                                <a href="{{(url('gb-map-delete/'.$v->id))}}" class="mx-1 btn-confirm" data-title="{{$v->name}}"><i class="fe fe-trash fs-11"></i></a>
                                             </div>
                                         </div>
                                         @endforeach
@@ -130,7 +130,7 @@
                                                 <p class="mb-1">{{$v->name}}</p>
                                             </div>
                                             <div class="ml-auto text-right">
-                                                <a href="{{(url('gb-map-delete/'.$v->id))}}" class="mx-1 btn-confirm" data-title="{{$mbk->name}}"><i class="fe fe-trash fs-11"></i></a>
+                                                <a href="{{(url('gb-map-delete/'.$v->id))}}" class="mx-1 btn-confirm" data-title="{{$v->name}}"><i class="fe fe-trash fs-11"></i></a>
                                             </div>
                                         </div>
                                         @endforeach
@@ -152,7 +152,7 @@
                                                 <p class="mb-1">{{$v->name}}</p>
                                             </div>
                                             <div class="ml-auto text-right">
-                                                <a href="{{(url('gb-map-delete/'.$v->id))}}" class="mx-1 btn-confirm" data-title="{{$mbk->name}}"><i class="fe fe-trash fs-11"></i></a>
+                                                <a href="{{(url('gb-map-delete/'.$v->id))}}" class="mx-1 btn-confirm" data-title="{{$v->name}}"><i class="fe fe-trash fs-11"></i></a>
                                             </div>
                                         </div>
                                         @endforeach
