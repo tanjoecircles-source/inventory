@@ -299,6 +299,7 @@ class ProductController extends Controller
             'varietal' => $detail->varietal,
             'deskripsi' => $detail->summary,
             'status' => $detail->status,
+            'is_pricelist' => $detail->is_pricelist,
             'published' => $detail->status == 'Active' ? 'Aktif' : 'Draft',
             'is_recomended' => $detail->is_recomended,
             'is_sold_out' => $detail->is_sold_out,
@@ -325,6 +326,7 @@ class ProductController extends Controller
         $data = $request->all();
         $valid = validator($data, [
             'name' => 'required|string|max:255',
+            'name_pl' => 'required|string|max:255',
             'product_parent' => 'required',
             'satuan' => 'required',
             'type' => 'required',
@@ -338,6 +340,7 @@ class ProductController extends Controller
         $insert = Product::create([
             'code' => strtolower($this->generate_code(8)),
             'name' => $data['name'],
+            'name_pl' => $data['name_pl'],
             'group' => $data['product_parent'],
             'satuan' => $data['satuan'],
             'type' => $data['type'],

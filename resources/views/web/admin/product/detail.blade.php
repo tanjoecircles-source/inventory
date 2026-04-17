@@ -115,7 +115,12 @@
                             </div>
                             <div class="d-flex mb-2 border-bottom">
                                 <p class="px-2 mb-2">Status</p>
-                                <p class="px-2 ml-auto font-weight-bold">{{($info['status'] == 'Active' ? 'Aktif' : 'Tidak Aktif')}}</p>
+                                <p class="px-2 ml-auto font-weight-bold">{{($info['status'] == 'Active' ? 'Aktif' : 'Tidak Aktif')}} @if($info['status'] == 'Active') <span class="text-success">•</span> @else <span class="text-danger">•</span> @endif</p>
+                            </div>
+                            
+                            <div class="d-flex mb-2 border-bottom">
+                                <p class="px-2 mb-2">Show in Price List</p>
+                                <p class="px-2 ml-auto font-weight-bold">{{($info['is_pricelist'] == 'true' ? 'On' : 'Off')}} @if($info['is_pricelist'] == 'true') <span class="text-success">•</span> @else <span class="text-danger">•</span> @endif</p>
                             </div>
                         </div>
                         <h5 class="mt-4 mb-1">Deskripsi</h5>

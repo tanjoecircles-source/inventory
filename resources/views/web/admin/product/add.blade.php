@@ -45,6 +45,11 @@
                             @error('name')<div class="text-primary fs-11">{{ $message }}</div>@enderror
                         </div>
                         <div class="form-group">
+                                <label class="form-label">Nama Produk Pricelist</label>
+                                <input type="text" class="form-control" name="name_pl" id="name_pl" value="{{ old('name_pl') }}" placeholder="Masukan Judul Produk Pricelist">
+                                @error('name_pl')<div class="text-primary fs-11">{{ $message }}</div>@enderror
+                            </div>
+                        <div class="form-group">
                             <label class="form-label">Category</label>
                             <input type="text" class="form-control" name="category" id="category" value="{{old('category')}}" placeholder="Category">
                             @error('category')<div class="text-primary fs-11">{{ $message }}</div>@enderror
