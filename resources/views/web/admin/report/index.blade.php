@@ -11,11 +11,41 @@
         .accordionjs .acc_section.acc_active > .acc_head {
             border-radius: 0px;
         }
+
+        /* Customisasi Daterangepicker: Tombol di atas & Mobile Friendly */
+        .daterangepicker .drp-buttons {
+            border-top: none;
+            border-bottom: 1px solid #eee;
+            padding: 12px 10px;
+            text-align: right;
+            background: #f8f9fa;
+        }
+        .daterangepicker .drp-buttons .btn {
+            font-weight: bold;
+            padding: 6px 15px;
+        }
+        
+        /* Tampilan Khusus Mobile */
+        @media (max-width: 576px) {
+            .daterangepicker {
+                width: 100% !important;
+                left: 0 !important;
+                right: 0 !important;
+                border-radius: 0;
+                margin-top: 0;
+            }
+            .daterangepicker .drp-calendar.left,
+            .daterangepicker .drp-calendar.right {
+                width: 100%;
+                max-width: 100%;
+                float: none;
+                padding: 10px;
+            }
+        }
     </style>
     
     <!-- Daterangepicker CSS & JS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     
@@ -34,21 +64,17 @@
                         <form id="report-period" name="report-period" action="{{url('report-period')}}" method="POST" enctype="multipart/form-data" >
                         @csrf
                         <div class="form-group row">
-                            <label class="col-3 px-1 form-label">Periode</label>
-                            <div class="col-8 px-1">
+                            <div class="col-12 px-1">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <div class="input-group-text p-1">
                                             <i class="fa fa-calendar tx-16 lh-0 op-6"></i>
                                         </div>
                                     </div>
-                                    <input class="form-control form-control-sm" id="report_daterange" type="text" placeholder="Pilih Periode">
+                                    <input class="form-control form-control-sm" id="report_daterange" type="text" placeholder="Pilih Periode" readonly style="background: #fff; cursor: pointer;">
                                 </div>
                                 <input type="hidden" name="report_date_start" id="report_date_start" value="{{date('d-m-Y', strtotime($report_date_start))}}">
                                 <input type="hidden" name="report_date_end" id="report_date_end" value="{{date('d-m-Y', strtotime($report_date_end))}}">
-                            </div>
-                            <div class="col-1 px-1">
-                                <button type="submit" class="btn btn-primary btn-sm py-1 px-2"><i class="fe fe-settings"></i></button>
                             </div>
                         </div>
                         </form>
@@ -154,6 +180,12 @@
                 // Hidden input tetap format DD-MM-YYYY untuk backend
                 $('#report_date_start').val(start_date.format('DD-MM-YYYY'));
                 $('#report_date_end').val(end_date.format('DD-MM-YYYY'));
+
+                // Submit otomatis saat tombol Apply ditekan!
+                $('#report-period').submit();
+            }).on('show.daterangepicker', function(ev, picker) {
+                // Memindahkan area tombol ke posisi paling atas di dalam pop-up kalender
+                picker.container.find('.drp-buttons').prependTo(picker.container);
             });
             
             // Set initial display value (DD MMM YYYY)
