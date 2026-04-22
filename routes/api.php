@@ -23,6 +23,10 @@ Route::post('register-seller-independent', 'UsersController@create_seller_indepe
 Route::post('register-seller-dealer', 'UsersController@create_seller_dealer');
 Route::post('otp_verification', 'UsersController@otp_verification');
 Route::post('login', 'UsersController@login');
+
+// Public Product List
+Route::post('public/product-list', 'PublicProductController@list');
+
 Route::middleware(['auth:api'])->group(function(){
     //core
     Route::get('profile', 'UsersController@profile');

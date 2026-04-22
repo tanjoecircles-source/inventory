@@ -24,6 +24,7 @@ class SalesController extends Controller
         $enddate = (isset($_GET['enddate'])) ? $_GET['enddate'] : "";
         $author = (isset($_GET['author'])) ? $_GET['author'] : "";
         $status = (isset($_GET['status'])) ? $_GET['status'] : "";
+        $sort = (isset($_GET['sort'])) ? $_GET['sort'] : "terbaru";
         $contents = DB::table('sales AS s')
                     ->leftJoin('customer AS c', 'c.id', '=', 's.inv_cust')
                     ->leftJoin('users AS u', 'u.id', '=', 's.author')
@@ -48,7 +49,20 @@ class SalesController extends Controller
         if (Gate::denies('isAdmin')){
             $contents = $contents->where(['s.author' => Auth::user()->id]);
         }
-        $contents = $contents->orderBy('s.inv_date', 'DESC')->orderBy('s.id', 'DESC')->paginate($limit);
+        
+        // Sorting Logic
+        if ($sort == 'tertinggi') {
+            // CAST to INT or DECIMAL to ensure proper numeric sorting
+            $contents = $contents->orderByRaw('CAST(s.inv_total AS UNSIGNED) DESC');
+        } elseif ($sort == 'terendah') {
+            $contents = $contents->orderByRaw('CAST(s.inv_total AS UNSIGNED) ASC');
+        } elseif ($sort == 'terlama') {
+            $contents = $contents->orderBy('s.inv_date', 'ASC')->orderBy('s.id', 'ASC');
+        } else {
+            $contents = $contents->orderBy('s.inv_date', 'DESC')->orderBy('s.id', 'DESC');
+        }
+
+        $contents = $contents->paginate($limit);
 
         $counts = DB::table('sales AS s')
                     ->leftJoin('customer AS c', 'c.id', '=', 's.inv_cust')
@@ -95,6 +109,7 @@ class SalesController extends Controller
             'startdate_filtered' => $startdate,
             'enddate_filtered' => $enddate,
             'status_filtered' => $status,
+            'sort_filtered' => $sort,
             'limit' => $limit,
             'contents' => $contents,
             'contents_count' => $counts,

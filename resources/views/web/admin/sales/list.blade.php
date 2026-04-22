@@ -83,6 +83,17 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
+                                    <label class="col-md-2 col-sm-12 form-label" for="example-email">Urutan</label>
+                                    <div class="col-md-10 col-sm-12">
+                                        <select class="form-control" name="sort" id="sort">
+                                            <option value="terbaru" {{ (isset($sort_filtered) && $sort_filtered == 'terbaru') ? 'selected' : '' }}>Terbaru</option>
+                                            <option value="terlama" {{ (isset($sort_filtered) && $sort_filtered == 'terlama') ? 'selected' : '' }}>Terlama</option>
+                                            <option value="tertinggi" {{ (isset($sort_filtered) && $sort_filtered == 'tertinggi') ? 'selected' : '' }}>Nominal Tertinggi</option>
+                                            <option value="terendah" {{ (isset($sort_filtered) && $sort_filtered == 'terendah') ? 'selected' : '' }}>Nominal Terendah</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
                                     <div class="col-md-10 col-sm-12">
                                         <button type="submit" class="btn btn-primary br-tr-7 br-br-7">
                                             Filter
@@ -148,36 +159,56 @@
         });
         
         var page = 1;
+        var isLoading = false;
+        var isEndOfData = false;
+
         $(window).scroll(function(){
+            if(isLoading || isEndOfData) return;
+
             var key = '{{$keyword}}';
             var startdate = '{{$startdate_filtered}}';
             var enddate = '{{$enddate_filtered}}';
             var author = '{{$author_filtered}}';
             var status = '{{$status_filtered}}';
-            if ($(window).scrollTop() >= $(document).height() - $(window).height() - 1){
+            var sort = '{{$sort_filtered ?? "terbaru"}}';
+
+            if ($(window).scrollTop() >= $(document).height() - $(window).height() - 50){
                 page++;
-                loadMoreData(page, key, startdate, enddate, author, status);
+                loadMoreData(page, key, startdate, enddate, author, status, sort);
             }
         });
     
-        function loadMoreData(page, key, startdate, enddate, author, status){
+        function loadMoreData(page, key, startdate, enddate, author, status, sort){
             $.ajax({
-                url:'?page=' + page + '&keyword=' + key + '&startdate=' + startdate + '&enddate=' + enddate + '&author=' + author + '&status=' + status,
-                type:'get',
+                url:'?page=' + page,
+                type:'GET',
+                data: {
+                    keyword: key,
+                    startdate: startdate,
+                    enddate: enddate,
+                    author: author,
+                    status: status,
+                    sort: sort
+                },
                 beforeSend: function(){
+                    isLoading = true;
                     $('.ajax-load').show();
                 }
             })
             .done(function(data){
                 if(data.html == ""){
+                    isEndOfData = true;
                     $('.ajax-load').html("No more records found");
                     return;     
                 }
+                
                 $('.ajax-load').hide();
                 $('#content-data').append(data.html);
+                isLoading = false;
             })
             .fail(function(jqXHR,ajaxOptions,thrownError){
                 $('.ajax-load').html("server error");
+                isLoading = false;
             });
         }
 

@@ -13,6 +13,12 @@
         }
     </style>
     
+    <!-- Daterangepicker CSS & JS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    
     <div class="container">
         <div class="row">
             <div class="col-sm-12 col-md-12 col-lg-8 mx-auto">
@@ -29,11 +35,17 @@
                         @csrf
                         <div class="form-group row">
                             <label class="col-3 px-1 form-label">Periode</label>
-                            <div class="col-4 px-1">
-                                <input class="form-control form-control-sm fc-datepicker" name="report_date_start" value="{{date('d-m-Y', strtotime($report_date_start))}}" type="text" placeholder="Tanggal Awal">
-                            </div>
-                            <div class="col-4 px-1">
-                                <input class="form-control form-control-sm fc-datepicker" name="report_date_end" value="{{date('d-m-Y', strtotime($report_date_end))}}" type="text" placeholder="Tanggal Akhir">
+                            <div class="col-8 px-1">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text p-1">
+                                            <i class="fa fa-calendar tx-16 lh-0 op-6"></i>
+                                        </div>
+                                    </div>
+                                    <input class="form-control form-control-sm" id="report_daterange" type="text" placeholder="Pilih Periode">
+                                </div>
+                                <input type="hidden" name="report_date_start" id="report_date_start" value="{{date('d-m-Y', strtotime($report_date_start))}}">
+                                <input type="hidden" name="report_date_end" id="report_date_end" value="{{date('d-m-Y', strtotime($report_date_end))}}">
                             </div>
                             <div class="col-1 px-1">
                                 <button type="submit" class="btn btn-primary btn-sm py-1 px-2"><i class="fe fe-settings"></i></button>
@@ -127,5 +139,25 @@
             </div>
         </div>
     </div>
-    </x-layouts.app>
-    
+    <script>
+        $(document).ready(function() {
+            var start = moment('{{date("Y-m-d", strtotime($report_date_start))}}');
+            var end = moment('{{date("Y-m-d", strtotime($report_date_end))}}');
+
+            $('#report_daterange').daterangepicker({
+                startDate: start,
+                endDate: end,
+                locale: {
+                    format: 'DD MMM YYYY'
+                }
+            }, function(start_date, end_date) {
+                // Hidden input tetap format DD-MM-YYYY untuk backend
+                $('#report_date_start').val(start_date.format('DD-MM-YYYY'));
+                $('#report_date_end').val(end_date.format('DD-MM-YYYY'));
+            });
+            
+            // Set initial display value (DD MMM YYYY)
+            $('#report_daterange').val(start.format('DD MMM YYYY') + ' - ' + end.format('DD MMM YYYY'));
+        });
+    </script>
+</x-layouts.app>
