@@ -187,9 +187,11 @@ class ReportStoreController extends Controller
             'employee' => Employee::all(),
             'shift'    => ShiftStore::all(),
             'products' => DB::table('product')
-                            ->select('id', 'name', 'price')
-                            ->where('status', 'Active')
-                            ->orderBy('name', 'ASC')
+                            ->join('ref_product_type', 'ref_product_type.id', '=', 'product.type')
+                            ->select('product.id', 'product.name', 'product.price')
+                            ->where('product.status', 'Active')
+                            ->where('ref_product_type.name', 'Menu Toko')
+                            ->orderBy('product.name', 'ASC')
                             ->get(),
             'date' => date('d-m-Y'),
             'activeSession' => $activeSession,
