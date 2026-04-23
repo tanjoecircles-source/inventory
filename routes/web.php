@@ -200,7 +200,12 @@ Route::middleware(['auth:web'])->group(function(){
     Route::post('report-store-update-final/{app_id}', 'ReportStoreController@updateFinal');
     Route::get('report-store-publish/{app_id}', 'ReportStoreController@publish');
     Route::get('report-store-verification/{app_id}', 'ReportStoreController@verification');
+    Route::get('report-store-unverification/{app_id}', 'ReportStoreController@unverification');
     Route::get('report-store-spending-delete/{app_id}', 'ReportStoreController@spendingDelete');
+    Route::get('pos', 'ReportStoreController@pos');
+    Route::post('pos-open-shift', 'ReportStoreController@posOpenShift');
+    Route::get('pos-close-shift/{id}', 'ReportStoreController@posCloseShift');
+    Route::post('pos-checkout', 'ReportStoreController@posCheckout');
 
     //product type list
     Route::get('product-type-list', 'ProductTypeController@list');

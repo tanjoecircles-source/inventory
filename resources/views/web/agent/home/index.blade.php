@@ -149,6 +149,16 @@
                     <p class="text-center mt-2 fs-13 font-weight-semibold">Map Storage</p>
                     </a>
                 </div>
+                <div class="col-3 p-2">
+                    <a href="{{url('pos')}}">
+                    <div class="card mb-0">
+                        <div class="card-body text-center p-2">
+                            <span class="fs-30 icon-muted"><i class="fe fe-shopping-cart icon-dropshadow-info text-primary"></i></span>
+                        </div>
+                    </div>
+                    <p class="text-center mt-2 mb-0 fs-13 font-weight-semibold">POS</p>
+                    </a>
+                </div>
             </div>
             <div class="row px-2">
                 <div class="col-12 p-2">

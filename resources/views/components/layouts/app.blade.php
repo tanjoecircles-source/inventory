@@ -130,7 +130,7 @@ a:hover {
                 <div class="h-100h"></div>  
                 <!-- END Main content -->
                 <!-- Bottom bar -->
-                
+                @if(!isset($hideBottomMenu) || !$hideBottomMenu)
                 <div id="bottom-bar">
                     <div class="container">
                         <div class="row">
@@ -142,6 +142,7 @@ a:hover {
                         </div>
                     </div>
                 </div>
+                @endif
             </div>
         </div>
     </div>

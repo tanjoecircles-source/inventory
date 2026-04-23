@@ -58,6 +58,45 @@
                     </div>
                 </div>
             </div>
+
+            @if(!empty($posTransactions) && count($posTransactions) > 0)
+            <div class="d-flex py-2 px-2">
+                <h5 class="mb-1 font-weight-semibold flex-grow-1"><i class="fe fe-list mr-1"></i> Detail Transaksi POS</h5>
+            </div>
+            <div class="card no-border shadow-none custom-square mb-2">
+                <div class="card-body p-0">
+                    <div class="accordion" id="accordionPOS">
+                        @foreach($posTransactions as $index => $trx)
+                        <div class="border-bottom">
+                            <div class="p-3 bg-white" id="heading{{$trx->id}}">
+                                <div class="d-flex align-items-center justify-content-between" data-toggle="collapse" data-target="#collapse{{$trx->id}}" aria-expanded="false" aria-controls="collapse{{$trx->id}}" style="cursor: pointer;">
+                                    <div>
+                                        <h6 class="mb-0 font-weight-bold fs-13 text-primary">{{$trx->receipt_no}}</h6>
+                                        <small class="text-muted">{{$trx->created_at->format('H:i')}} | <span class="badge badge-light text-dark">{{strtoupper($trx->payment_method)}}</span></small>
+                                    </div>
+                                    <div class="text-right">
+                                        <h6 class="mb-0 font-weight-bold fs-13">Rp {{number_format($trx->total_amount, 0, ',', '.')}}</h6>
+                                        <small class="text-muted"><i class="fe fe-chevron-down"></i></small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="collapse{{$trx->id}}" class="collapse" aria-labelledby="heading{{$trx->id}}" data-parent="#accordionPOS">
+                                <div class="card-body bg-light px-3 py-2">
+                                    @foreach($trx->items as $item)
+                                    <div class="d-flex justify-content-between fs-11 mb-1">
+                                        <span>{{$item->product_name}} (x{{$item->qty}})</span>
+                                        <span>Rp {{number_format($item->subtotal, 0, ',', '.')}}</span>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            @endif
             <div class="d-flex py-2 px-2 border-bottom">
                 <h5 class="mb-1 font-weight-semibold flex-grow-1"><i class="fe fe-log-out mr-1"></i> Pengeluaran</h5>
             </div>
@@ -154,6 +193,10 @@
                         @if(Gate::allows('isAdmin'))
                             <a href="{{url('report-store-verification/'.$report_store->id)}}" data-title="{{$report_store->date.' - '.$report_store->shift_name}}" class="btn btn-dark btn-block btn-verifikasi" id="btn-verifikasi" name="btn-verifikasi"><i class="fe fe-check-circle"></i> Verifikasi</a>
                         @endif
+                    @elseif($report_store->status == 'verified')
+                        @if(Gate::allows('isAdmin'))
+                            <a href="{{url('report-store-unverification/'.$report_store->id)}}" data-title="{{$report_store->date.' - '.$report_store->shift_name}}" class="btn btn-danger btn-block btn-unverifikasi" id="btn-unverifikasi" name="btn-unverifikasi"><i class="fe fe-x-circle"></i> Unverified</a>
+                        @endif
                     @endif
                     </form>
                 </div>
@@ -185,6 +228,16 @@ $(document).off('click', '.btn-publish').on('click', '.btn-publish', function(e)
 $(document).off('click', '.btn-verifikasi').on('click', '.btn-verifikasi', function(e){
     e.preventDefault();
     $('#modal-confirm .modal-body').html('You will verification data <b>'+$(this).data('title')+'</b>?');
+    $('#modal-confirm .btn-action').attr('href', $(this).attr('href'));
+    var myModal = new bootstrap.Modal(document.getElementById('modal-confirm'), {
+        keyboard: false
+    });
+    myModal.show();
+});
+
+$(document).off('click', '.btn-unverifikasi').on('click', '.btn-unverifikasi', function(e){
+    e.preventDefault();
+    $('#modal-confirm .modal-body').html('You will unverified data <b>'+$(this).data('title')+'</b>?');
     $('#modal-confirm .btn-action').attr('href', $(this).attr('href'));
     var myModal = new bootstrap.Modal(document.getElementById('modal-confirm'), {
         keyboard: false
