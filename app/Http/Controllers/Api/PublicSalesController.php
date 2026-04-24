@@ -174,6 +174,12 @@ class PublicSalesController extends Controller
         $invoice->must_pay = (int)$invoice->inv_total - (int)$invoice->inv_payment;
         $invoice->inv_date_formatted = date('d M Y', strtotime($invoice->inv_date));
         
+        // Generate copy_url similar to the web version
+        $csurl = Str::slug($invoice->cust_name);
+        $dturl = Str::slug(date('d M Y', strtotime($invoice->inv_date)));
+        $authurl = Str::slug($invoice->inv_author);
+        $invoice->copy_url = url('sales-detail/' . $invoice->id . '&cust=' . $csurl . '&date=' . $dturl . '&author=' . $authurl);
+
         $data = [
             'invoice' => $invoice,
             'items' => $items,
