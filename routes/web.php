@@ -203,8 +203,10 @@ Route::middleware(['auth:web'])->group(function(){
     Route::get('report-store-unverification/{app_id}', 'ReportStoreController@unverification');
     Route::get('report-store-spending-delete/{app_id}', 'ReportStoreController@spendingDelete');
     Route::get('pos', 'ReportStoreController@pos');
-    Route::post('pos-open-shift', 'ReportStoreController@posOpenShift');
+    Route::get('pos-open-shift', 'ReportStoreController@posOpenShift');
+    Route::post('pos-open-shift', 'ReportStoreController@posOpenShiftStore');
     Route::get('pos-close-shift/{id}', 'ReportStoreController@posCloseShift');
+    Route::get('pos-payment', 'ReportStoreController@posPayment');
     Route::post('pos-checkout', 'ReportStoreController@posCheckout');
 
     //product type list

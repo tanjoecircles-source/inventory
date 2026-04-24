@@ -190,7 +190,7 @@ class ReportStoreController extends Controller
                             ->join('ref_product_type', 'ref_product_type.id', '=', 'product.type')
                             ->select('product.id', 'product.name', 'product.price')
                             ->where('product.status', 'Active')
-                            ->where('ref_product_type.name', 'Menu Toko')
+                            ->where('ref_product_type.name', 'Minuman Kedai')
                             ->orderBy('product.name', 'ASC')
                             ->get(),
             'date' => date('d-m-Y'),
@@ -252,6 +252,18 @@ class ReportStoreController extends Controller
             DB::rollback();
             return redirect()->back()->with('danger', 'Gagal menutup shift.');
         }
+    }
+
+    public function posPayment()
+    {
+        $activeSession = \App\Models\PosSession::where('status', 'open')->first();
+        if (!$activeSession) {
+            return redirect('pos')->with('danger', 'Tidak ada shift yang aktif.');
+        }
+
+        return view('web.agent.report_store.pos_payment', [
+            'activeSession' => $activeSession,
+        ]);
     }
 
     public function posCheckout(Request $request)

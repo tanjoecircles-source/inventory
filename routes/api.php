@@ -26,6 +26,9 @@ Route::post('login', 'UsersController@login');
 
 // Public Product List
 Route::post('public/product-list', 'PublicProductController@list');
+Route::get('public/sales-list', 'PublicSalesController@list');
+Route::get('public/sales-list-paid', 'PublicSalesController@listPaid');
+Route::get('public/sales-detail/{id}', 'PublicSalesController@detail');
 
 Route::middleware(['auth:api'])->group(function(){
     //core

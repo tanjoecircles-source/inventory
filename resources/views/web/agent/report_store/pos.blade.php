@@ -192,13 +192,6 @@
 .empty-cart { text-align: center; color: #bbb; font-size: 12px; padding: 10px 0; }
 </style>
 
-<form id="pos-form" action="{{ url('pos-checkout') }}" method="POST">
-@csrf
-<input type="hidden" name="payment_method" id="f-payment-method">
-<input type="hidden" name="cash"        id="f-cash">
-<input type="hidden" name="qris"        id="f-qris">
-<div id="items-container"></div>
-
 <div class="pos-wrapper">
     {{-- Meta bar --}}
     <div class="pos-meta">
@@ -256,24 +249,12 @@
                 <span class="cart-total-label">Total</span>
                 <span class="cart-total-val" id="cart-total">Rp 0</span>
             </div>
-            <div class="pay-method-row">
-                <div class="pay-method-btn active" id="pm-cash" onclick="setPayMethod('cash')">
-                    <i class="fe fe-dollar-sign"></i> Cash
-                </div>
-                <div class="pay-method-btn" id="pm-qris" onclick="setPayMethod('qris')">
-                    <i class="fe fe-credit-card"></i> QRIS
-                </div>
-                <div class="pay-method-btn" id="pm-split" onclick="setPayMethod('split')">
-                    <i class="fe fe-shuffle"></i> Split
-                </div>
-            </div>
-            <button type="button" class="btn-checkout" id="btn-checkout" disabled onclick="submitPOS()">
-                <i class="fe fe-check-circle mr-1"></i> Bayar
+            <button type="button" class="btn-checkout" id="btn-checkout" disabled onclick="window.location.href='{{ url('pos-payment') }}'">
+                <i class="fe fe-arrow-right-circle mr-1"></i> Bayar Sekarang
             </button>
         </div>
     </div>
 </div>
-</form>
 
 <!-- Modal Transactions -->
 <div class="modal fade" id="modal-transactions" tabindex="-1" aria-hidden="true">
@@ -467,16 +448,6 @@ function renderCart() {
 }
 
 /* ════════════════════════════════════════
-   Payment method
-════════════════════════════════════════ */
-function setPayMethod(method) {
-    payMethod = method;
-    ['cash','qris','split'].forEach(function(m) {
-        document.getElementById('pm-' + m).classList.toggle('active', m === method);
-    });
-}
-
-/* ════════════════════════════════════════
    Clear cart button
 ════════════════════════════════════════ */
 function clearCart() {
@@ -487,49 +458,6 @@ function clearCart() {
     document.querySelectorAll('.product-card').forEach(function(el) {
         el.classList.remove('in-cart');
     });
-}
-
-/* ════════════════════════════════════════
-   Submit / Checkout
-════════════════════════════════════════ */
-function submitPOS() {
-    if (Object.keys(cart).length === 0) {
-        alert('Keranjang masih kosong.');
-        return;
-    }
-
-    let totalAmt = 0;
-    Object.values(cart).forEach(function(i) { totalAmt += i.price * i.qty; });
-
-    let cash = 0, qris = 0;
-    if (payMethod === 'cash')  { cash = totalAmt; }
-    if (payMethod === 'qris')  { qris = totalAmt; }
-    if (payMethod === 'split') {
-        cash = Math.round(totalAmt / 2);
-        qris = totalAmt - cash;
-    }
-
-    document.getElementById('f-payment-method').value = payMethod;
-    document.getElementById('f-cash').value           = cash;
-    document.getElementById('f-qris').value           = qris;
-
-    const container = document.getElementById('items-container');
-    container.innerHTML = '';
-    let idx = 0;
-    Object.keys(cart).forEach(function(id) {
-        const item = cart[id];
-        container.innerHTML +=
-            '<input type="hidden" name="items[' + idx + '][product_id]" value="' + id + '">' +
-            '<input type="hidden" name="items[' + idx + '][name]"       value="' + item.name + '">' +
-            '<input type="hidden" name="items[' + idx + '][price]"      value="' + item.price + '">' +
-            '<input type="hidden" name="items[' + idx + '][qty]"        value="' + item.qty + '">';
-        idx++;
-    });
-
-    // clear storage after submit
-    clearStorage();
-
-    document.getElementById('pos-form').submit();
 }
 
 /* ════════════════════════════════════════
@@ -635,6 +563,15 @@ function formatNum(n) {
    Init on page load
 ════════════════════════════════════════ */
 $(document).ready(function () {
+    @if(session('success'))
+        localStorage.removeItem(CART_KEY);
+        cart = {};
+        notif({
+            msg: "<b>Success:</b> {{ session('success') }}",
+            type: "success"
+        });
+    @endif
+
     // restore cart from localStorage
     loadCart();
     loadHeldCarts();
