@@ -23,10 +23,12 @@ Route::get('callback-google-oauth', 'AuthController@callback_google_oauth')->mid
 Route::get('register', 'AuthController@register')->middleware('guest')->name('register');
 Route::post('register-form', 'AuthController@register_form')->middleware('guest')->name('register_form');
 Route::get('register-form-agent', 'AuthController@register_form_agent')->middleware('guest')->name('register_form_agent');
+Route::get('register-form-user', 'AuthController@register_form_user')->middleware('guest')->name('register_form_user');
 Route::get('register-form-seller', 'AuthController@register_form_seller')->middleware('guest')->name('register_form_seller');
 Route::get('register-otp/{app_id}', 'AuthController@register_otp')->middleware('guest')->name('register_otp');
 Route::post('register-otp-process', 'AuthController@register_otp_process')->middleware('guest')->name('register_otp_process');
 Route::post('register-agent', 'AuthController@register_agent')->middleware('guest')->name('register_agent');
+Route::post('register-user', 'AuthController@register_user')->middleware('guest')->name('register_user');
 Route::post('register-seller', 'AuthController@register_seller')->middleware('guest')->name('register_seller');
 Route::get('register-seller-confirm/{app_id}', 'AuthController@register_seller_confirm')->middleware('guest')->name('register_seller_confirm');
 Route::post('register-seller-confirm-submit', 'AuthController@register_seller_confirm_submit')->middleware('guest')->name('register_seller_confirm_submit');
@@ -75,6 +77,13 @@ Route::middleware(['auth:web'])->group(function(){
     Route::get('product-explore-detail/{app_id}', 'ProductExploreController@detail');
     Route::post('product-explore-etalase', 'ProductExploreController@etalase');
     Route::post('product-explore-unetalase', 'ProductExploreController@unetalase');
+
+    // Cart
+    Route::get('cart', 'CartController@index')->name('cart-index');
+    Route::get('checkout', 'CartController@checkout')->name('checkout');
+    Route::post('cart-add', 'CartController@add')->name('cart-add');
+    Route::post('cart-update', 'CartController@update')->name('cart-update');
+    Route::post('cart-remove', 'CartController@remove')->name('cart-remove');
 
 
     Route::group(['prefix' => 'transaction'], function(){

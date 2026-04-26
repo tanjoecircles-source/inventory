@@ -53,7 +53,7 @@ class HomeController extends Controller
             'stok_gb' => $stok_gb,
             'stok_rsf' => $stok_rsf,
             'stok_rss' => $stok_rss,
-            'product' => Product::where('status', 'Active')->orderBy('is_sold_out', 'DESC')->paginate(10),
+            'product' => Product::with('detailType')->where('status', 'Active')->orderBy('is_sold_out', 'DESC')->paginate(10),
             'agent_id' => $agent->id,
             'seller_total' => User::where(['type' => 'seller'])->whereNotNull('email_verified_at')->count(),
             'agent_total' => User::where(['type' => 'agent'])->whereNotNull('email_verified_at')->count(),
@@ -67,6 +67,12 @@ class HomeController extends Controller
         ];
         if (Gate::allows('isSeller') || Gate::allows('isSellerDealer')) return view('web.seller.home.index', $data);
         if (Gate::allows('isAgent')) return view('web.agent.home.index', $data);
+        if (Gate::allows('isUser')) {
+            if (request()->ajax()) {
+                return view('web.user.home.product_list', $data);
+            }
+            return view('web.user.home.index', $data);
+        }
         return view('web.admin.home.index', $data);
     }
 

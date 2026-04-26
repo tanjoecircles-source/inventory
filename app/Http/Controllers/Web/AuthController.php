@@ -146,8 +146,8 @@ class AuthController extends Controller
     }
 
     public function register(){
-        $data = [];
-        return view('core.register', $data);
+        $data['type'] = 'user';
+        return view('core.register_form_user', $data);
     }
 
     public function register_form(Request $request){
@@ -158,6 +158,11 @@ class AuthController extends Controller
     public function register_form_agent(){
         $data['type'] = 'agent';
         return view('core.register_form_agent', $data);
+    }
+
+    public function register_form_user(){
+        $data['type'] = 'user';
+        return view('core.register_form_user', $data);
     }
 
     public function register_agent(Request $request){
@@ -214,18 +219,65 @@ class AuthController extends Controller
         $request->session()->put('email', $email);
     
 
-        $client = Client::where('password_client', 1)->first();
-
-        $request->request->add([
-            'grant_type'    => 'password',
-            'client_id'     => $client->id,
-            'client_secret' => $client->secret,
-            'username'      => $data['email'],
-            'password'      => $data['password'],
-            'scope'         => null,
-        ]);
-        
         if($result){
+            DB::commit();
+            $request->session()->forget('data_register');
+            return redirect('register-otp/'.encrypt($user->id));
+        }else{
+            DB::rollback();
+            return redirect()->back()->with('danger', 'Gagal Mendaftar Akun');
+        }
+    }
+
+    public function register_user(Request $request){
+        $valid = validator($request->only('email', 'name', 'phone', 'password', 'password_confirmation', 'term'), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'phone' => 'required|string|max:15',
+            'password' => !empty(session('google')) ? 'nullable' : 'required|string|confirmed|min:6',
+            'password_confirmation' => !empty(session('google')) ? 'nullable' : 'required|string|min:6',
+            'term' => 'required'
+        ]);
+
+        if ($valid->fails()) {
+            return redirect()->back()->withErrors($valid)->withInput();
+        }
+
+        $data = request()->only('email','name','password', 'phone', 'term');
+        
+        $otp = strtoupper($this->generate_otp());
+
+        DB::beginTransaction();
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => !empty(session('google')) ? bcrypt('12312312321123xcv@12#') : bcrypt($data['password']),
+            'phone' => $data['phone'],
+            'type' => 'user',
+            'ifseller' => 'independent',
+            'term' => $data['term'],
+            'otp' => $otp,
+            'email_verified_at' => !empty(session('google')) ? date('Y-m-d H:i:s') : null,
+            'login_method' => !empty(session('google')) ? 'google' : 'default'
+        ]);
+
+        if (!empty(session('google'))){
+            DB::commit();
+            return $this->auto_login_google($request, $user->id);
+        }
+        
+        //send mail OTP
+        $email = $data['email'];
+        $datamail = [
+            'title' => 'Selamat, Anda telah berhasil melakukan Registrasi Akun',
+            'url' => 'https://brocar.id',
+            'otp' => $otp
+        ];
+        Mail::to($email)->send(new Register($datamail));
+        $request->session()->put('email', $email);
+    
+
+        if($user){
             DB::commit();
             $request->session()->forget('data_register');
             return redirect('register-otp/'.encrypt($user->id));
@@ -291,15 +343,6 @@ class AuthController extends Controller
         ];
         Mail::to($data['email'])->send(new Register($datamail));
 
-        $client = Client::where('password_client', 1)->first();
-        $request->request->add([
-            'grant_type'    => 'password',
-            'client_id'     => $client->id,
-            'client_secret' => $client->secret,
-            'username'      => $data['email'],
-            'password'      => $data['password'],
-            'scope'         => null,
-        ]);
         if($result){
             DB::commit();
             return redirect('register-otp/'.encrypt($user->id));

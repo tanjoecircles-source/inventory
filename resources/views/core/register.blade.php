@@ -49,6 +49,20 @@
                     </div>
                 </div>
             </div>
+            <div class="card mt-2">
+                <div class="card-body py-3">
+                    <div class="d-flex">
+                        <label class="custom-control custom-radio">
+                            <input type="radio" class="custom-control-input" name="type" value="user">
+                            <span class="custom-control-label"></span>
+                        </label>
+                        <div class="ml-3">
+                            <h6 class="font-weight-semibold mb-0">User Umum</h6>
+                            <small class="text-muted">Jelajahi dan temukan mobil impian kamu</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -1,46 +1,48 @@
 <x-layouts.public>
-<x-header-red-3column notif="">
-    @slot('back')
-    <x-back urlback="{{url('login')}}"></x-back>
-    @endslot
-</x-header-red-3column>
+<style>
+    .header.top-header {
+        box-shadow: rgba(50, 50, 93, 0.05) 0px 6px 12px -2px, rgba(0, 0, 0, 0.08) 0px 3px 7px -3px
+    }
+    .form-control-otp {
+        background: #f4f4f4;
+        border: 1px solid #ddd;
+        color: #333 !important;
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+        border-radius: 8px;
+    }
+</style>
+<div class="app-header header top-header bg-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-8 mx-auto">
+                <div class="d-flex text-dark title-bar align-items-center">
+                    <a href="{{url('login')}}" class="text-dark"><i class="fe fe-arrow-left fs-20"></i></a>
+                    <div class="mx-auto">
+                        <img src="{{ asset('assets/images/brand/logo.png') }}" style="height:2.5rem;" alt="tanjoecoffee.com">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="height: 70px;"></div>
 <form id="login-form" name="login-form" action="{{url('register-otp-process')}}" method="POST" enctype="multipart/form-data" >
 @csrf
-<div class="card no-border shadow-none custom-square bg-primary">
-    <div class="card-body">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-12 col-md-12 col-lg-8 mx-auto">
-                    <center>
-                    <h4 class="text-white text-center mb-5">Konfirmasi OTP Akun</h4>
-                    <i class="fe fe-tablet fs-40 text-center text-white"></i>
-                    <p class="text-white text-center mt-5">Masukan 6 digit kode otp yang dikirimkan melalui email anda <br><b>{{$email}}</b></p>
-                    <div class="form-group row mt-7">
-                        <div class="col px-1">
-                            <input type="number" class="form-control font-weight-bold text-center text-white fs-20 @error('otp') is-invalid @enderror" name="otp" id="otp" value="{{ old('otp') }}" style="background: rgba(255, 255, 255, 0.5);border:none;">
-                        </div>
-                    </div>
-                    {{-- <div class="form-group row mt-7">
-                        <div class="col px-1">
-                            <input type="text" class="form-control font-weight-bold text-center text-white fs-20 @error('otp1') is-invalid @enderror" name="otp1" id="otp1" value="{{ old('otp1') }}" style="background: rgba(255, 255, 255, 0.5);border:none;">
-                        </div>
-                        <div class="col px-1">
-                            <input type="text" class="form-control font-weight-bold text-center text-white fs-20 @error('otp2') is-invalid @enderror" name="otp2" id="otp2" value="{{ old('otp2') }}" style="background: rgba(255, 255, 255, 0.5);border:none;">
-                        </div>
-                        <div class="col px-1">
-                            <input type="text" class="form-control font-weight-bold text-center text-white fs-20 @error('otp3') is-invalid @enderror" name="otp3" id="otp3" value="{{ old('otp3') }}" style="background: rgba(255, 255, 255, 0.5);border:none;">
-                        </div>
-                        <div class="col px-1">
-                            <input type="text" class="form-control font-weight-bold text-center text-white fs-20 @error('otp4') is-invalid @enderror" name="otp4" id="otp4" value="{{ old('otp4') }}" style="background: rgba(255, 255, 255, 0.5);border:none;">
-                        </div>
-                        <div class="col px-1">
-                            <input type="text" class="form-control font-weight-bold text-center text-white fs-20 @error('otp5') is-invalid @enderror" name="otp5" id="otp5" value="{{ old('otp5') }}" style="background: rgba(255, 255, 255, 0.5);border:none;">
-                        </div>
-                        <div class="col px-1">
-                            <input type="text" class="form-control font-weight-bold text-center text-white fs-20 @error('otp6') is-invalid @enderror" name="otp6" id="otp6" value="{{ old('otp6') }}" style="background: rgba(255, 255, 255, 0.5);border:none;">
-                        </div>
-                    </div> --}}
-                    </center>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-8 mx-auto">
+            <div class="text-center">
+                <h4 class="font-weight-semibold mb-4">Konfirmasi OTP</h4>
+                <div class="mb-4">
+                    <i class="fe fe-smartphone fs-50 text-primary"></i>
+                </div>
+                <p class="text-muted mb-5">Masukkan 6 digit kode OTP yang dikirimkan ke email:<br><span class="font-weight-bold text-dark">{{$email}}</span></p>
+                
+                <div class="form-group mb-5">
+                    <input type="number" class="form-control form-control-otp @error('otp') is-invalid @enderror" name="otp" id="otp" value="{{ old('otp') }}" placeholder="000000" maxlength="6">
+                    @error('otp')<div class="text-danger mt-2">{{ $message }}</div>@enderror
                 </div>
             </div>
         </div>
@@ -68,23 +70,6 @@
 </div>
 </form>
 <script>
-$("#otp1").focus();
-$("#otp1").keyup(function(){
-    if($("#otp1").val() != ''){ $("#otp2").focus(); }else{ this.focus(); }
-});
-$("#otp2").keyup(function(){
-    if($("#otp2").val() != ''){ $("#otp3").focus(); }else{ this.focus(); }
-});
-$("#otp3").keyup(function(){
-    if($("#otp3").val() != ''){ $("#otp4").focus(); }else{ this.focus(); }
-});
-$("#otp4").keyup(function(){
-    if($("#otp4").val() != ''){ $("#otp5").focus(); }else{ this.focus(); }
-});
-$("#otp5").keyup(function(){
-    if($("#otp5").val() != ''){ $("#otp6").focus(); }else{ this.focus(); }
-});
-
 // Mengatur waktu akhir perhitungan mundur
 var countDownDate = new Date("{{$expired_time}}").getTime();
 
