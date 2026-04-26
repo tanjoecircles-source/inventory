@@ -99,4 +99,63 @@ class PublicProductController extends Controller
             return response(['status' => false, 'message' => 'Data Empty', 'data' => []], 404);
         }
     }
+
+    public function info(Request $request, $id)
+    {
+        $product = DB::table('product AS p')
+            ->leftJoin('ref_product_type AS rpt', 'rpt.id', '=', 'p.type')
+            ->select('p.*', 'rpt.name AS type_name')
+            ->where('p.id', $id)
+            ->first();
+
+        if (!$product) {
+            return response(['status' => false, 'message' => 'Product not found'], 404);
+        }
+
+        // Format image URL
+        if (!empty($product->photo_thumbnail)) {
+            $product->photo_thumbnail = url('storage/'.$product->photo_thumbnail);
+        } else {
+            $product->photo_thumbnail = url('storage/noimages.jpg');
+        }
+
+        return response([
+            'status' => true,
+            'message' => 'Success',
+            'data' => $product
+        ], 200);
+    }
+
+    public function updateStock(Request $request)
+    {
+        $valid = validator($request->all(), [
+            'id' => 'required|exists:product,id',
+            'stock' => 'required|numeric|min:0',
+            'token' => 'required'
+        ]);
+
+        if ($valid->fails()) {
+            return response(['status' => false, 'message' => $valid->errors()->all()], 400);
+        }
+
+        // Token validation
+        $apiToken = env('API_PUBLIC_TOKEN', 'tanjoe_api_secret_2026');
+        if ($request->input('token') !== $apiToken) {
+            return response(['status' => false, 'message' => 'Invalid token'], 401);
+        }
+
+        $id = $request->input('id');
+        $stock = $request->input('stock');
+
+        $update = DB::table('product')->where('id', $id)->update([
+            'stock' => $stock,
+            'updated_at' => now()
+        ]);
+
+        if ($update) {
+            return response(['status' => true, 'message' => 'Stock updated successfully'], 200);
+        } else {
+            return response(['status' => false, 'message' => 'Failed to update stock or stock remains the same'], 400);
+        }
+    }
 }

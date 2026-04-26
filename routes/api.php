@@ -29,6 +29,8 @@ Route::post('public/product-list', 'PublicProductController@list');
 Route::get('public/sales-list', 'PublicSalesController@list');
 Route::get('public/sales-list-paid', 'PublicSalesController@listPaid');
 Route::get('public/sales-detail/{id}', 'PublicSalesController@detail');
+Route::get('public/product-info/{id}', 'PublicProductController@info');
+Route::post('public/product-stock-update', 'PublicProductController@updateStock');
 
 Route::middleware(['auth:api'])->group(function(){
     //core
