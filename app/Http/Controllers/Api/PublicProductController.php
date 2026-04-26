@@ -51,6 +51,7 @@ class PublicProductController extends Controller
         if (!empty($search)) {
             $query->where(function($q) use ($search) {
                 $q->where('p.name', 'like', '%'.$search.'%')
+                  ->orWhere('p.name_pl', 'like', '%'.$search.'%')
                   ->orWhere('p.category', 'like', '%'.$search.'%')
                   ->orWhere('p.origin', 'like', '%'.$search.'%')
                   ->orWhere('rpt.name', 'like', '%'.$search.'%');
