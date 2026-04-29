@@ -34,7 +34,7 @@ class PublicReportProductController extends Controller
                 ) as total_profit')
             )
             ->where([
-                's.inv_status' => 'publish',
+                's.inv_status' => 'Publish',
             ])
             ->whereBetween('s.inv_date', [$start, $end])
             ->groupBy('si.itm_product', 'p.name', 'p.code', 'rt.name')
@@ -77,7 +77,7 @@ class PublicReportProductController extends Controller
                 ) as total_profit')
             )
             ->where([
-                's.inv_status' => 'publish',
+                's.inv_status' => 'Publish',
             ])
             ->whereBetween('s.inv_date', [$start, $end])
             ->groupBy('p.type', 'rt.name')
@@ -122,7 +122,7 @@ class PublicReportProductController extends Controller
                 ) as total_profit')
             )
             ->where([
-                's.inv_status' => 'publish',
+                's.inv_status' => 'Publish',
             ])
             ->whereBetween('s.inv_date', [$start, $end])
             ->groupBy('s.author', 'u.name', 'p.type', 'rt.name')
@@ -142,7 +142,7 @@ class PublicReportProductController extends Controller
                     (si.itm_total / NULLIF(s.inv_sub_total, 0)) * (s.inv_sub_total - s.inv_hpp - s.inv_discount)
                 ) as total_profit')
             )
-            ->where(['s.inv_status' => 'publish'])
+            ->where(['s.inv_status' => 'Publish'])
             ->whereBetween('s.inv_date', [$start, $end])
             ->groupBy('s.author', 'u.name')
             ->orderBy('total_qty', 'DESC')
