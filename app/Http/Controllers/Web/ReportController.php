@@ -176,6 +176,144 @@ class ReportController extends Controller
         return view('web.admin.report.invest_list', $data);
     }
 
+    public function baristaFee(Request $request)
+    {
+        $limit = 10;
+        $report_period = Setting::first();
+        
+        $query = DB::table('barista_fee AS bf')
+                    ->leftJoin('periode AS p', 'p.id', '=', 'bf.periode_id')
+                    ->where([
+                        ['p.start_date', '>=', $report_period->report_date_start],
+                        ['p.end_date', '<=', $report_period->report_date_end],
+                        'bf.status' => 'Published'
+                    ]);
+
+        $contents = (clone $query)
+                    ->select('bf.*', 'p.name AS periode_name', 'p.start_date', 'p.end_date')
+                    ->orderBy('p.start_date', 'DESC')
+                    ->paginate($limit);
+        
+        $summary = (clone $query)->select(
+                        DB::raw('SUM(bf.total_fee) as total_fee_sum'),
+                        DB::raw('SUM(bf.total_potongan) as total_potongan_sum'),
+                        DB::raw('SUM(bf.total_share) as total_share_sum')
+                    )->first();
+
+        $data = [
+            'contents' => $contents,
+            'total_fee' => $summary->total_fee_sum ?? 0,
+            'total_potongan' => $summary->total_potongan_sum ?? 0,
+            'total_share' => $summary->total_share_sum ?? 0,
+            'report_date_start' => $report_period->report_date_start,
+            'report_date_end' => $report_period->report_date_end,
+        ];
+
+        return view('web.admin.report.barista_fee', $data);
+    }
+
+    public function storePurchasing(Request $request)
+    {
+        $limit = 10;
+        $report_period = Setting::first();
+        
+        // Current Period
+        $query = DB::table('store_purchasing AS s')
+                    ->leftJoin('vendor AS v', 'v.id', '=', 's.pur_vendor')
+                    ->where([
+                        ['s.pur_date', '>=', $report_period->report_date_start],
+                        ['s.pur_date', '<=', $report_period->report_date_end],
+                        's.pur_status' => 'Publish'
+                    ]);
+
+        $contents = (clone $query)
+                    ->select('s.*', 'v.name AS vendor_name')
+                    ->orderBy('s.pur_date', 'DESC')
+                    ->paginate($limit);
+        
+        $current_total = (clone $query)->sum('s.pur_total');
+        $current_count = (clone $query)->count();
+
+        // Previous Month Comparison
+        $start = Carbon::parse($report_period->report_date_start);
+        $prev_start = (clone $start)->subMonth()->startOfMonth()->format('Y-m-d');
+        $prev_end = (clone $start)->subMonth()->endOfMonth()->format('Y-m-d');
+
+        $prev_total = DB::table('store_purchasing')
+                        ->where([
+                            ['pur_date', '>=', $prev_start],
+                            ['pur_date', '<=', $prev_end],
+                            'pur_status' => 'Publish'
+                        ])
+                        ->sum('pur_total');
+
+        $diff_total = $current_total - $prev_total;
+        $percent_change = ($prev_total > 0) ? ($diff_total / $prev_total) * 100 : 0;
+
+        $data = [
+            'contents' => $contents,
+            'current_total' => $current_total,
+            'prev_total' => $prev_total,
+            'percent_change' => $percent_change,
+            'current_count' => $current_count,
+            'report_date_start' => $report_period->report_date_start,
+            'report_date_end' => $report_period->report_date_end,
+        ];
+
+        return view('web.admin.report.store_purchasing', $data);
+    }
+
+    public function storeOperational(Request $request)
+    {
+        $limit = 10;
+        $report_period = Setting::first();
+        
+        // Current Period
+        $query = DB::table('store_operational AS s')
+                    ->leftJoin('vendor AS v', 'v.id', '=', 's.op_vendor')
+                    ->where([
+                        ['s.op_date', '>=', $report_period->report_date_start],
+                        ['s.op_date', '<=', $report_period->report_date_end],
+                        's.op_status' => 'Publish'
+                    ]);
+
+        $contents = (clone $query)
+                    ->select('s.*', 'v.name AS vendor_name')
+                    ->orderBy('s.op_date', 'DESC')
+                    ->paginate($limit);
+        
+        $current_total = (clone $query)->sum('s.op_total');
+        $current_count = (clone $query)->count();
+
+        // Previous Month Comparison
+        $start = Carbon::parse($report_period->report_date_start);
+        $prev_start = (clone $start)->subMonth()->startOfMonth()->format('Y-m-d');
+        $prev_end = (clone $start)->subMonth()->endOfMonth()->format('Y-m-d');
+
+        $prev_total = DB::table('store_operational')
+                        ->where([
+                            ['op_date', '>=', $prev_start],
+                            ['op_date', '<=', $prev_end],
+                            'op_status' => 'Publish'
+                        ])
+                        ->sum('op_total');
+
+        $diff_total = $current_total - $prev_total;
+        $percent_change = ($prev_total > 0) ? ($diff_total / $prev_total) * 100 : 0;
+
+        $data = [
+            'contents' => $contents,
+            'current_total' => $current_total,
+            'prev_total' => $prev_total,
+            'percent_change' => $percent_change,
+            'current_count' => $current_count,
+            'report_date_start' => $report_period->report_date_start,
+            'report_date_end' => $report_period->report_date_end,
+        ];
+
+        return view('web.admin.report.store_operational', $data);
+    }
+
     public function productPrint()
     {
         

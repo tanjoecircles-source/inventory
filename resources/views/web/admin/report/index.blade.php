@@ -98,10 +98,6 @@
                                         <i class="fe fe-chevron-right fs-16 mr-2"></i>
                                         <h6 class="mb-1 font-weight-semibold">Investasi</h6>
                                     </a>
-                                    <a href="{{url('brand-list')}}" class="d-flex p-3 border-bottom">
-                                        <i class="fe fe-chevron-right fs-16 mr-2"></i>
-                                        <h6 class="mb-1 font-weight-semibold">Kredit</h6>
-                                    </a>
                                 </div>
                             </li>
                             <li>
@@ -111,11 +107,11 @@
                                         <i class="fe fe-chevron-right fs-16 mr-2"></i>
                                         <h6 class="mb-1 font-weight-semibold">Belanja Stok Coffee Bean & Alat Kopi</h6>
                                     </a>
-                                    <a href="#" class="d-flex p-3">
+                                    <a href="{{url('report-store-purchasing')}}" class="d-flex p-3 border-bottom">
                                         <i class="fe fe-chevron-right fs-16 mr-2"></i>
                                         <h6 class="mb-1 font-weight-semibold">Belanja Stok Kedai</h6>
                                     </a>
-                                    <a href="#" class="d-flex p-3">
+                                    <a href="{{url('report-store-operational')}}" class="d-flex p-3 border-bottom">
                                         <i class="fe fe-chevron-right fs-16 mr-2"></i>
                                         <h6 class="mb-1 font-weight-semibold">Operasional Kedai</h6>
                                     </a>
