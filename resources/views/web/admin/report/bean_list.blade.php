@@ -94,8 +94,8 @@
                         @csrf
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <div class="input-group-text p-1">
-                                    <i class="fa fa-calendar tx-16 lh-0 op-6 text-primary"></i>
+                                <div class="input-group-text px-2 text-white" style="background-color: var(--primary-color);">
+                                    <i class="fa fa-calendar text-default lh-0 op-6"></i>
                                 </div>
                             </div>
                             <input class="form-control form-control-sm font-weight-bold" id="report_daterange" type="text" placeholder="Pilih Periode" readonly style="background: #fff; cursor: pointer;">

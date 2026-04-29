@@ -48,7 +48,7 @@ class ReportController extends Controller
         ]);
         if ($update){
             DB::commit();
-            return redirect('report')->with('success','Data has been updated');
+            return redirect()->back()->with('success','Filter Berhasil Diterapkan');
         }else{
             DB::rollback();
             return redirect()->back()->with('danger', 'Data failed to update, try again later');
@@ -137,6 +137,43 @@ class ReportController extends Controller
             return response()->json(['html' => $view]);
         }
         return view('web.admin.report.bean_list', $data);
+    }
+
+    public function investList(Request $request)
+    {
+        $limit = 10;
+        
+        $query = DB::table('invest');
+
+        $contents = (clone $query)
+                    ->orderByRaw('(total_payment / total_invest) ASC')
+                    ->orderBy('start_date', 'DESC')
+                    ->paginate($limit);
+        
+        $summary = (clone $query)->select(
+                        DB::raw('SUM(total_invest) as total_invest_sum'),
+                        DB::raw('SUM(total_payment) as total_payment_sum'),
+                        DB::raw('COUNT(id) as total_investors')
+                    )->first();
+
+        $total_invest = $summary->total_invest_sum ?? 0;
+        $total_payment = $summary->total_payment_sum ?? 0;
+        $remaining = $total_invest - $total_payment;
+
+        foreach ($contents as $key => $value) {
+            $value->start_date = date('d M Y', strtotime($value->start_date));
+            $value->due_date = date('d M Y', strtotime($value->due_date));
+        }
+
+        $data = [
+            'contents' => $contents,
+            'total_invest' => $total_invest,
+            'total_payment' => $total_payment,
+            'remaining' => $remaining,
+            'total_investors' => $summary->total_investors ?? 0,
+        ];
+
+        return view('web.admin.report.invest_list', $data);
     }
 
     public function productPrint()

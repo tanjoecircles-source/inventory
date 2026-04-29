@@ -67,8 +67,8 @@
                             <div class="col-12 px-1">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
-                                        <div class="input-group-text p-1">
-                                            <i class="fa fa-calendar tx-16 lh-0 op-6"></i>
+                                        <div class="input-group-text px-2 text-default" style="background-color: var(--primary-color);">
+                                            <i class="fa fa-calendar text-default tx-16 lh-0 op-6"></i>
                                         </div>
                                     </div>
                                     <input class="form-control form-control-sm" id="report_daterange" type="text" placeholder="Pilih Periode" readonly style="background: #fff; cursor: pointer;">
@@ -94,7 +94,7 @@
                                         <i class="fe fe-chevron-right fs-16 mr-2"></i>
                                         <h6 class="mb-1 font-weight-semibold">Penjualan Toko Kopi</h6>
                                     </a>
-                                    <a href="{{url('brand-list')}}" class="d-flex p-3 border-bottom">
+                                    <a href="{{url('report-invest-list')}}" class="d-flex p-3 border-bottom">
                                         <i class="fe fe-chevron-right fs-16 mr-2"></i>
                                         <h6 class="mb-1 font-weight-semibold">Investasi</h6>
                                     </a>
