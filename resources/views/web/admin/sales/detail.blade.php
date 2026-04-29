@@ -121,11 +121,20 @@
                     @endif
                     <div class="d-flex title-bar py-2">
                         <div class="mr-auto text-left">
-                            <p class="mb-1">Total</p>
+                            <p class="mb-1  font-weight-bold">Total</p>
                         </div>
                         <div class="ml-auto text-right">
                             <input type="hidden" name="inv_total" value="{{$inv_total}}">
-                            <p class="mb-0">Rp {{str_replace(",", ".", number_format($inv_total))}}</p>
+                            <p class="mb-0 font-weight-bold">Rp {{str_replace(",", ".", number_format($inv_total))}}</p>
+                        </div>
+                    </div>
+                    <div class="d-flex title-bar py-2 border-top">
+                        <div class="mr-auto text-left">
+                            <p class="mb-1 italic"><i>Estimasi Profit</i></p>
+                        </div>
+                        <div class="ml-auto text-right">
+                            @php $estimasi_profit = (INT)$inv_sub_total - (INT)$invoice->inv_discount - (INT)$inv_hpp; @endphp
+                            <p class="mb-0"><i>Rp {{str_replace(",", ".", number_format($estimasi_profit))}}</i></p>
                         </div>
                     </div>
                     @if($invoice->inv_status == 'Draft')

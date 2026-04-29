@@ -128,7 +128,9 @@ class ReportController extends Controller
             'sales_hpp' => $sales_hpp,
             'sales_expedition' => $sales_expedition,
             'sales_total' => $sales_total,
-            'sales_profit' => (INT)$sales_total - (INT)$sales_hpp
+            'sales_profit' => (INT)$sales_total - (INT)$sales_hpp,
+            'report_date_start' => $report_period->report_date_start,
+            'report_date_end' => $report_period->report_date_end
         ];
         if($request->ajax()){
             $view = view('web.admin.report.bean_paginate', $data)->render();

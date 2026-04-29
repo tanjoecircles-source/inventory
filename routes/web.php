@@ -398,6 +398,9 @@ Route::middleware(['auth:web'])->group(function(){
     Route::get('report-summary', 'ReportController@summary')->name('report-summary');
     Route::get('report-store-recap', 'ReportController@recap');
     Route::get('report-profit-share', 'ReportController@profitShare');
+    Route::get('report-product-recap', 'ReportProductController@recapQty')->name('report-product-recap');
+    Route::get('report-product-recap-type', 'ReportProductController@recapByType')->name('report-product-recap-type');
+    Route::get('report-product-recap-author', 'ReportProductController@recapByAuthor')->name('report-product-recap-author');
     Route::get('report-statistic-bean', 'ReportController@statisticBean');
     Route::get('report-statistic-bean-json', 'ReportController@statisticBeanJson')->name('report-bean-json');
     Route::get('report-statistic-profit-json', 'ReportController@statisticProfitJson')->name('report-profit-json');

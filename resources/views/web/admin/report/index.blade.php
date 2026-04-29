@@ -132,9 +132,17 @@
                                         <i class="fe fe-chevron-right fs-16 mr-2"></i>
                                         <h6 class="mb-1 font-weight-semibold">Toko Kopi</h6>
                                     </a>
-                                    <a href="#" class="d-flex p-3">
+                                    <a href="{{url('report-product-recap')}}" class="d-flex p-3 border-bottom">
                                         <i class="fe fe-chevron-right fs-16 mr-2"></i>
-                                        <h6 class="mb-1 font-weight-semibold">Coffee Bean & Alat Kopi</h6>
+                                        <h6 class="mb-1 font-weight-semibold">Coffee Bean & Alat Kopi (Produk)</h6>
+                                    </a>
+                                    <a href="{{url('report-product-recap-type')}}" class="d-flex p-3 border-bottom">
+                                        <i class="fe fe-chevron-right fs-16 mr-2"></i>
+                                        <h6 class="mb-1 font-weight-semibold">Coffee Bean & Alat Kopi (Tipe)</h6>
+                                    </a>
+                                    <a href="{{url('report-product-recap-author')}}" class="d-flex p-3 border-bottom">
+                                        <i class="fe fe-chevron-right fs-16 mr-2"></i>
+                                        <h6 class="mb-1 font-weight-semibold">Coffee Bean & Alat Kopi (Author)</h6>
                                     </a>
                                     <a href="{{url('report-profit-share')}}" class="d-flex p-3">
                                         <i class="fe fe-chevron-right fs-16 mr-2"></i>
