@@ -268,6 +268,9 @@ Route::middleware(['auth:web'])->group(function(){
     Route::post('product-update-sales/{app_id}', 'ProductController@update_sales')->name('product-update-sales');
     Route::post('product-hpp-update/{app_id}', 'ProductController@update_hpp')->name('product-update-hpp');
     Route::post('product-stock-update/{app_id}', 'ProductController@update_stock')->name('product-update-stock');
+    Route::post('product-status-update/{app_id}', 'ProductController@update_status')->name('product-update-status');
+    Route::post('product-pricelist-update/{app_id}', 'ProductController@update_is_pricelist')->name('product-update-pricelist');
+    Route::post('product-new-update/{app_id}', 'ProductController@update_is_new')->name('product-update-new');
     Route::get('product-publish/{app_id}', 'ProductController@publish')->name('product-publish');
     Route::get('product-choosed/{app_id}', 'ProductController@choosed')->name('product-choosed');
     Route::get('product-sold/{app_id}', 'ProductController@sold')->name('product-sold');

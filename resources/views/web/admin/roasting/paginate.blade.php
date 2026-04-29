@@ -9,6 +9,7 @@
                 </div>
                 <div class="ml-auto text-right">
                     <p class="mb-2">{{$content->vendor_name}}</p>
+                    <span class="badge badge-pill badge-success py-1 mt-1">{{$content->total_qty}} Kg</span>
                     <span class="badge badge-pill badge-dark ml-auto mr-0 py-1 mt-1">{{$content->status}}</span>
                 </div>
             </div>

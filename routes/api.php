@@ -32,6 +32,11 @@ Route::get('public/sales-detail/{id}', 'PublicSalesController@detail');
 Route::get('public/product-info/{id}', 'PublicProductController@info');
 Route::post('public/product-stock-update', 'PublicProductController@updateStock');
 
+// Public Reports
+Route::get('public/report-product-recap', 'PublicReportProductController@recapQty');
+Route::get('public/report-product-recap-type', 'PublicReportProductController@recapByType');
+Route::get('public/report-product-recap-author', 'PublicReportProductController@recapByAuthor');
+
 Route::middleware(['auth:api'])->group(function(){
     //core
     Route::get('profile', 'UsersController@profile');

@@ -411,13 +411,43 @@ class SalesController extends Controller
     
     public function publish($id)
     {
+        $detail = DB::table('sales AS s')
+            ->leftJoin('customer AS c', 'c.id', '=', 's.inv_cust')
+            ->select('s.*', 'c.name AS cust_name')
+            ->where(['s.id' => $id])
+            ->first();
+
+        $items = DB::table('sales_items AS s')
+            ->leftJoin('product AS p', 'p.id', '=', 's.itm_product')
+            ->select('s.*', 'p.name AS product_name')
+            ->where(['s.itm_inv_id' => $id])
+            ->get();
+
         DB::beginTransaction();
         $update = Sales::where('id', $id)->update([
             'inv_status' => 'Publish'
         ]);
         if ($update){
+            $item_text = "";
+            $no = 1;
+            foreach($items as $it){
+                $item_text .= $no.". ".$it->product_name." (".$it->itm_qty.") - Rp ".number_format($it->itm_total, 0, ',', '.')."\n";
+                $no++;
+            }
+
+            $msg = "*Invoice Published!*\n".
+                    "Invoice Code : ".$detail->inv_code."\n".
+                    "Customer : ".$detail->cust_name."\n".
+                    "Date : ".date('d M Y', strtotime($detail->inv_date))."\n".
+                    "Total : Rp ".number_format($detail->inv_total, 0, ',', '.')."\n\n".
+                    "*Items:*\n".
+                    $item_text."\n".
+                    "https://www.app.tanjoecoffee.com/sales-detail/".$id;
+            
+            $this->sendtele($msg);
+
             DB::commit();
-            return redirect('sales-list')->with('success','Data has been updated');
+            return redirect('sales-list')->with('success','Invoice successfully published and notification sent.');
         }else{
             DB::rollback();
             return redirect()->back()->with('danger', 'Data failed to update, try again later');

@@ -19,15 +19,65 @@ class RoastingController extends Controller
     public function list(Request $request)
     {
         $limit = 10;
-        $search = (isset($_GET['keyword'])) ? $_GET['keyword'] : "";
+        $search = $request->get('keyword', '');
+        $status = $request->get('status', '');
+        $sort = $request->get('sort', 'terbaru');
+        $startdate = $request->get('startdate', '');
+        $enddate = $request->get('enddate', '');
+
         $contents = DB::table('roasting AS s')
                     ->leftJoin('vendor AS c', 'c.id', '=', 's.vendor')
                     ->select('s.*', 'c.name AS vendor_name')
+                    ->selectSub(function($query) {
+                        $query->from('roasting_item')
+                            ->whereColumn('roasting_id', 's.id')
+                            ->selectRaw('SUM(qty)');
+                    }, 'total_qty')
                     ->where(function($contents) use ($search){
                         $contents->where('s.code', 'like', '%'.$search.'%')
                                 ->orWhere('c.name', 'like', '%'.$search.'%');
-                    })
-                    ->orderBy('s.date', 'DESC')->orderBy('s.id', 'DESC')->paginate($limit);
+                    });
+
+        if(!empty($status)){
+            $contents = $contents->where(['s.status' => $status]);
+        }
+        if(!empty($startdate)){
+            $contents = $contents->where('s.date', '>=', date('Y-m-d', strtotime($startdate)));
+        }
+        if(!empty($enddate)){
+            $contents = $contents->where('s.date', '<=', date('Y-m-d', strtotime($enddate)));
+        }
+
+        // Sorting Logic
+        if ($sort == 'tertinggi') {
+            $contents = $contents->orderByRaw('CAST(total_qty AS DECIMAL) DESC');
+        } elseif ($sort == 'terendah') {
+            $contents = $contents->orderByRaw('CAST(total_qty AS DECIMAL) ASC');
+        } elseif ($sort == 'terlama') {
+            $contents = $contents->orderBy('s.date', 'ASC')->orderBy('s.id', 'ASC');
+        } else {
+            $contents = $contents->orderBy('s.date', 'DESC')->orderBy('s.id', 'DESC');
+        }
+
+        $contents = $contents->paginate($limit);
+
+        $grand_qty_total = DB::table('roasting_item AS ri')
+                    ->join('roasting AS s', 's.id', '=', 'ri.roasting_id')
+                    ->leftJoin('vendor AS c', 'c.id', '=', 's.vendor')
+                    ->where(function($contents) use ($search){
+                        $contents->where('s.code', 'like', '%'.$search.'%')
+                                ->orWhere('c.name', 'like', '%'.$search.'%');
+                    });
+        if(!empty($status)){
+            $grand_qty_total = $grand_qty_total->where(['s.status' => $status]);
+        }
+        if(!empty($startdate)){
+            $grand_qty_total = $grand_qty_total->where('s.date', '>=', date('Y-m-d', strtotime($startdate)));
+        }
+        if(!empty($enddate)){
+            $grand_qty_total = $grand_qty_total->where('s.date', '<=', date('Y-m-d', strtotime($enddate)));
+        }
+        $grand_qty_total = $grand_qty_total->sum('ri.qty');
 
         $counts = DB::table('roasting AS s')
                     ->leftJoin('vendor AS c', 'c.id', '=', 's.vendor')
@@ -35,9 +85,17 @@ class RoastingController extends Controller
                     ->where(function($contents) use ($search){
                         $contents->where('s.code', 'like', '%'.$search.'%')
                                 ->orWhere('c.name', 'like', '%'.$search.'%');
-                    })
-                    ->where(['s.author' => Auth::user()->id])
-                    ->count();
+                    });
+        if(!empty($status)){
+            $counts = $counts->where(['s.status' => $status]);
+        }
+        if(!empty($startdate)){
+            $counts = $counts->where('s.date', '>=', date('Y-m-d', strtotime($startdate)));
+        }
+        if(!empty($enddate)){
+            $counts = $counts->where('s.date', '<=', date('Y-m-d', strtotime($enddate)));
+        }
+        $counts = $counts->count();
 
         if(!empty($contents)){
             foreach ($contents as $key => $value) {
@@ -46,9 +104,14 @@ class RoastingController extends Controller
         }
         $data = [
             'keyword' => $search,
+            'status' => $status,
+            'sort' => $sort,
+            'startdate' => $startdate,
+            'enddate' => $enddate,
             'limit' => $limit,
             'contents' => $contents,
-            'contents_count' => $counts
+            'contents_count' => $counts,
+            'grand_qty_total' => $grand_qty_total
         ];
         if($request->ajax()){
             $view = view('web.admin.roasting.paginate', $data)->render();

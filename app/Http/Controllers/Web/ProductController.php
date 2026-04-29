@@ -284,6 +284,8 @@ class ProductController extends Controller
             'kategori' => $detail->product_type,
             'product_parent' => $detail->product_parent,
             'nama' => $detail->name,
+            'nama_pl' => $detail->name_pl,
+            'category' => $detail->category,
             'satuan' => $detail->product_satuan,
             'harga' => $this->format_angka($detail->price),
             'harga15' => !empty($detail->price_grosir15) ? $this->format_angka($detail->price_grosir15) : "",
@@ -295,9 +297,15 @@ class ProductController extends Controller
             'code' => strtoupper($detail->code),
             'stock' => $detail->stock,
             'origin' => $detail->origin,
+            'elevation' => $detail->elevation,
             'process' => $detail->process,
+            'processor' => $detail->processor,
+            'harvest' => $detail->harvest,
             'varietal' => $detail->varietal,
             'deskripsi' => $detail->summary,
+            'deskripsi_pl' => $detail->desc,
+            'order_pricelist' => $detail->order_pricelist,
+            'is_new' => $detail->is_new,
             'status' => $detail->status,
             'is_pricelist' => $detail->is_pricelist,
             'published' => $detail->status == 'Active' ? 'Aktif' : 'Draft',
@@ -770,6 +778,57 @@ class ProductController extends Controller
         }else{
             DB::rollback();
             return redirect('product-detail/'.$id)->with('danger', 'Gagal mengubah data');
+        }
+    }
+
+    public function update_status(Request $request, $id){
+        $data = $request->all();
+        $valid = validator($data, [
+            'status' => 'required'
+        ]);
+        if ($valid->fails()) return redirect()->back()->withErrors($valid)->withInput();
+        DB::beginTransaction();
+        $update = Product::where(['id' => $id])->update(['status' => $request->status]);
+        if ($update){
+            DB::commit();
+            return redirect('product-detail/'.$id)->with('success','Status Berhasil Diperbarui');
+        }else{
+            DB::rollback();
+            return redirect('product-detail/'.$id)->with('danger', 'Gagal memperbarui status');
+        }
+    }
+
+    public function update_is_pricelist(Request $request, $id){
+        $data = $request->all();
+        $valid = validator($data, [
+            'is_pricelist' => 'required'
+        ]);
+        if ($valid->fails()) return redirect()->back()->withErrors($valid)->withInput();
+        DB::beginTransaction();
+        $update = Product::where(['id' => $id])->update(['is_pricelist' => $request->is_pricelist]);
+        if ($update){
+            DB::commit();
+            return redirect('product-detail/'.$id)->with('success','Status Price List Berhasil Diperbarui');
+        }else{
+            DB::rollback();
+            return redirect('product-detail/'.$id)->with('danger', 'Gagal memperbarui status');
+        }
+    }
+
+    public function update_is_new(Request $request, $id){
+        $data = $request->all();
+        $valid = validator($data, [
+            'is_new' => 'required'
+        ]);
+        if ($valid->fails()) return redirect()->back()->withErrors($valid)->withInput();
+        DB::beginTransaction();
+        $update = Product::where(['id' => $id])->update(['is_new' => $request->is_new]);
+        if ($update){
+            DB::commit();
+            return redirect('product-detail/'.$id)->with('success','Status Produk Baru Berhasil Diperbarui');
+        }else{
+            DB::rollback();
+            return redirect('product-detail/'.$id)->with('danger', 'Gagal memperbarui status');
         }
     }
 
