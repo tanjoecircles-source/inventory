@@ -41,14 +41,14 @@
                         </div>
                     </div>
                     <style>
-                    .price-type-pills { display:flex; gap:8px; flex-wrap:wrap; }
+                    .price-type-pills { display:flex; gap:6px; flex-wrap:nowrap; }
                     .price-pill {
-                        display:inline-flex; align-items:center; gap:6px;
-                        padding:8px 16px; border-radius:50px;
+                        flex:1; text-align:center; justify-content:center;
+                        padding:7px 6px; border-radius:50px;
                         border:2px solid #e0e0e0; background:#f8f9fa;
-                        cursor:pointer; font-size:13px; font-weight:500;
+                        cursor:pointer; font-size:12px; font-weight:500;
                         color:#555; transition:all 0.2s ease;
-                        user-select:none;
+                        user-select:none; white-space:nowrap;
                     }
                     .price-pill:hover { border-color:#adb5bd; background:#f1f3f5; color:#222; }
                     .price-pill.active {
@@ -57,7 +57,6 @@
                         color:#fff; box-shadow:0 3px 10px rgba(0,0,0,0.15);
                         transform:translateY(-1px);
                     }
-
                     </style>
                     <div class="form-group">
                         <label class="form-label">Harga</label>
