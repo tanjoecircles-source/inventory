@@ -148,42 +148,49 @@
         var isLoading = false;
         var isEndOfData = false;
 
-        $(window).scroll(function(){
-            if(isLoading || isEndOfData) return;
+        $(window).on('scroll', function() {
+            if (isLoading || isEndOfData) return;
 
+            if ($(window).scrollTop() + $(window).height() >= $(document).height() - 150) {
+                loadMore();
+            }
+        });
+
+        function loadMore() {
+            if (isLoading || isEndOfData) return;
+            
+            page++;
             var key = '{{$keyword}}';
             var status = '{{$status}}';
             var sort = '{{$sort}}';
             var startdate = '{{$startdate}}';
             var enddate = '{{$enddate}}';
-
-            if ($(window).scrollTop() >= $(document).height() - $(window).height() - 50){
-                page++;
-                loadMoreData(page, key, status, sort, startdate, enddate);
-            }
-        });
-    
-        function loadMoreData(page, key, status, sort, startdate, enddate){
+            
             $.ajax({
                 url:'?page=' + page + '&keyword=' + key + '&status=' + status + '&sort=' + sort + '&startdate=' + startdate + '&enddate=' + enddate,
                 type:'get',
                 beforeSend: function(){
                     isLoading = true;
-                    $('.ajax-load').show();
+                    $('.ajax-load').fadeIn();
                 }
             })
             .done(function(data){
-                if(data.html == ""){
+                if(data.html.trim() == ""){
                     isEndOfData = true;
-                    $('.ajax-load').html("No more records found");
+                    $('.ajax-load').html('<p class="text-muted fs-12 mt-2">— Akhir dari data —</p>');
                     return;     
                 }
                 $('.ajax-load').hide();
                 $('#content-data').append(data.html);
                 isLoading = false;
+                
+                // Auto check if still more space to scroll (rare case)
+                if ($(window).height() >= $(document).height()) {
+                    loadMore();
+                }
             })
-            .fail(function(jqXHR,ajaxOptions,thrownError){
-                $('.ajax-load').html("server error");
+            .fail(function(){
+                $('.ajax-load').html('<p class="text-danger fs-12 mt-2">Gagal memuat data, silakan coba lagi</p>');
                 isLoading = false;
             });
         }
