@@ -9,7 +9,7 @@
                 </div>
                 <div class="ml-auto text-right">
                     <p class="mb-2">{{$content->vendor_name}}</p>
-                    <span class="badge badge-pill badge-light border py-1 mt-1">{{$content->total_qty}} Kg</span>
+                    <span class="badge badge-pill badge-light border py-1 mt-1">{{ number_format($content->total_qty, 2, ',', '.') }} Kg</span>
                     @if($content->status == 'Publish')
                         <span class="badge badge-pill badge-success ml-auto mr-0 py-1 mt-1">{{$content->status}}</span>
                     @else
