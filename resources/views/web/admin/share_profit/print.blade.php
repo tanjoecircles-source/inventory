@@ -49,29 +49,29 @@
         <p>Periode: <strong>{{ $detail->periode }}</strong></p>
     </div>
 
-    <div class="section-title">Total Pemasukan</div>
-    <table>
-        <thead>
-            <tr>
-                <th>Sumber Pendapatan</th>
-                <th class="text-right">Nominal (IDR)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Penjualan Bahan (Green & Roasted Bean)</td>
-                <td class="text-right">{{ number_format($detail->profit_bean + ($bean_recap->total_potongan ?? 0) + ($bean_recap->potongan_non_investor ?? 0), 0, ',', '.') }}</td>
-            </tr>
-            <tr>
-                <td>Operasional Kedai Kopi ({{ ($detail->profit_toko < 0) ? 'Loss' : 'Profit' }})</td>
-                <td class="text-right">{{ number_format($detail->profit_toko, 0, ',', '.') }}</td>
-            </tr>
-            <tr class="total-row">
-                <td>GROSS REVENUE</td>
-                <td class="text-right">{{ number_format(($detail->profit_bean + ($bean_recap->total_potongan ?? 0) + ($bean_recap->potongan_non_investor ?? 0)) + $detail->profit_toko, 0, ',', '.') }}</td>
-            </tr>
-        </tbody>
-    </table>
+        <h4 class="font-bold mb-1">Total Pemasukan</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sumber Pendapatan</th>
+                    <th class="text-right">Nominal (IDR)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Penjualan Bahan (Green & Roasted Bean)</td>
+                    <td class="text-right">{{ number_format($bean_recap->profit ?? 0, 0, ',', '.') }}</td>
+                </tr>
+                <tr>
+                    <td>Operasional Kedai Kopi ({{ ($detail->profit_toko < 0) ? 'Loss' : 'Profit' }})</td>
+                    <td class="text-right">{{ number_format($detail->profit_toko, 0, ',', '.') }}</td>
+                </tr>
+                <tr class="total-row">
+                    <td>GROSS REVENUE</td>
+                    <td class="text-right">{{ number_format(($bean_recap->profit ?? 0) + $detail->profit_toko, 0, ',', '.') }}</td>
+                </tr>
+            </tbody>
+        </table>
 
     @if(count($bean_spending) > 0)
     <div class="section-title">Pengeluaran Operasional</div>
