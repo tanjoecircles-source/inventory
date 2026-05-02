@@ -81,41 +81,37 @@
                 <a class="btn btn-dark btn-sm btn-pill py-1" href="{{url('bean-recap-spending/'.$detail->id)}}"><i class="fe fe-plus-circle"></i> Tambah</a>
                 @endif
             </div>
-            <div class="card text-center no-border shadow-none custom-square mb-7">
+            <div class="card no-border shadow-none custom-square mb-7">
                 <div class="card-body p-0">
-                    <table class="table table-vcenter">
                     @if($spending->isEmpty())
-                        <tr>
-                            <td>
-                                <p class="mb-1 text-center">Tidak ada data</p>
-                            </td>
-                        </tr>
+                        <div class="py-4 text-center">
+                            <p class="text-muted">Tidak ada data potongan</p>
+                        </div>
                     @else
                         @foreach ($spending as $spn)
-                        <tr>
-                            <td class="border-bottom  px-4 py-2 text-left" width="15%">
-                                <p class="mb-1">{{date('d M Y', strtotime($spn->date))}}</p>
-                            </td>
-                            <td class="border-bottom  px-4 py-2 text-left"  width="25%">
-                                <p class="mb-1">{{$spn->name}}</p>
-                            </td>
-                            <td class="border-bottom  px-4 py-2 text-left">
-                                <p class="mb-1">{{$spn->is_non_investor == 'true' ? 'Non Investor' : 'With Investor'}}</p>
-                            </td>
-                            <td class="border-bottom px-4 py-2 text-right">
-                                <p class="font-weight-bold mb-0">Rp {{str_replace(",", ".", number_format($spn->amount))}}</p>
-                            </td>
-                            @if($detail->status == 'Draft')
-                            <td class="border-bottom px-4 py-2 text-right" width="5%">
-                                <a href="{{(url('bean-recap-spending-delete/'.$spn->id.'?mid='.$detail->id))}}" data-title="{{$spn->name}}" class="btn btn-sm btn-danger btn-confirm py-0 px-1">
-                                    <i class="fe fe-trash fs-16"></i>
-                                </a>
-                            </td>
-                            @endif
-                        </tr>
+                        <div class="border-bottom p-3">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1 font-weight-bold text-dark">{{$spn->name}}</h6>
+                                    <div class="d-flex align-items-center text-muted fs-12">
+                                        <span class="mr-2"><i class="fe fe-calendar mr-1"></i>{{date('d M Y', strtotime($spn->date))}}</span>
+                                        <span class="badge badge-pill badge-{{$spn->is_non_investor == 'true' ? 'light' : 'primary-light'}}">
+                                            {{$spn->is_non_investor == 'true' ? 'Non Investor' : 'With Investor'}}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="text-right ml-2">
+                                    <p class="font-weight-bold mb-0 text-dark">Rp {{str_replace(",", ".", number_format($spn->amount))}}</p>
+                                    @if($detail->status == 'Draft')
+                                    <a href="{{(url('bean-recap-spending-delete/'.$spn->id.'?mid='.$detail->id))}}" data-title="{{$spn->name}}" class="btn btn-sm btn-link text-danger btn-confirm p-0 mt-1">
+                                        <i class="fe fe-trash fs-16"></i> Hapus
+                                    </a>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
                         @endforeach
                     @endif
-                    </table>
                 </div>
             </div> 
             @if($detail->status == 'Draft')

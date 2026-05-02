@@ -54,7 +54,7 @@
                             <div class="mr-auto text-left">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-dark btn-sm dropdown-toggle" data-toggle="dropdown">
-                                        Download Laporan <span class="caret"></span>
+                                        Unduh <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu" role="menu">
                                         <li><a href="#"><i class="fa fa-file-excel-o"></i> Berdasarkan Invoice</a></li>
