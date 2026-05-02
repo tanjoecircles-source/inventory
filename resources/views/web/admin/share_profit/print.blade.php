@@ -23,9 +23,9 @@
         .total-row { background-color: #fafafa; font-weight: bold; }
         .total-row td { border-top: 1px solid #333; border-bottom: 1px solid #333; }
         
-        .summary-box { background-color: #000; color: #fff; padding: 12px 15px; margin-top: 15px; display: table; width: 100%; box-sizing: border-box; }
-        .summary-box .label { font-size: 8.5pt; opacity: 0.8; margin-bottom: 3px; }
-        .summary-box .value { font-size: 16pt; font-weight: bold; }
+        .summary-box { background-color: #000; color: #fff; padding: 8px 12px; margin-top: 10px; display: table; width: 100%; box-sizing: border-box; }
+        .summary-box .label { font-size: 8pt; opacity: 0.8; margin-bottom: 2px; }
+        .summary-box .value { font-size: 13pt; font-weight: bold; }
         
         .employee-table th { background-color: #333; color: #fff; }
         .employee-table td { font-size: 9pt; }
@@ -39,11 +39,7 @@
         }
     </style>
 </head>
-<body onload="window.print()">
-    <div class="no-print" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
-        <button onclick="window.print()" style="padding: 12px 24px; cursor: pointer; background: #000; color: #fff; border: none; border-radius: 4px; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">CETAK LAPORAN</button>
-    </div>
-
+<body>
     <div class="header">
         <h1>Rekap Share Profit</h1>
         <p>Periode: <strong>{{ $detail->periode }}</strong></p>
@@ -161,18 +157,10 @@
     </table>
 
     <div class="footer">
-        <div style="float: left; width: 60%;">
-            <p><strong>Catatan:</strong><br>
-            Laporan ini dihasilkan secara otomatis oleh Sistem Manajemen Tanjoe.<br>
-            Data yang tercantum adalah final berdasarkan rekapan transaksi pada periode terkait.</p>
-            <p>Dicetak pada: {{ date('d/m/Y H:i') }}</p>
-        </div>
-        <div style="float: right; width: 30%; text-align: center;" class="signature-space">
-            <p>Finance Management,</p>
-            <br><br><br>
-            <p><strong>( ................................. )</strong></p>
-        </div>
-        <div style="clear: both;"></div>
+        <p><strong>Catatan:</strong><br>
+        Laporan ini dihasilkan secara otomatis oleh Sistem Manajemen Tanjoe. 
+        Data yang tercantum adalah final berdasarkan rekapan transaksi pada periode terkait.
+        Dicetak pada: {{ date('d/m/Y H:i') }}</p>
     </div>
 </body>
 </html>

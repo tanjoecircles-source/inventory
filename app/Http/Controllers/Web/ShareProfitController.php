@@ -16,6 +16,7 @@ use App\Models\StoreRecap;
 use App\Models\BeanRecap;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ShareProfitController extends Controller
 {
@@ -368,6 +369,7 @@ class ShareProfitController extends Controller
             'store_recap' => $store_recap
         ];
 
-        return view('web.admin.share_profit.print', $data);
+        $pdf = Pdf::loadView('web.admin.share_profit.print', $data);
+        return $pdf->setPaper('a4', 'portrait')->download('Rekap-Share-Profit-'.$detail->periode.'.pdf');
     }
 }
