@@ -12,9 +12,9 @@
         <div class="col-sm-12 col-md-12 col-lg-8 mx-auto">
             <div class="card no-border shadow-none custom-square mt-4 mb-4 overflow-hidden br-7 border">
                 <div class="card-body p-0">
-                    <div class="bg-dark p-3 text-white d-flex align-items-center">
+                    <div class="bg-white p-3 d-flex align-items-center">
                         <div class="flex-grow-1">
-                            <span class="fs-10 opacity-70 d-block mb-1">PERIODE</span>
+                            <span class="fs-10 d-block mb-1">PERIODE</span>
                             <h5 class="font-weight-bold mb-0 text-uppercase">{{$detail->periode}}</h5>
                         </div>
                         @if($detail->status == 'Draft')
@@ -22,7 +22,7 @@
                                 <i class="fe fe-trash-2 mr-1"></i> Hapus
                             </a>
                         @endif
-                        <a href="{{url('share-profit-print/'.$detail->id)}}" target="_blank" class="btn btn-light btn-sm py-1 px-3 br-7 ml-2">
+                        <a href="{{url('share-profit-print/'.$detail->id)}}" target="_blank" class="btn btn-default btn-sm py-1 px-3 br-7 ml-2">
                             <i class="fe fe-printer mr-1"></i> Cetak
                         </a>
                     </div>
