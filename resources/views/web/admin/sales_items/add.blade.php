@@ -136,18 +136,18 @@ $(document).ready(function () {
     // Definisi opsi pill per tipe produk
     var pillOptions = {
         1: [ // Green Beans
-            { value:'ecer',     label:'Ecer 1–15kg',       color:'#2fb344' },
-            { value:'grosir15', label:'Grosir ≥ 15kg',     color:'#f59f00' },
-            { value:'grosir50', label:'Harga Grosir ≥ 50kg', color:'#e67e22' }
+            { value:'ecer',     label:'Ecer 1–15kg',  color:'#206bc4' },
+            { value:'grosir15', label:'Grosir ≥ 15kg', color:'#f59f00' },
+            { value:'grosir50', label:'Grosir ≥ 50kg', color:'#d63939' }
         ],
         2: [ // Roasted Filter
             { value:'normal',   label:'Normal',   color:'#206bc4' },
-            { value:'bundling', label:'Bundling', color:'#ae3ec9' },
+            { value:'bundling', label:'Bundling', color:'#f59f00' },
             { value:'b2b',      label:'B2B',      color:'#d63939' }
         ],
         3: [ // Roasted Espresso
             { value:'normal',   label:'Normal',   color:'#206bc4' },
-            { value:'bundling', label:'Bundling', color:'#ae3ec9' },
+            { value:'bundling', label:'Bundling', color:'#f59f00' },
             { value:'b2b',      label:'B2B',      color:'#d63939' }
         ]
     };
