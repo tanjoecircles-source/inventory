@@ -176,7 +176,7 @@ class ProductController extends Controller
 
     public function detail_json(Request $request){
         $contents = DB::table('product')
-                    ->select('id', 'name', 'price', 'stock', 'origin', 'process', 'varietal', 'elevation')
+                    ->select('id', 'name', 'type', 'price', 'price_grosir15', 'price_grosir50', 'stock', 'origin', 'process', 'varietal', 'elevation')
                     ->where(['id' => $request->id])
                     ->first();
         return response()->json($contents);

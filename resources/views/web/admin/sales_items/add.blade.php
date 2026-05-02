@@ -33,6 +33,32 @@
                         </select>
                         @error('itm_product') <div class="text-primary fs-11">{{ $message }}</div> @enderror
                     </div>
+                    <div class="form-group" id="price-type-group" style="display:none;">
+                        <label class="form-label" style="font-size:13px;font-weight:600;color:#444;margin-bottom:8px;">Tipe Harga</label>
+                        <input type="hidden" name="itm_price_type" id="itm_price_type" value="">
+                        <div id="price-type-pills" class="price-type-pills">
+                            <div class="price-type-placeholder text-muted" style="font-size:13px;">Pilih produk terlebih dahulu...</div>
+                        </div>
+                    </div>
+                    <style>
+                    .price-type-pills { display:flex; gap:8px; flex-wrap:wrap; }
+                    .price-pill {
+                        display:inline-flex; align-items:center; gap:6px;
+                        padding:8px 16px; border-radius:50px;
+                        border:2px solid #e0e0e0; background:#f8f9fa;
+                        cursor:pointer; font-size:13px; font-weight:500;
+                        color:#555; transition:all 0.2s ease;
+                        user-select:none;
+                    }
+                    .price-pill:hover { border-color:#adb5bd; background:#f1f3f5; color:#222; }
+                    .price-pill.active {
+                        border-color: var(--pill-color, #206bc4);
+                        background: var(--pill-color, #206bc4);
+                        color:#fff; box-shadow:0 3px 10px rgba(0,0,0,0.15);
+                        transform:translateY(-1px);
+                    }
+
+                    </style>
                     <div class="form-group">
                         <label class="form-label">Harga</label>
                         <div class="input-icon mb-3">
@@ -104,10 +130,83 @@ $(document).ready(function () {
         // minimumInputLength: 1
     });
     
+    // Simpan data harga produk yang sedang aktif
+    var currentProductData = null;
+
+    // Definisi opsi pill per tipe produk
+    var pillOptions = {
+        1: [ // Green Beans
+            { value:'ecer',     label:'Ecer 1–15kg',       color:'#2fb344' },
+            { value:'grosir15', label:'Grosir ≥ 15kg',     color:'#f59f00' },
+            { value:'grosir50', label:'Harga Grosir ≥ 50kg', color:'#e67e22' }
+        ],
+        2: [ // Roasted Filter
+            { value:'normal',   label:'Normal',   color:'#206bc4' },
+            { value:'bundling', label:'Bundling', color:'#ae3ec9' },
+            { value:'b2b',      label:'B2B',      color:'#d63939' }
+        ],
+        3: [ // Roasted Espresso
+            { value:'normal',   label:'Normal',   color:'#206bc4' },
+            { value:'bundling', label:'Bundling', color:'#ae3ec9' },
+            { value:'b2b',      label:'B2B',      color:'#d63939' }
+        ]
+    };
+
+    function getPriceByType(data, selectedValue) {
+        var price = data.price;
+        if (data.type == 1) {
+            if (selectedValue === 'grosir15') price = data.price_grosir15 || data.price;
+            else if (selectedValue === 'grosir50') price = data.price_grosir50 || data.price;
+        } else if (data.type == 2 || data.type == 3) {
+            if (selectedValue === 'bundling') price = data.price_grosir15 || data.price;
+            else if (selectedValue === 'b2b') price = data.price_grosir50 || data.price;
+        }
+        return price;
+    }
+
+    function updatePriceFromType() {
+        if (!currentProductData) return;
+        var selectedType = $("#itm_price_type").val();
+        var price = getPriceByType(currentProductData, selectedType);
+
+        $("#itm_price").inputmask('remove');
+        $("#itm_price").val(price);
+        $("#itm_price").inputmask({
+            rightAlign:false, radixPoint:',', groupSeparator:".",
+            alias:"numeric", autoGroup:true, digits:0
+        });
+        var qty = $("#itm_qty").val();
+        var amount = price * qty;
+        $("#itm_amount").html(amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+        $("#itm_total").val(amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+    }
+
+    function renderPills(productType) {
+        var options = pillOptions[productType] || pillOptions[2];
+        var $container = $("#price-type-pills").empty();
+        $.each(options, function(i, opt) {
+            var isFirst = (i === 0);
+            var pill = $('<div>')
+                .addClass('price-pill' + (isFirst ? ' active' : ''))
+                .attr({'data-value': opt.value, style: '--pill-color:' + opt.color + ';'})
+                .text(opt.label);
+            if (isFirst) $("#itm_price_type").val(opt.value);
+            $container.append(pill);
+        });
+        $("#price-type-group").show();
+    }
+
+    $(document).on('click', '.price-pill', function() {
+        if ($(this).hasClass('disabled-pill')) return;
+        $("#price-type-pills .price-pill").removeClass('active');
+        $(this).addClass('active');
+        $("#itm_price_type").val($(this).data('value'));
+        updatePriceFromType();
+    });
+
     $("#itm_product").on('change', function(e) {
         let id = $(this).val();
         let qty = $("#itm_qty").val();
-        let url = "{{url('product-detail-json')}}";
         $.ajax({
             type:'GET',
             url:"{{url('product-detail-json')}}",
@@ -115,18 +214,20 @@ $(document).ready(function () {
             success:function(data){
                 if(data.stock == 0){
                     $("#btn-update").prop("disabled", true);
+                    $("#itm_price_type").prop("disabled", true);
+                    currentProductData = null;
                     $('#modal-warning .modal-body').html('Tidak dapat menambah produk, Cek kembali Ketersediaan Stok!');
                     var myModal = new bootstrap.Modal(document.getElementById('modal-warning'), {
                         keyboard: false
                     });
                     myModal.show();
                 }else{
-                    
                     $("#btn-update").prop("disabled", false);
-                    $("#itm_price").val(data.price);
-                    amount = data.price * qty;
-                    $("#itm_amount").html(amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
-                    $("#itm_total").val(amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+                    currentProductData = data;
+
+                    // Render radio pills sesuai tipe produk
+                    renderPills(data.type);
+                    updatePriceFromType();
                 }
             }
         });
