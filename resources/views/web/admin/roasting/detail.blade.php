@@ -13,7 +13,7 @@
             <div class="card no-border shadow-none custom-square mt-4 mb-3">
                 <div class="card-body px-2 py-4">
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-7">
                             <div class="form-group">
                                 <p class="px-2 mb-2">Kode</p>
                                 <h6 class="px-2 m-0 font-weight-bold">{{$roasting->code}}</h6>
@@ -23,7 +23,7 @@
                                 <h6 class="px-2 m-0 font-weight-bold">{{$roasting->vendor_name}}</h6>
                             </div>
                         </div>
-                        <div class="col-6">
+                        <div class="col-5">
                             <div class="form-group">
                                 <p class="px-2 mb-2">Tanggal</p>
                                 <h6 class="px-2 m-0 font-weight-bold">{{date('d M Y', strtotime($roasting->date))}}</h6>
