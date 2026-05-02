@@ -58,23 +58,29 @@
                             <p class="mb-1 text-center">Tidak ada data</p>
                         </div>
                     @else
-                        @foreach ($contents as $content)
-                            @if($roasting->status == 'Draft')
-                                <a href="{{url('roasting-item-detail/'.$roasting->id.'?id='.$content->id)}}">
-                            @endif
-                            <div class="card-body px-2 py-2 border-bottom">
-                                <div class="d-flex title-bar">
-                                    <div class="mr-auto text-left">
-                                        <p class="mb-1">{{$content->product_name}}</p>
-                                    </div>
-                                    <div class="ml-auto text-right">
-                                        <p class="font-weight-bold mb-0">{{$content->qty}}x</p>
+                        @foreach ($grouped as $category => $items)
+                            <div class="bg-light px-3 py-2 text-left border-bottom">
+                                <span class="fs-11 font-weight-bold text-uppercase text-muted">{{ $category }}</span>
+                            </div>
+                            @foreach ($items as $content)
+                                @if($roasting->status == 'Draft')
+                                    <a href="{{url('roasting-item-detail/'.$roasting->id.'?id='.$content->id)}}">
+                                @endif
+                                <div class="card-body px-2 py-2 border-bottom">
+                                    <div class="d-flex title-bar">
+                                        <div class="mr-auto text-left">
+                                            <p class="mb-1">{{$content->product_name}}</p>
+                                            <small class="text-muted">{{$content->profile_name}}</small>
+                                        </div>
+                                        <div class="ml-auto text-right">
+                                            <p class="font-weight-bold mb-0">{{$content->qty}}x</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            @if($roasting->status == 'Draft')
-                                </a>
-                            @endif
+                                @if($roasting->status == 'Draft')
+                                    </a>
+                                @endif
+                            @endforeach
                         @endforeach
                         <div class="card-body px-2 py-2 border-bottom">
                             <div class="d-flex title-bar">
@@ -92,12 +98,17 @@
                 <a href="{{url('roasting-item-add/'.$roasting->id)}}" class="card-body p-2 border-top font-weight-semibold"><i class="fe fe-plus-circle fs-16"></i> Tambah Produk</a>
                 @endif
             </div>
-            @if($roasting->status == 'Draft')
-                <a href="{{url('roasting-publish/'.$roasting->id)}}" data-title="{{$roasting->code}}" class="btn btn-dark btn-block btn-publish" id="btn-publish" name="btn-publish">Publish</a>
-            @endif
-            @if($roasting->status == 'Publish')
-                <a href="{{url('roasting-drafting/'.$roasting->id)}}" data-title="{{$roasting->code}}" class="btn btn-outline-dark btn-block btn-draft" id="btn-draft" name="btn-draft">Drafting</a>
-            @endif
+            <div class="card text-center no-border shadow-none custom-square mb-2">
+                <div class="card-body p-2">
+                    @if($roasting->status == 'Draft')
+                        <a href="{{url('roasting-save/'.$roasting->id)}}" class="btn btn-primary btn-block">Simpan</a>
+                        <a href="{{url('roasting-publish/'.$roasting->id)}}" data-title="{{$roasting->code}}" class="btn btn-outline-dark btn-block btn-publish mt-2" id="btn-publish" name="btn-publish">Publish</a>
+                    @endif
+                    @if($roasting->status == 'Publish')
+                        <a href="{{url('roasting-drafting/'.$roasting->id)}}" data-title="{{$roasting->code}}" class="btn btn-outline-dark btn-block btn-draft" id="btn-draft" name="btn-draft">Drafting</a>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -130,6 +141,24 @@ $(document).off('click', '.btn-draft').on('click', '.btn-draft', function(e){
         keyboard: false
     });
     myModal.show();
+});
+$(document).ready(function () {
+    alert_success = $("#alert_success").val();
+    if(alert_success != undefined){
+        notif({
+            msg: alert_success,
+            type: "success",
+            position: "center"
+        });
+    }
+    alert_danger = $("#alert_danger").val();
+    if(alert_danger != undefined){
+        notif({
+            msg: alert_danger,
+            type: "error",
+            position: "center"
+        });
+    }
 });
 </script>
 </x-layouts.app>

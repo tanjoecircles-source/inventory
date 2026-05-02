@@ -166,7 +166,7 @@ class RoastingController extends Controller
         ]);
         if ($insert){
             DB::commit();
-            return redirect('roasting-detail/'.$insert->id)->with('success','Data has been created');
+            return redirect('roasting-detail/'.$insert->id)->with('success','Data Berhasil Disimpan');
         }else{
             DB::rollback();
             return redirect()->back()->with('danger', 'Data failed to create, try again later');
@@ -178,7 +178,8 @@ class RoastingController extends Controller
         $search = (isset($_GET['keyword'])) ? $_GET['keyword'] : "";
         $contents = DB::table('roasting_item AS s')
                     ->leftJoin('product AS p', 'p.id', '=', 's.product')
-                    ->select('s.*', 'p.name AS product_name', 'p.price AS product_price', 'p.price_hpp AS price_hpp')
+                    ->leftJoin('roasting_profile AS rp', 'rp.id', '=', 's.profile')
+                    ->select('s.*', 'p.name AS product_name', 'p.price AS product_price', 'p.price_hpp AS price_hpp', 'rp.name AS profile_name')
                     ->where(['s.roasting_id' => $id])
                     ->where(function($contents) use ($search){
                         $contents->where('p.name', 'like', '%'.$search.'%');
@@ -186,25 +187,36 @@ class RoastingController extends Controller
                     ->orderBy('id', 'DESC')
                     ->get();
 
+        $inv_sub_total = 0;
+        $inv_hpp = 0;
         if(!empty($contents)){
             $qty_total = 0;
             foreach ($contents as $key => $value) {
                 $qty_total += $value->qty;
+                $inv_sub_total += (INT)$value->qty * (INT)$value->product_price;
+                $inv_hpp += (INT)$value->qty * (INT)$value->price_hpp;
             }
         }
         
         $detail = DB::table('roasting AS s')
             ->leftJoin('vendor AS c', 'c.id', '=', 's.vendor')
-            ->select('s.*',
-                    'c.name AS vendor_name')
+            ->select('s.*', 'c.name AS vendor_name')
             ->where(['s.id' => $id])
             ->first();
         
+        $grouped = $contents->groupBy(function($item) {
+            $name = strtolower($item->profile_name);
+            if (str_contains($name, 'espresso')) return 'Espresso';
+            if (str_contains($name, 'filter')) return 'Filter';
+            return 'Lainnya';
+        });
+
         $data = [
             'roasting' => $detail,
             'qty_total' => $qty_total,
             'keyword' => $search,
-            'contents' => $contents
+            'contents' => $contents,
+            'grouped' => $grouped
         ];
         return view('web.admin.roasting.detail', $data);
     }
@@ -243,7 +255,7 @@ class RoastingController extends Controller
         ]);
         if ($update){
             DB::commit();
-            return redirect('roasting-detail/'.$id)->with('success','Data has been updated');
+            return redirect('roasting-detail/'.$id)->with('success','Data Berhasil Disimpan');
         }else{
             DB::rollback();
             return redirect()->back()->with('danger', 'Data failed to update, try again later');
@@ -288,7 +300,7 @@ class RoastingController extends Controller
 
         if ($result){
             DB::commit();
-            return redirect('roasting-detail/'.$id)->with('success','Data has been created');
+            return redirect('roasting-detail/'.$id)->with('success','Data Berhasil Disimpan');
         }else{
             DB::rollback();
             return redirect()->back()->with('danger', 'Data failed to create, try again later');
@@ -343,7 +355,7 @@ class RoastingController extends Controller
         ]);
         if ($update){
             DB::commit();
-            return redirect('roasting-list')->with('success','Data has been updated');
+            return redirect('roasting-list')->with('success','Data Berhasil Disimpan');
         }else{
             DB::rollback();
             return redirect()->back()->with('danger', 'Data failed to update, try again later');
@@ -358,11 +370,16 @@ class RoastingController extends Controller
         ]);
         if ($update){
             DB::commit();
-            return redirect('roasting-list')->with('success','Data has been updated');
+            return redirect('roasting-list')->with('success','Data Berhasil Dipublish');
         }else{
             DB::rollback();
             return redirect()->back()->with('danger', 'Data failed to update, try again later');
         }
+    }
+
+    public function save($id)
+    {
+        return redirect('roasting-detail/'.$id)->with('success','Data Berhasil Disimpan');
     }
 
     public function drafting($id)
@@ -373,7 +390,7 @@ class RoastingController extends Controller
         ]);
         if ($update){
             DB::commit();
-            return redirect('roasting-list')->with('success','Data has been updated');
+            return redirect('roasting-detail/'.$id)->with('success','Data has been updated');
         }else{
             DB::rollback();
             return redirect()->back()->with('danger', 'Data failed to update, try again later');

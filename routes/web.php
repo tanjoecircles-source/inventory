@@ -420,6 +420,7 @@ Route::middleware(['auth:web'])->group(function(){
     Route::get('roasting-add', 'RoastingController@add');
     Route::post('roasting-create', 'RoastingController@create');
     Route::get('roasting-detail/{app_id}', 'RoastingController@detail');
+    Route::get('roasting-save/{app_id}', 'RoastingController@save');
     Route::get('roasting-item-add/{app_id}', 'RoastingController@addItem');
     Route::post('roasting-item-create/{app_id}', 'RoastingController@createItem');
     Route::get('roasting-item-detail/{app_id}', 'RoastingController@detailItem');
