@@ -110,6 +110,7 @@ class BaristaFeeController extends Controller
                     ->select('p.name as periode_name', 'p.start_date as periode_start', 'p.end_date as periode_end')
                     ->where(['bf.id' => $request->id_profit])
                     ->first();
+        
         $jml_short =  DB::table('report_store AS rs')
                     ->select('rs.id')
                     ->where(['rs.employee_id' => $request->id_employee, ['rs.date', '>=', $periode->periode_start], ['rs.date', '<=', $periode->periode_end]])
@@ -120,13 +121,30 @@ class BaristaFeeController extends Controller
                     ->where(['rs.employee_id' => $request->id_employee, ['rs.date', '>=', $periode->periode_start], ['rs.date', '<=', $periode->periode_end]])
                     ->whereIn('rs.shift_id', ['2', '3'])
                     ->count();
+
+        // Calculate Bonus: 60% x (Total - 250,000) if Total > 250,000 per day
+        $reports = DB::table('report_store AS rs')
+                    ->select('rs.cash', 'rs.qris')
+                    ->where(['rs.employee_id' => $request->id_employee, ['rs.date', '>=', $periode->periode_start], ['rs.date', '<=', $periode->periode_end]])
+                    ->get();
+        
+        $bonus_total = 0;
+        foreach($reports as $rp){
+            $total_harian = (FLOAT)$rp->cash + (FLOAT)$rp->qris;
+            if($total_harian > 250000){
+                $bonus_total += (0.6 * ($total_harian - 250000));
+            }
+        }
+
         $fee_short = (INT)$set->barista_fee_short * (INT)$jml_short;
         $fee_long = (INT)$set->barista_fee_long * (INT)$jml_long;
         $fee_total = (INT)$fee_short + (INT)$fee_long;
+        
         $data = [
             'shift_short' => $jml_short,
             'shift_long' => $jml_long,
-            'percent_share' => $fee_total
+            'percent_share' => $fee_total,
+            'bonus' => (INT)$bonus_total
         ];
         
         return response()->json($data);
@@ -336,6 +354,7 @@ class BaristaFeeController extends Controller
             return redirect('barista-fee-share/'.$id)->with('danger','Error! Sorry your data already exists');
         }
         DB::beginTransaction();
+        $bonus = str_replace('.', "", $data['bonus']);
         $insert = BaristaFeeEmployee::create([
             'bf_id' => $id,
             'employee_id' => $data['employee_id'],
@@ -343,6 +362,7 @@ class BaristaFeeController extends Controller
             'shift_long' => str_replace('.', "", $data['shift_long']),
             'sub_total' => str_replace('.', "", $data['sub_total']),
             'potongan' => str_replace('.', "", $data['potongan']),
+            'bonus' => $bonus,
             'total' => str_replace('.', "", $data['total']),
             'desc' => $data['desc'],
             'payment_status' => 'paid',
@@ -361,6 +381,34 @@ class BaristaFeeController extends Controller
         }else{
             DB::rollback();
             return redirect()->back()->with('danger', 'Data failed to update, try again later');
+        }
+    }
+
+    public function shareDelete($id)
+    {
+        $data = BaristaFeeEmployee::find($id);
+        if (is_null($data)){
+            return redirect()->back()->with('danger','Something Wrong, data not found.');
+        }
+        
+        $bf_id = $data->bf_id;
+        $potongan = $data->potongan;
+        $total = $data->total;
+
+        DB::beginTransaction();
+        $bf = BaristaFee::where('id', $bf_id)->first();
+        $update_bf = BaristaFee::where('id', $bf_id)->update([
+            'total_potongan' => (INT)$bf->total_potongan - (INT)$potongan,
+            'total_share' => (INT)$bf->total_share - (INT)$total,
+            'total_fee' => (INT)$bf->total_fee - ((INT)$total + (INT)$potongan),
+        ]);
+
+        if ($update_bf && $data->delete()){
+            DB::commit();
+            return redirect('barista-fee-detail/'.$bf_id)->with('success', 'Data has been deleted.');
+        }else{
+            DB::rollback();
+            return redirect('barista-fee-detail/'.$bf_id)->with('danger', 'Something Wrong, Data failed to delete.');
         }
     }
 

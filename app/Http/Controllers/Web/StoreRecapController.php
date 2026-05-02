@@ -74,8 +74,10 @@ class StoreRecapController extends Controller
 
     public function add()
     {
-        $period = Periode::whereNotIn('id', function($query) {
-                    $query->select('periode_id')->from('store_recap');
+        $period = Periode::whereNotExists(function($query) {
+                    $query->select(DB::raw(1))
+                          ->from('store_recap')
+                          ->whereColumn('store_recap.periode_id', 'periode.id');
                 })->orderBy('id', 'desc')->get();
         $data = ['period' => $period];
         return view('web.admin.store_recap.add', $data);

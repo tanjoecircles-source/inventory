@@ -19,26 +19,47 @@ class ReportStoreController extends Controller
     {
         $limit = 10;
         $search = (isset($_GET['keyword'])) ? $_GET['keyword'] : "";
-        $contents = DB::table('report_store AS rs')
+        $status = (isset($_GET['status'])) ? $_GET['status'] : "all";
+        $employee_id = (isset($_GET['employee_id'])) ? $_GET['employee_id'] : "all";
+        $date_start = (isset($_GET['date_start'])) ? $_GET['date_start'] : "";
+        $date_end = (isset($_GET['date_end'])) ? $_GET['date_end'] : "";
+        $sort = (isset($_GET['sort'])) ? $_GET['sort'] : "date_desc";
+
+        $query = DB::table('report_store AS rs')
                     ->leftJoin('employee AS e', 'e.id', '=', 'rs.employee_id')
                     ->leftJoin('shift_store AS sf', 'sf.id', '=', 'rs.shift_id')
-                    ->select('rs.*', 'e.name AS emp_name', 'sf.name AS shift_name')
-                    ->whereRaw('1 = 1')
-                    ->where(function($contents) use ($search){
-                        $contents->where('e.name', 'like', '%'.$search.'%');
-                    })
-                    ->orderBy('rs.date', 'DESC')
-                    ->paginate($limit);
+                    ->select('rs.*', 'e.name AS emp_name', 'sf.name AS shift_name');
 
-        $counts = DB::table('report_store AS rs')
-                    ->leftJoin('employee AS e', 'e.id', '=', 'rs.employee_id')
-                    ->select('rs.id')
-                    ->whereRaw('1 = 1')
-                    ->where(function($contents) use ($search){
-                        $contents->where('e.name', 'like', '%'.$search.'%');
-                    })
-                    ->orderBy('rs.date', 'DESC')
-                    ->count();
+        if($search != ""){
+            $query->where('e.name', 'like', '%'.$search.'%');
+        }
+        if($status != "all"){
+            $query->where('rs.status', $status);
+        }
+        if($employee_id != "all"){
+            $query->where('rs.employee_id', $employee_id);
+        }
+        if($date_start != ""){
+            $query->where('rs.date', '>=', date('Y-m-d', strtotime($date_start)));
+        }
+        if($date_end != ""){
+            $query->where('rs.date', '<=', date('Y-m-d', strtotime($date_end)));
+        }
+
+        // Sorting
+        if($sort == 'total_asc'){
+            $query->orderBy('rs.total', 'ASC');
+        }elseif($sort == 'total_desc'){
+            $query->orderBy('rs.total', 'DESC');
+        }elseif($sort == 'date_asc'){
+            $query->orderBy('rs.date', 'ASC');
+        }else{
+            $query->orderBy('rs.date', 'DESC');
+        }
+        $query->orderBy('rs.id', 'DESC');
+
+        $contents = $query->paginate($limit);
+        $counts = $query->count();
 
         if(!empty($contents)){
             foreach ($contents as $key => $value) {
@@ -57,9 +78,15 @@ class ReportStoreController extends Controller
         }
         $data = [
             'keyword' => $search,
+            'status' => $status,
+            'employee_id' => $employee_id,
+            'date_start' => $date_start,
+            'date_end' => $date_end,
+            'sort' => $sort,
             'limit' => $limit,
             'contents' => $contents,
-            'contents_count' => $counts
+            'contents_count' => $counts,
+            'employees' => Employee::all()
         ];
         if($request->ajax()){
             $view = view('web.agent.report_store.paginate', $data)->render();

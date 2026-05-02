@@ -112,8 +112,10 @@ class ShareProfitController extends Controller
 
     public function add()
     {
-        $period = Periode::whereNotIn('id', function($query) {
-                    $query->select('periode_id')->from('share_profit');
+        $period = Periode::whereNotExists(function($query) {
+                    $query->select(DB::raw(1))
+                          ->from('share_profit')
+                          ->whereColumn('share_profit.periode_id', 'periode.id');
                 })->orderBy('id', 'desc')->get();
         $data = [
             'period' => $period,
@@ -172,10 +174,13 @@ class ShareProfitController extends Controller
                     ->leftJoin('employee AS e', 'e.id', '=', 'spe.employee_id')
                     ->select('spe.*', 'e.name as employee')
                     ->where(['spe.sp_id' => $id]);
+        
         $contents = $sql->orderBy('id', 'DESC')->get();
-        $detail->potongan = $sql->sum('potongan');
-        $detail->balanced = (INT)$detail->total_profit - ((INT)$detail->total_share + (INT)$detail->potongan);
-        $detail->balanced = max(0, $detail->balanced);
+        $total_sub_total = $sql->sum('sub_total');
+        $balanced = (INT)$detail->total_profit - (INT)$total_sub_total;
+        
+        // Handle rounding tolerance (e.g. +/- 10 rupiah) to keep the UI clean
+        $detail->balanced = (abs($balanced) <= 10) ? 0 : $balanced;
         $data = [
             'detail' => $detail,
             'contents' => $contents
@@ -275,14 +280,26 @@ class ShareProfitController extends Controller
 
     public function shareDelete($id)
     {   
-        $mid = isset($_GET['mid']) ? $_GET['mid'] : '';
         $data = ShareProfitEmployee::find($id);
         if (is_null($data)){
-            return redirect('share-profit-detail/'.$mid)->with('danger','Something Wrong, data not found.');
-        }elseif (!$data->delete()){
-            return redirect('share-profit-detail/'.$mid)->with('danger','Something Wrong, Data failed to delete.');
-        }else{
+            return redirect()->back()->with('danger','Something Wrong, data not found.');
+        }
+
+        $mid = $data->sp_id;
+        $total_revert = (INT)$data->total + (INT)$data->tabungan_credit;
+
+        DB::beginTransaction();
+        $profit = ShareProfit::where('id', $mid)->first();
+        $update = ShareProfit::where('id', $mid)->update([
+            'total_share' => (INT)$profit->total_share - $total_revert
+        ]);
+
+        if ($update && $data->delete()){
+            DB::commit();
             return redirect('share-profit-detail/'.$mid)->with('success','Data has been deleted.');
+        }else{
+            DB::rollback();
+            return redirect('share-profit-detail/'.$mid)->with('danger','Something Wrong, Data failed to delete.');
         }
     }
 
@@ -318,5 +335,39 @@ class ShareProfitController extends Controller
         }else{
             return redirect('share-profit-list')->with('success','Data has been deleted.');
         }
+    }
+
+    public function print($id)
+    {
+        $detail = DB::table('share_profit AS sp')
+                    ->leftJoin('periode AS p', 'p.id', '=', 'sp.periode_id')
+                    ->select('sp.*', 'p.name AS periode', 'p.id as pid')
+                    ->where(['sp.id' => $id])
+                    ->first();
+
+        $contents = DB::table('share_profit_employee AS spe')
+                    ->leftJoin('employee AS e', 'e.id', '=', 'spe.employee_id')
+                    ->select('spe.*', 'e.name as employee')
+                    ->where(['spe.sp_id' => $id])
+                    ->orderBy('id', 'ASC')
+                    ->get();
+
+        $bean_recap = DB::table('bean_recap')->where('periode_id', $detail->pid)->first();
+        $bean_spending = [];
+        if($bean_recap){
+            $bean_spending = DB::table('bean_recap_spending')->where('bean_recap_id', $bean_recap->id)->get();
+        }
+
+        $store_recap = DB::table('store_recap')->where('periode_id', $detail->pid)->first();
+
+        $data = [
+            'detail' => $detail,
+            'contents' => $contents,
+            'bean_recap' => $bean_recap,
+            'bean_spending' => $bean_spending,
+            'store_recap' => $store_recap
+        ];
+
+        return view('web.admin.share_profit.print', $data);
     }
 }

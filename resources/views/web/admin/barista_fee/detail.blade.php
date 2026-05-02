@@ -58,6 +58,7 @@
                                 <td class="text-right font-weight-bold text-info">Subtotal</td>
                                 <td class="text-right font-weight-bold text-danger">Potongan</td>
                                 <td class="text-right font-weight-bold text-success">Total</td>
+                                <td class="text-right font-weight-bold">Aksi</td>
                             </tr>
                             @foreach ($contents as $content)
                                     <tr>
@@ -65,6 +66,9 @@
                                         <td class="text-right text-info">Rp {{str_replace(",", ".", number_format($content->sub_total))}}</td>
                                         <td class="text-right text-danger">Rp {{str_replace(",", ".", number_format($content->potongan))}}</td>
                                         <td class="text-right text-success font-weight-bold">Rp {{str_replace(",", ".", number_format($content->total))}}</td>
+                                        <td class="text-right">
+                                            <a href="{{url('barista-fee-share-delete/'.$content->id)}}" data-title="{{$content->employee}}" class="text-danger btn-confirm"><i class="fe fe-trash"></i></a>
+                                        </td>
                                     </tr>
                             @endforeach
                         </table>

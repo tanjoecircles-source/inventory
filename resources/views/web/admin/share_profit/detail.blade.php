@@ -10,30 +10,39 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-8 mx-auto">
-            <div class="card no-border shadow-none custom-square mt-4 mb-3">
-                <div class="card-body px-2 py-4">
-                    <div class="row">
-                        <div class="col-4">
-                            <div class="form-group">
-                                <p class="px-2 mb-2">Periode</p>
-                                <h6 class="px-2 m-0 font-weight-bold">{{$detail->periode}}</h6>
-                            </div>
-                            @if($detail->status == 'Draft')
-                            <div class="form-group pt-3">
-                                <a href="{{(url('share-profit-delete/'.$detail->id))}}" data-title="{{$detail->periode}}" class="btn btn-outline-danger btn-sm btn-confirm"><i class="fe fe-trash fs-16"></i> Hapus</a>
-                            </div>
-                            @endif
+            <div class="card no-border shadow-none custom-square mt-4 mb-4 overflow-hidden br-7 border">
+                <div class="card-body p-0">
+                    <div class="bg-dark p-3 text-white d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <span class="fs-10 opacity-70 d-block mb-1">PERIODE</span>
+                            <h5 class="font-weight-bold mb-0 text-uppercase">{{$detail->periode}}</h5>
                         </div>
-                        <div class="col-4">
-                            <div class="form-group">
-                                <p class="px-2 mb-2">Total Profit</p>
-                                <h6 class="px-2 m-0 font-weight-bold">Rp {{str_replace(",", ".", number_format($detail->total_profit))}}</h6>
+                        @if($detail->status == 'Draft')
+                            <a href="{{(url('share-profit-delete/'.$detail->id))}}" data-title="{{$detail->periode}}" class="btn btn-danger btn-sm btn-confirm py-1 px-3 br-7">
+                                <i class="fe fe-trash-2 mr-1"></i> Hapus
+                            </a>
+                        @endif
+                        <a href="{{url('share-profit-print/'.$detail->id)}}" target="_blank" class="btn btn-light btn-sm py-1 px-3 br-7 ml-2">
+                            <i class="fe fe-printer mr-1"></i> Cetak
+                        </a>
+                    </div>
+                    <div class="p-3 bg-white">
+                        <div class="row">
+                            <div class="col-6 border-right">
+                                <span class="fs-10 text-muted d-block mb-1">TOTAL PROFIT</span>
+                                <h6 class="font-weight-bold mb-0 fs-13">Rp {{str_replace(",", ".", number_format($detail->total_profit))}}</h6>
                             </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="form-group">
-                                <p class="px-2 mb-2">Total Share</p>
-                                <h6 class="px-2 m-0 font-weight-bold">Rp {{str_replace(",", ".", number_format($detail->total_share))}}</h6>
+                            <div class="col-6 text-right">
+                                <span class="fs-10 text-muted d-block mb-1">TOTAL SHARE</span>
+                                <h6 class="font-weight-bold mb-0 fs-13">Rp {{str_replace(",", ".", number_format($detail->total_share))}}</h6>
+                            </div>
+                            <div class="col-12 mt-3 pt-3 border-top">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fs-11 font-weight-semibold text-muted">SISA BELUM DIBAGIKAN</span>
+                                    <h6 class="font-weight-bold mb-0 {{ $detail->balanced > 0 ? 'text-danger' : 'text-success' }} fs-13">
+                                        Rp {{str_replace(",", ".", number_format($detail->balanced))}}
+                                    </h6>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -45,23 +54,11 @@
                 <a class="btn btn-dark btn-sm btn-pill py-1" href="{{url('share-profit-share/'.$detail->id)}}"><i class="fe fe-plus-circle"></i> Tambah</a>
                 @endif
             </div>
-            <div class="card text-center no-border shadow-none custom-square mb-7">
+            <div class="card no-border shadow-none custom-square mb-7">
                 <div class="card-body p-0">
-                    <table class="table">
-                        <tr>
-                            <td class="font-weight-bold border-bottom  px-4 py-2 text-left">Nama Person<br>(Owner / Investor)</td>
-                            <td class="font-weight-bold border-bottom  px-4 py-2 text-right">Sub Total Profit</td>
-                            <td class="font-weight-bold border-bottom  px-4 py-2 text-right">Potongan<br>Tabungan/KUR</td>
-                            <td class="font-weight-bold border-bottom  px-4 py-2 text-right">Potongan<br>Pribadi</td>
-                            <td class="font-weight-bold border-bottom  px-4 py-2 text-right">Jumlah<br>Transfer</td>
-                        </tr>
-                        @if($contents->isEmpty())
-                            <tr>
-                                <td colspan="4">
-                                    <p class="mb-1 text-center">Tidak ada data</p>
-                                </td>
-                            </tr>
-                        @else
+                    @if($contents->isEmpty())
+                        <p class="mb-1 text-center py-5">Tidak ada data pembagian</p>
+                    @else
                         @php
                         $total_sub_total = 0;
                         $total_tabungan_credit = 0;
@@ -75,33 +72,68 @@
                             $total_potongan += $content->potongan;
                             $total_total += $content->total;
                         @endphp
-                        <tr>
-                            <td class="border-bottom  px-4 py-2 text-left" width="20%">
-                                <p class="mb-1">{{$content->employee}}</p>
-                            </td>
-                            <td class="border-bottom  px-4 py-2 text-right" width="17%">
-                                <p class="mb-1">Rp {{str_replace(",", ".", number_format($content->sub_total))}}</p>
-                            </td>
-                            <td class="border-bottom  px-4 py-2 text-right" width="20%">
-                                <p class="mb-1">Rp {{str_replace(",", ".", number_format($content->tabungan_credit))}}</p>
-                            </td>
-                            <td class="border-bottom  px-4 py-2 text-right" width="23%">
-                                <p class="mb-1 text-danger">{{!empty($content->potongan) ? $content->desc.' : Rp '.str_replace(",", ".", number_format($content->potongan)) : '-' }}</p>
-                            </td>
-                            <td class="border-bottom px-4 py-2 text-right">
-                                <p class="font-weight-bold mb-0">Rp {{str_replace(",", ".", number_format($content->total))}}</p>
-                            </td>
-                        </tr>
+                        <div class="px-3 py-4 border-bottom">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="flex-grow-1">
+                                    <h6 class="font-weight-bold mb-0 fs-14">{{$content->employee}}</h6>
+                                </div>
+                                @if($detail->status == 'Draft')
+                                    <a href="{{url('share-profit-share-delete/'.$content->id.'?mid='.$detail->id)}}" class="btn btn-outline-danger btn-sm btn-confirm py-1 px-2 br-7" data-title="pembagian {{$content->employee}}">
+                                        <i class="fe fe-trash-2"></i>
+                                    </a>
+                                @endif
+                            </div>
+                            
+                            <div class="row fs-12">
+                                <div class="col-6 mb-2">
+                                    <span class="text-muted d-block mb-1">Sub Total Profit</span>
+                                    <span class="font-weight-semibold">Rp {{str_replace(",", ".", number_format($content->sub_total))}}</span>
+                                </div>
+                                <div class="col-6 mb-2 text-right">
+                                    <span class="text-muted d-block mb-1">Tabungan/KUR</span>
+                                    <span class="font-weight-semibold">Rp {{str_replace(",", ".", number_format($content->tabungan_credit))}}</span>
+                                </div>
+                                
+                                @if(!empty($content->potongan))
+                                <div class="col-12 mb-3">
+                                    <div class="bg-light p-2 border-left border-danger">
+                                        <span class="text-muted d-block fs-11">Potongan: {{$content->desc}}</span>
+                                        <span class="text-danger font-weight-bold">- Rp {{str_replace(",", ".", number_format($content->potongan))}}</span>
+                                    </div>
+                                </div>
+                                @endif
+
+                                <div class="col-12">
+                                    <div class="d-flex justify-content-between align-items-center bg-success text-white p-2 br-7 shadow-sm">
+                                        <span class="font-weight-bold">Jumlah Transfer</span>
+                                        <span class="font-weight-bold mb-0">Rp {{str_replace(",", ".", number_format($content->total))}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         @endforeach
-                        <tr>
-                            <td class="font-weight-bold border-bottom  px-4 py-2 text-left">Total</td>
-                            <td class="font-weight-bold border-bottom  px-4 py-2 text-right">Rp {{str_replace(",", ".", number_format($total_sub_total))}}</td>
-                            <td class="font-weight-bold border-bottom  px-4 py-2 text-right">Rp {{str_replace(",", ".", number_format($total_tabungan_credit))}}</td>
-                            <td class="font-weight-bold border-bottom  px-4 py-2 text-right">Rp {{str_replace(",", ".", number_format($total_potongan))}}</td>
-                            <td class="font-weight-bold border-bottom  px-4 py-2 text-right">Rp {{str_replace(",", ".", number_format($total_total))}}</td>
-                        </tr>
+                        
+                        <div class="bg-light px-3 py-4">
+                            <h6 class="font-weight-bold mb-3 fs-13">Ringkasan Total Pembagian</h6>
+                            <div class="d-flex justify-content-between fs-12 mb-2">
+                                <span class="text-muted">Total Sub Profit</span>
+                                <span class="font-weight-semibold">Rp {{str_replace(",", ".", number_format($total_sub_total))}}</span>
+                            </div>
+                            <div class="d-flex justify-content-between fs-12 mb-2">
+                                <span class="text-muted">Total Tabungan</span>
+                                <span class="font-weight-semibold">Rp {{str_replace(",", ".", number_format($total_tabungan_credit))}}</span>
+                            </div>
+                            <div class="d-flex justify-content-between fs-12 mb-3">
+                                <span class="text-muted">Total Potongan Pribadi</span>
+                                <span class="text-danger font-weight-semibold">Rp {{str_replace(",", ".", number_format($total_potongan))}}</span>
+                            </div>
+                            <hr class="my-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="font-weight-bold">GRAND TOTAL TRANSFER</span>
+                                <h5 class="font-weight-bold text-primary mb-0">Rp {{str_replace(",", ".", number_format($total_total))}}</h5>
+                            </div>
+                        </div>
                     @endif
-                    </table>
                 </div>
             </div>
             @if($detail->status == 'Draft')

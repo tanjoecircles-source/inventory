@@ -441,7 +441,9 @@ class ReportController extends Controller
     {
         $limit = 10;
         $search = (isset($_GET['filter-status'])) ? $_GET['filter-status'] : "all";
+        $emp_search = (isset($_GET['filter-employee'])) ? $_GET['filter-employee'] : "all";
         $report_period = Setting::first();
+
         $contents = DB::table('report_store AS rs')
                     ->leftJoin('employee AS e', 'e.id', '=', 'rs.employee_id')
                     ->leftJoin('shift_store AS sf', 'sf.id', '=', 'rs.shift_id')
@@ -452,6 +454,9 @@ class ReportController extends Controller
                     ]);
                     if($search != 'all'){
                         $contents = $contents->where(['rs.status' => $search]);
+                    }
+                    if($emp_search != 'all'){
+                        $contents = $contents->where(['rs.employee_id' => $emp_search]);
                     }
                     $contents = $contents->orderBy('rs.date', 'DESC')->orderBy('rs.id', 'DESC')->paginate($limit);
 
@@ -464,6 +469,9 @@ class ReportController extends Controller
                     ]);
                     if($search != 'all'){
                         $counts = $counts->where(['rs.status' => $search]);
+                    }
+                    if($emp_search != 'all'){
+                        $counts = $counts->where(['rs.employee_id' => $emp_search]);
                     }
                     $counts = $counts->count();
 
@@ -488,27 +496,40 @@ class ReportController extends Controller
         if($search != 'all'){
             $cash = $cash->where(['status' => $search]);
         }
+        if($emp_search != 'all'){
+            $cash = $cash->where(['employee_id' => $emp_search]);
+        }
         $cash = $cash->sum('cash');
+
         $qris = ReportStore::where([['date', '>=', $report_period->report_date_start], ['date', '<=', $report_period->report_date_end]]);
         if($search != 'all'){
             $qris = $qris->where(['status' => $search]);
         }
+        if($emp_search != 'all'){
+            $qris = $qris->where(['employee_id' => $emp_search]);
+        }
         $qris = $qris->sum('qris');
+
         $spending = ReportStore::where([['date', '>=', $report_period->report_date_start], ['date', '<=', $report_period->report_date_end]]);
         if($search != 'all'){
             $spending = $spending->where(['status' => $search]);
+        }
+        if($emp_search != 'all'){
+            $spending = $spending->where(['employee_id' => $emp_search]);
         }
         $spending = $spending->sum('spending');
 
         $data = [
             'keyword' => $search,
+            'emp_keyword' => $emp_search,
             'limit' => $limit,
             'contents' => $contents,
             'contents_count' => $counts,
             'cash' => $cash,
             'qris' => $qris,
             'spending' => $spending,
-            'sales_total' => (INT)$cash + (INT)$qris
+            'sales_total' => (INT)$cash + (INT)$qris,
+            'employee' => \App\Models\Employee::all()
         ];
         if($request->ajax()){
             $view = view('web.admin.report.store_income_paginate', $data)->render();

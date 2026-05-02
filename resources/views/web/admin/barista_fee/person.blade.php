@@ -41,9 +41,13 @@
                         <p class="px-2 mb-2">Upah Long Shift<br><span class="fs-11">Rp {{str_replace(",", ".", number_format($set->barista_fee_long))}} x {{$person->shift_long}} Shift</span></p>
                         <p class="px-2 ml-auto font-weight-bold">Rp {{str_replace(",", ".", number_format($person->fee_long))}}</p>
                     </div>
-                    <div class="d-flex">
-                        <p class="px-2 mb-0">Total Penghasilan</p>
+                    <div class="d-flex mb-2 border-bottom">
+                        <p class="px-2 mb-2">Total Upah Shift</p>
                         <p class="px-2 ml-auto font-weight-bold">Rp {{str_replace(",", ".", number_format($person->sub_total))}}</p>
+                    </div>
+                    <div class="d-flex">
+                        <p class="px-2 mb-2">Bonus</p>
+                        <p class="px-2 ml-auto font-weight-bold text-success">Rp {{str_replace(",", ".", number_format($person->bonus))}}</p>
                     </div>
                 </div>
             </div>
@@ -62,8 +66,12 @@
             <div class="card no-border shadow-none custom-square mt-3 mb-4">
                 <div class="card-body px-2 pt-4 pb-0">
                     <div class="d-flex mb-2 border-bottom">
-                        <p class="px-2">Total Penghasilan</p>
+                        <p class="px-2">Upah Shift</p>
                         <p class="px-2 ml-auto font-weight-bold">Rp {{str_replace(",", ".", number_format($person->sub_total))}}</p>
+                    </div>
+                    <div class="d-flex mb-2 border-bottom">
+                        <p class="px-2">Bonus</p>
+                        <p class="px-2 ml-auto font-weight-bold">Rp {{str_replace(",", ".", number_format($person->bonus))}}</p>
                     </div>
                     <div class="d-flex mb-2 border-bottom">
                         <p class="px-2">Total Potongan</p>

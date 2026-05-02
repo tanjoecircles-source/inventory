@@ -175,6 +175,7 @@ Route::middleware(['auth:web'])->group(function(){
     Route::get('share-profit-calculate', 'ShareProfitController@calculate');
     Route::get('share-profit-emppart', 'ShareProfitController@emppart');
     Route::get('share-profit-publish/{app_id}', 'ShareProfitController@publish');
+    Route::get('share-profit-print/{app_id}', 'ShareProfitController@print');
 
     // Fee Barista
     Route::get('barista-fee-list', 'BaristaFeeController@list');

@@ -65,8 +65,14 @@
                                     </ul>
                                 </div>
                             </div>
-                            <div class="ml-auto text-right">
-                                <select class="form-control form-control-sm" name="filter-status" id="payment-status" placeholder="Semua Tagihan">
+                            <div class="ml-auto text-right d-flex">
+                                <select class="form-control form-control-sm mr-1" name="filter-employee" id="filter-employee" style="width: 130px;">
+                                    <option value="all" {{$emp_keyword == 'all' ? 'selected' : ''}}>Semua Personil</option>
+                                    @foreach($employee as $emp)
+                                        <option value="{{$emp->id}}" {{$emp_keyword == $emp->id ? 'selected' : ''}}>{{$emp->name}}</option>
+                                    @endforeach
+                                </select>
+                                <select class="form-control form-control-sm" name="filter-status" id="payment-status" placeholder="Semua Tagihan" style="width: 120px;">
                                     @if($keyword == 'all')
                                     <option value="all" selected>Semua Status</option>
                                     <option value="reported">Reported</option>
@@ -130,22 +136,23 @@
         }
     });
 
-    $("#payment-status").change(function(){
+    $("#payment-status, #filter-employee").change(function(){
         $("#filter-form").submit();
     }); 
 
     var page = 1;
     $(window).scroll(function(){
         var key = '{{$keyword}}';
+        var emp = '{{$emp_keyword}}';
         if ($(window).scrollTop() >= $(document).height() - $(window).height() - 1){
             page++;
-            loadMoreData(page, key);
+            loadMoreData(page, key, emp);
         }
     });
 
-    function loadMoreData(page, key){
+    function loadMoreData(page, key, emp){
         $.ajax({
-            url:'?page=' + page + '&filter-status=' + key,
+            url:'?page=' + page + '&filter-status=' + key + '&filter-employee=' + emp,
             type:'get',
             beforeSend: function(){
                 $('.ajax-load').show();

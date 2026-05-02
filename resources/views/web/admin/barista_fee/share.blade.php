@@ -53,12 +53,19 @@
                         @error('sub_total')<div class="text-danger">{{ $message }}</div>@enderror
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Sub Total Profit</label>
+                        <label class="form-label">Sub Total Profit (Shift)</label>
                         <div class="input-icon mb-3">
                             <span class="input-icon-addon fs-15">Rp</span>
                             <input type="text" class="form-control masked @error('sub_total') is-invalid @enderror" id="sub_total" name="sub_total" value="0" readonly>
                         </div>
                         @error('sub_total')<div class="text-danger">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Bonus (60% Revenue > 250k)</label>
+                        <div class="input-icon mb-3">
+                            <span class="input-icon-addon fs-15">Rp</span>
+                            <input type="text" class="form-control masked" id="bonus" name="bonus" value="0">
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Potongan Profit</label>
@@ -132,17 +139,24 @@ $(document).ready(function () {
                 $("#shift_short").val(data.shift_short.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
                 $("#shift_long").val(data.shift_long.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
                 $("#sub_total").val(data.percent_share.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
-                $("#total").val(data.percent_share.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+                $("#bonus").val(data.bonus.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+                
+                calculateTotal();
             }
         }); 
     });
 
-    $("#potongan").keyup(function(){
-        sub_total = $("#sub_total").val();
-        potongan = $(this).val();
-        total = sub_total.replace(/\./g,"") - potongan.replace(/\./g,"");
-        $("#total").val(total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+    function calculateTotal() {
+        let sub_total = $("#sub_total").val().replace(/\./g,"") || 0;
+        let bonus = $("#bonus").val().replace(/\./g,"") || 0;
+        let potongan = $("#potongan").val().replace(/\./g,"") || 0;
         
+        let total = (parseInt(sub_total) + parseInt(bonus)) - parseInt(potongan);
+        $("#total").val(total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+    }
+
+    $("#potongan, #bonus").keyup(function(){
+        calculateTotal();
     });
 });
 </script>

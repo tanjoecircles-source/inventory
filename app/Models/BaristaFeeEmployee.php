@@ -29,6 +29,7 @@ class BaristaFeeEmployee extends Model
         'shift_long',
         'sub_total',
         'potongan',
+        'bonus',
         'total',
         'desc',
         'payment_status',

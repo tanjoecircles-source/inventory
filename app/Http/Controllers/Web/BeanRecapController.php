@@ -40,7 +40,7 @@ class BeanRecapController extends Controller
         if(!empty($contents)){
             foreach ($contents as $key => $value) {
                 $value->created_at = date('d M Y', strtotime($value->created_at));
-                $value->sisa_profit = (INT)$value->profit - (INT)$value->total_potongan;
+                $value->sisa_profit = (INT)$value->profit - ((INT)$value->total_potongan + (INT)$value->potongan_non_investor);
             }
         }
         
@@ -73,8 +73,10 @@ class BeanRecapController extends Controller
 
     public function add()
     {
-        $period = Periode::whereNotIn('id', function($query) {
-                    $query->select('periode_id')->from('bean_recap');
+        $period = Periode::whereNotExists(function($query) {
+                    $query->select(DB::raw(1))
+                          ->from('bean_recap')
+                          ->whereColumn('bean_recap.periode_id', 'periode.id');
                 })->orderBy('id', 'desc')->get();
         $data = ['period' => $period];
         return view('web.admin.bean_recap.add', $data);
@@ -223,14 +225,33 @@ class BeanRecapController extends Controller
 
     public function SpendingDelete($id)
     {
-        $mid = (isset($_GET['mid'])) ? $_GET['mid'] : '';
         $data = BeanRecapSpending::find($id);
         if (is_null($data)){
-            return redirect('bean-recap-detail/'.$mid)->with('danger','Something Wrong, data not found.');
-        }elseif (!$data->delete()){
-            return redirect('bean-recap-detail/'.$mid)->with('danger','Something Wrong, Data failed to delete.');
+            return redirect()->back()->with('danger','Something Wrong, data not found.');
+        }
+        
+        $mid = $data->bean_recap_id;
+        $amount = $data->amount;
+        $is_non_investor = $data->is_non_investor;
+
+        DB::beginTransaction();
+        $profit = BeanRecap::where('id', $mid)->first();
+        if($is_non_investor == 'true'){
+            $update = BeanRecap::where('id', $mid)->update([
+                'potongan_non_investor' => (INT)$profit->potongan_non_investor - (INT)$amount
+            ]);
         }else{
+            $update = BeanRecap::where('id', $mid)->update([
+                'total_potongan' => (INT)$profit->total_potongan - (INT)$amount
+            ]);
+        }
+
+        if ($update && $data->delete()){
+            DB::commit();
             return redirect('bean-recap-detail/'.$mid)->with('success','Data has been deleted.');
+        }else{
+            DB::rollback();
+            return redirect('bean-recap-detail/'.$mid)->with('danger','Something Wrong, Data failed to delete.');
         }
     }
 
