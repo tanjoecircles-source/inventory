@@ -330,11 +330,13 @@ Route::middleware(['auth:web'])->group(function(){
     Route::get('sales-edit/{app_id}', 'SalesController@edit');
     Route::post('sales-update/{app_id}', 'SalesController@update');
     Route::post('sales-update-final/{app_id}', 'SalesController@updateFinal');
+    Route::post('sales-update-hpp/{app_id}', 'SalesController@updateHpp');
     Route::get('sales-publish/{app_id}', 'SalesController@publish');
     Route::get('sales-drafting/{app_id}', 'SalesController@drafting');
     Route::get('sales-print/{app_id}', 'SalesController@print');
     Route::get('sales-payment/{app_id}', 'SalesController@payment');
     Route::post('sales-pay/{app_id}', 'SalesController@pay');
+    Route::get('sales-unpay/{app_id}', 'SalesController@unpay');
     Route::get('sales-set/{app_id}', 'SalesController@set');
     Route::post('sales-setup/{app_id}', 'SalesController@setup');
     Route::get('sales-delete/{app_id}', 'SalesController@delete');

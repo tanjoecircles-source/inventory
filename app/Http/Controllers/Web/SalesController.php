@@ -323,7 +323,7 @@ class SalesController extends Controller
         
         $data = [
             'invoice' => $detail,
-            'inv_hpp' => $itm_hpp,
+            'inv_hpp' => ($detail->inv_hpp > 0) ? $detail->inv_hpp : $itm_hpp,
             'inv_sub_total' => $itm_total,
             'inv_total' => (INT)$itm_total - (INT)$detail->inv_discount + (INT)$detail->inv_expedition,
             'keyword' => $search,
@@ -409,6 +409,32 @@ class SalesController extends Controller
         }
     }
     
+    public function updateHpp(Request $request, $id)
+    {
+        $valid = validator($request->only('inv_hpp'), [
+            'inv_hpp' => 'required'
+        ]);
+
+        if ($valid->fails()) {
+            return redirect()->back()->withErrors($valid)->withInput();
+        }
+        
+        $hpp = preg_replace('/[^0-9]/', '', $request->inv_hpp);
+        
+        DB::beginTransaction();
+        $update = Sales::where('id', $id)->update([
+            'inv_hpp' => $hpp
+        ]);
+        
+        if ($update){
+            DB::commit();
+            return redirect('sales-detail/'.$id)->with('success','HPP has been updated');
+        }else{
+            DB::rollback();
+            return redirect()->back()->with('danger', 'Failed to update HPP');
+        }
+    }
+
     public function publish($id)
     {
         $detail = DB::table('sales AS s')
@@ -567,6 +593,37 @@ class SalesController extends Controller
         }else{
             DB::rollback();
             return redirect()->back()->with('danger', 'Data failed to update, try again later');
+        }
+    }
+
+    public function unpay($id)
+    {
+        $detail =  DB::table('sales AS s')
+            ->leftJoin('customer AS c', 'c.id', '=', 's.inv_cust')
+            ->select('s.*', 'c.name AS cust_name')
+            ->where(['s.id' => $id])
+            ->first();
+
+        DB::beginTransaction();
+        $update = Sales::where('id', $id)->update([
+            'inv_payment' => 0,
+            'inv_payment_date' => null,
+            'inv_payment_type' => 'Transfer',
+            'inv_status_payment' => 'unpaid'
+        ]);
+
+        if ($update){
+            $msg = $this->usertanjoe()->name." Membatalkan Pembayaran (Unpaid)\n".
+                    "invoice Code : ".$detail->inv_code."\n".
+                    "Nama Customer : ".$detail->cust_name."\n".
+                    "Waktu Pembatalan : ".date('d M Y H:i:s')."\n".
+                    "https://www.app.tanjoecoffee.com/sales-detail/".$id;
+            $this->sendtele($msg);
+            DB::commit();
+            return redirect('sales-detail/'.$id)->with('success','Pembayaran telah dibatalkan');
+        }else{
+            DB::rollback();
+            return redirect()->back()->with('danger', 'Gagal membatalkan pembayaran');
         }
     }
 

@@ -130,6 +130,18 @@
                     </div>
                     <div class="d-flex title-bar py-2 border-top">
                         <div class="mr-auto text-left">
+                            <p class="mb-1 italic"><i>Total HPP</i>
+                            @if(Auth::user()->name == 'Hendra')
+                                <a href="javascript:void(0)" class="ml-1 text-dark btn-edit-hpp" data-value="{{$inv_hpp}}"><i class="fe fe-settings fs-12"></i></a>
+                            @endif
+                            </p>
+                        </div>
+                        <div class="ml-auto text-right">
+                            <p class="mb-0"><i>Rp {{str_replace(",", ".", number_format($inv_hpp))}}</i></p>
+                        </div>
+                    </div>
+                    <div class="d-flex title-bar py-2">
+                        <div class="mr-auto text-left">
                             <p class="mb-1 italic"><i>Estimasi Profit</i></p>
                         </div>
                         <div class="ml-auto text-right">
@@ -199,6 +211,9 @@
                             <div class="alert alert-dark"><i class="fe fe-info fs-25"></i><br><span class="fs-12">Tunjukan <b>Bukti Pembayaran</b> kepada finanace. Perubahan <b>Status Pembayaran</b> akan diproses oleh Finance</span></div>
                         @endif
                     @endif
+                    @if($invoice->inv_status_payment == 'paid' && Auth::user()->name == 'Hendra')
+                        <a href="{{url('sales-unpay/'.$invoice->id)}}" data-title="{{$invoice->inv_code}}" class="btn btn-outline-dark btn-block btn-unpay mt-2" id="btn-unpay" name="btn-unpay"><i class="fe fe-rotate-ccw"></i> Set to Unpaid</a>
+                    @endif
                 </div>
             </div>
             @endif
@@ -229,6 +244,16 @@ $(document).off('click', '.btn-publish').on('click', '.btn-publish', function(e)
 $(document).off('click', '.btn-draft').on('click', '.btn-draft', function(e){
     e.preventDefault();
     $('#modal-confirm .modal-body').html('You will drafting data <b>'+$(this).data('title')+'</b>?');
+    $('#modal-confirm .btn-action').attr('href', $(this).attr('href'));
+    var myModal = new bootstrap.Modal(document.getElementById('modal-confirm'), {
+        keyboard: false
+    });
+    myModal.show();
+});
+
+$(document).off('click', '.btn-unpay').on('click', '.btn-unpay', function(e){
+    e.preventDefault();
+    $('#modal-confirm .modal-body').html('Apakah anda yakin ingin membatalkan pembayaran untuk invoice <b>'+$(this).data('title')+'</b>?');
     $('#modal-confirm .btn-action').attr('href', $(this).attr('href'));
     var myModal = new bootstrap.Modal(document.getElementById('modal-confirm'), {
         keyboard: false
@@ -294,6 +319,59 @@ document.getElementById('copyurl').addEventListener('click', async () => {
         alert('Gagal menyalin URL.');
         console.error(err);
     }
+});
+</script>
+
+<!-- Modal Edit HPP -->
+<div class="modal fade" id="modal-edit-hpp" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content border-0 shadow">
+            <form action="{{url('sales-update-hpp/'.$invoice->id)}}" method="POST">
+                @csrf
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title font-weight-bold">Edit Nominal HPP</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body py-3">
+                    <div class="form-group mb-0">
+                        <label class="form-label text-muted">Nominal HPP Baru</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-right-0">Rp</span>
+                            <input type="text" class="form-control font-weight-bold" id="input-hpp" name="inv_hpp" required>
+                        </div>
+                        <small class="text-muted mt-2 d-block">* Mengubah ini akan mempengaruhi perhitungan estimasi profit.</small>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" class="btn btn-light btn-sm px-4" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-dark btn-sm px-4">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).on('click', '.btn-edit-hpp', function() {
+    var val = $(this).data('value');
+    $('#input-hpp').val(val);
+    
+    // Trigger inputmask if available
+    if(typeof Inputmask !== 'undefined') {
+        Inputmask({
+            alias: 'numeric',
+            groupSeparator: '.',
+            radixPoint: ',',
+            autoGroup: true,
+            digits: 0,
+            removeMaskOnSubmit: true,
+            prefix: ''
+        }).mask($('#input-hpp')[0]);
+    }
+
+    $('#modal-edit-hpp').modal('show');
 });
 </script>
 </x-layouts.app>
