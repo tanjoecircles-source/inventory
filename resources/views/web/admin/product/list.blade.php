@@ -86,32 +86,49 @@
         }
     });
     var page = 1;
-    $(window).scroll(function(){
-        var key = '{{$keyword}}';
-        if ($(window).scrollTop() >= $(document).height() - $(window).height() - 1){
-            page++;
-            loadMoreData(page, key);
+    var isLoading = false;
+    var isEndOfData = false;
+
+    $(window).on('scroll', function() {
+        if (isLoading || isEndOfData) return;
+
+        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 150) {
+            loadMore();
         }
     });
 
-    function loadMoreData(page, key){
+    function loadMore() {
+        if (isLoading || isEndOfData) return;
+        
+        page++;
+        var key = '{{$keyword}}';
+        
         $.ajax({
             url:'?page=' + page + '&keyword=' + key,
             type:'get',
             beforeSend: function(){
-                $('.ajax-load').show();
+                isLoading = true;
+                $('.ajax-load').fadeIn();
             }
         })
         .done(function(data){
-            if(data.html == ""){
-                $('.ajax-load').html("No more records found");
+            if(data.html.trim() == ""){
+                isEndOfData = true;
+                $('.ajax-load').html('<p class="text-muted fs-12 mt-2">— Akhir dari data —</p>');
                 return;     
             }
             $('.ajax-load').hide();
             $('#content-data').append(data.html);
+            isLoading = false;
+            
+            // Auto check if still more space to scroll (rare case)
+            if ($(window).height() >= $(document).height()) {
+                loadMore();
+            }
         })
-        .fail(function(jqXHR,ajaxOptions,thrownError){
-            $('.ajax-load').hide();
+        .fail(function(){
+            $('.ajax-load').html('<p class="text-danger fs-12 mt-2">Gagal memuat data, silakan coba lagi</p>');
+            isLoading = false;
         });
     }
 </script>
