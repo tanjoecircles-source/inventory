@@ -95,7 +95,7 @@
                                     <h6 class="mb-1 font-weight-bold text-dark">{{$spn->name}}</h6>
                                     <div class="d-flex align-items-center text-muted fs-12">
                                         <span class="mr-2"><i class="fe fe-calendar mr-1"></i>{{date('d M Y', strtotime($spn->date))}}</span>
-                                        <span class="badge badge-pill badge-{{$spn->is_non_investor == 'true' ? 'light' : 'primary-light'}}">
+                                        <span class="badge badge-pill badge-{{$spn->is_non_investor == 'true' ? 'light' : 'dark'}}">
                                             {{$spn->is_non_investor == 'true' ? 'Non Investor' : 'With Investor'}}
                                         </span>
                                     </div>
