@@ -370,6 +370,6 @@ class ShareProfitController extends Controller
         ];
 
         $pdf = Pdf::loadView('web.admin.share_profit.print', $data);
-        return $pdf->setPaper('a4', 'portrait')->download('Rekap-Share-Profit-'.$detail->periode.'.pdf');
+        return $pdf->setPaper('a4', 'portrait')->stream('Rekap-Share-Profit-'.$detail->periode.'.pdf');
     }
 }
