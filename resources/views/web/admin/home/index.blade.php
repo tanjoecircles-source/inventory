@@ -17,22 +17,59 @@
                         </div>
                     </div>
                 </div>
+                {{-- ===== MAIN TAB NAVIGATION ===== --}}
+                <style>
+                .main-tab-nav {
+                    display:flex; gap:10px;
+                    background:transparent;
+                    padding:8px 0 4px 0;
+                    margin-bottom:4px;
+                }
+                .main-tab-btn {
+                    flex:1; text-align:center; padding:11px 12px;
+                    border-radius:50px;
+                    border:2px solid #d0d9e8;
+                    background:#fff;
+                    font-size:13px; font-weight:700; color:#8a9bb5;
+                    cursor:pointer; transition:all 0.28s cubic-bezier(.4,0,.2,1);
+                    display:flex; align-items:center; justify-content:center; gap:7px;
+                    letter-spacing:0.2px;
+                    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+                }
+                .main-tab-btn i { font-size:15px; }
+                .main-tab-btn:hover:not(.active) {
+                    border-color:#a0b4d0; color:#5a7a9a;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                }
+                .main-tab-btn.active {
+                    background: #343a40;
+                    border-color: transparent;
+                    color:#fff;
+                    box-shadow: 0 6px 20px rgba(0,0,0,0.30), 0 2px 6px rgba(0,0,0,0.15);
+                    transform: translateY(-1px);
+                }
+                .main-tab-pane { display:none; }
+                .main-tab-pane.active { display:block; }
+                </style>
+
+                <div class="main-tab-nav" id="mainTabNav">
+                    <button class="main-tab-btn active" data-target="tab-produk" id="btn-tab-produk">
+                        <i class="fe fe-box"></i> Coffee Beans
+                    </button>
+                    <button class="main-tab-btn" data-target="tab-toko" id="btn-tab-toko">
+                        <i class="fe fe-zap"></i> Coffee Shop
+                    </button>
+                </div>
+
+                {{-- ===== TAB 1: PRODUK ===== --}}
+                <div class="main-tab-pane active" id="tab-produk">
                 <div class="row px-2">
                     <div class="col-12 p-2">
-                            <h5 class="text-left mt-2 mb-0">Roasted & Green Bean</h5>
+                            <h5 class="text-left mt-2 mb-0">Coffee Beans Features</h5>
                     </div>
                 </div>
                 <div class="row px-2">
-                    {{-- <div class="col-3 p-2">
-                        <a href="{{url('logistic-list')}}">
-                        <div class="card mb-0">
-                            <div class="card-body text-center p-2">
-                                <span class="fs-30 icon-muted"><i class="fe fe-truck icon-dropshadow-info text-primary"></i></span>
-                            </div>
-                        </div>
-                        <p class="text-center mt-2 fs-13 font-weight-semibold">Logistik</p>
-                        </a>
-                    </div> --}}
+                    {{-- Laporan --}}
                     <div class="col-3 p-2">
                         <a href="{{url('report')}}">
                         <div class="card mb-0">
@@ -193,12 +230,16 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>                    
+                        </div>
                     </div>
                 </div>
+                </div>{{-- end tab-produk --}}
+
+                {{-- ===== TAB 2: TOKO KOPI ===== --}}
+                <div class="main-tab-pane" id="tab-toko">
                 <div class="row px-2">
                     <div class="col-12 p-2">
-                            <h5 class="text-left mt-2 mb-0">Toko Kopi</h5>
+                            <h5 class="text-left mt-2 mb-0">Coffee Shop Features</h5>
                     </div>
                 </div>
                 <div class="row px-2">
@@ -252,7 +293,6 @@
                         <p class="text-center mt-2 fs-13 font-weight-semibold">Fee Barista</p>
                         </a>
                     </div>
-                    
                     <div class="col-4 p-2">
                         <a href="{{url('store-recap-list')}}">
                         <div class="card mb-0">
@@ -270,12 +310,25 @@
                     </div>
                 </div>
                 <iframe src="https://calendar.google.com/calendar/embed?src=2ee29115c7b770944890e774b4a1bf7b5b288c627a0e7212c72b41600199fad4%40group.calendar.google.com&ctz=Asia%2FJakarta" style="border: 0" width="100%" height="620" frameborder="0" scrolling="no"></iframe>
-                <div class="row py-5">&nbsp;</div>  
+                </div>{{-- end tab-toko --}}
+
+                <div class="row py-5">&nbsp;</div>
+
             </div>
         </div>
     </div>
 
     <script>
+    // Main Tab Switcher
+    document.querySelectorAll('.main-tab-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.main-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.main-tab-pane').forEach(p => p.classList.remove('active'));
+            this.classList.add('active');
+            document.getElementById(this.dataset.target).classList.add('active');
+        });
+    });
+
     $(document).off('click', '.btn-confirm').on('click', '.btn-confirm', function(e){
         e.preventDefault();
         $('#modal-confirm .modal-body').html('You will delete data <b>'+$(this).data('title')+'</b>?');
