@@ -32,7 +32,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Rp</span>
                                     </div>
-                                    <input type="text" name="amount" class="form-control format-angka" placeholder="0" required>
+                                    <input type="text" name="amount" class="form-control masked" placeholder="0" required>
                                 </div>
                             </div>
                             
@@ -43,4 +43,16 @@
             </div>
         </div>
     </div>
+    <script>
+    $(document).ready(function () {
+        $('.masked').inputmask({
+            rightAlign:false,
+            radixPoint: ',',
+            groupSeparator: ".",
+            alias: "numeric",
+            autoGroup: true,
+            digits: 0
+        });
+    });
+    </script>
 </x-layouts.app>
