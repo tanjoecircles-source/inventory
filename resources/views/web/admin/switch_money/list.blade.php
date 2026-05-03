@@ -51,8 +51,7 @@
                 <div id="content-data">
                     @if($contents_count == 0)
                         <div class="py-2 text-center">
-                            <img src="{{url('storage/no_data.png')}}" style="width: 120px; opacity: 0.5;">
-                            <p class="text-muted mt-3">Tidak ada data ditemukan</p>
+                            <p class="text-muted mt-3">Tidak ada data</p>
                         </div>
                     @endif
                     @include('web.admin.switch_money.paginate')
