@@ -56,6 +56,7 @@ Route::middleware(['auth:web'])->group(function(){
     Route::get('news-detail/{app_id}', 'HomeController@news_detail')->name('home-news');
     Route::get('menu', 'HomeController@menu');
     Route::get('map-storage', 'HomeController@mapstorage');
+    Route::get('recapitulation', 'HomeController@recapitulation');
     Route::get('menu-recipe', 'HomeController@menurecipe');
     Route::get('logout', 'AuthController@logout');
     Route::get('profile-reminder', 'ProfileController@reminder')->name('profile-reminder');
@@ -406,6 +407,24 @@ Route::middleware(['auth:web'])->group(function(){
     Route::get('report-store-income', 'ReportController@storeIncome')->name('report-store-income');
     Route::post('report-period', 'ReportController@setPeriod')->name('report-set-period');
     Route::get('report-summary', 'ReportController@summary')->name('report-summary');
+    Route::get('report-finance-mandiri', 'ReportController@financeMandiri');
+    Route::get('report-finance-bsi', 'ReportController@financeBsi');
+
+    // Switch Money Module
+    Route::get('switch-money-list', 'SwitchMoneyController@list');
+    Route::get('switch-money-add', 'SwitchMoneyController@add');
+    Route::post('switch-money-create', 'SwitchMoneyController@create');
+    Route::get('switch-money-detail/{id}', 'SwitchMoneyController@detail');
+    Route::get('switch-money-edit/{id}', 'SwitchMoneyController@edit');
+    Route::post('switch-money-update/{id}', 'SwitchMoneyController@update');
+    Route::get('switch-money-delete/{id}', 'SwitchMoneyController@delete');
+    Route::get('switch-money-publish/{id}', 'SwitchMoneyController@publish');
+    Route::get('switch-money-item-add/{id}', 'SwitchMoneyController@itemAdd');
+    Route::get('switch-money-item-deduction-add/{id}', 'SwitchMoneyController@itemDeductionAdd');
+    Route::post('switch-money-item-create/{id}', 'SwitchMoneyController@itemCreate');
+    Route::get('switch-money-item-delete/{id}', 'SwitchMoneyController@itemDelete');
+
+
     Route::get('report-store-recap', 'ReportController@recap');
     Route::get('report-profit-share', 'ReportController@profitShare');
     Route::get('report-product-recap', 'ReportProductController@recapQty')->name('report-product-recap');

@@ -112,4 +112,9 @@ class HomeController extends Controller
         $data = [];
         return view('web.admin.home.menurecipe', $data);
     }
+
+    public function recapitulation(){
+        if (Gate::denies('isAdmin')) return view('error_authorize');
+        return view('web.admin.home.recapitulation');
+    }
 }

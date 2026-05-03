@@ -911,4 +911,63 @@ class ReportController extends Controller
         }
     }
     
+    public function financeMandiri(Request $request)
+    {
+        $report_period = Setting::first();
+        $contents = DB::table('user_switch_money AS usm')
+                    ->join('switch_money AS sm', 'sm.id', '=', 'usm.switch_money_id')
+                    ->leftJoin('vendor_bank AS fb', 'fb.id', '=', 'sm.from_bank_id')
+                    ->leftJoin('vendor_bank AS tb', 'tb.id', '=', 'sm.to_bank_id')
+                    ->select('usm.*', 'fb.name AS from_bank_name', 'tb.name AS to_bank_name', 'usm.user_name AS user_name')
+                    ->where([
+                        ['usm.date', '>=', $report_period->report_date_start],
+                        ['usm.date', '<=', $report_period->report_date_end],
+                        'sm.status' => 'Published'
+                    ])
+                    ->where(function($query){
+                        $query->where('fb.name', 'like', '%Mandiri%')
+                              ->orWhere('tb.name', 'like', '%Mandiri%');
+                    })
+                    ->orderBy('usm.date', 'DESC')
+                    ->get();
+        
+        $data = [
+            'title' => 'Mandiri to Seabank',
+            'contents' => $contents,
+            'report_date_start' => $report_period->report_date_start,
+            'report_date_end' => $report_period->report_date_end,
+        ];
+
+        return view('web.admin.report.finance', $data);
+    }
+
+    public function financeBsi(Request $request)
+    {
+        $report_period = Setting::first();
+        $contents = DB::table('user_switch_money AS usm')
+                    ->join('switch_money AS sm', 'sm.id', '=', 'usm.switch_money_id')
+                    ->leftJoin('vendor_bank AS fb', 'fb.id', '=', 'sm.from_bank_id')
+                    ->leftJoin('vendor_bank AS tb', 'tb.id', '=', 'sm.to_bank_id')
+                    ->select('usm.*', 'fb.name AS from_bank_name', 'tb.name AS to_bank_name', 'usm.user_name AS user_name')
+                    ->where([
+                        ['usm.date', '>=', $report_period->report_date_start],
+                        ['usm.date', '<=', $report_period->report_date_end],
+                        'sm.status' => 'Published'
+                    ])
+                    ->where(function($query){
+                        $query->where('fb.name', 'like', '%BSI%')
+                              ->orWhere('tb.name', 'like', '%BSI%');
+                    })
+                    ->orderBy('usm.date', 'DESC')
+                    ->get();
+        
+        $data = [
+            'title' => 'BSI to Seabank',
+            'contents' => $contents,
+            'report_date_start' => $report_period->report_date_start,
+            'report_date_end' => $report_period->report_date_end,
+        ];
+
+        return view('web.admin.report.finance', $data);
+    }
 }

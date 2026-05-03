@@ -1,9 +1,9 @@
-    <x-layouts.app>
-    <x-header-white-3column back="&nbsp;">
-        @slot('notif')
-        <x-notification notifstyle="text-dark"></x-notification>
-        @endslot
-    </x-header-white-3column>
+<x-layouts.app>
+<x-header-white-3column back="&nbsp;">
+    @slot('notif')
+    <x-notification notifstyle="text-dark"></x-notification>
+    @endslot
+</x-header-white-3column>
     <div class="container">
         <div class="row">
             <div class="col-sm-12 col-md-12 col-lg-8 mx-auto">     
@@ -131,25 +131,27 @@
                         </a>
                     </div>
                     <div class="col-3 p-2">
-                        <a href="{{url('bean-recap-list')}}">
+                        <a href="{{url('recapitulation')}}">
                         <div class="card mb-0">
                             <div class="card-body text-center p-2">
-                                <span class="fs-30 icon-muted"><i class="fe fe-calendar icon-dropshadow-info text-primary"></i></span>
+                                <span class="fs-30 icon-muted"><i class="fe fe-list icon-dropshadow-info text-primary"></i></span>
                             </div>
                         </div>
-                        <p class="text-center mt-2 fs-13 font-weight-semibold">Rekap</p>
+                        <p class="text-center mt-2 fs-13 font-weight-semibold">Rekapitulasi</p>
                         </a>
                     </div>
+
                     <div class="col-3 p-2">
-                        <a href="{{url('share-profit-list')}}">
+                        <a href="{{url('switch-money-list')}}">
                         <div class="card mb-0">
                             <div class="card-body text-center p-2">
-                                <span class="fs-30 icon-muted"><i class="fe fe-clipboard icon-dropshadow-info text-primary"></i></span>
+                                <span class="fs-30 icon-muted"><i class="fe fe-repeat icon-dropshadow-info text-primary"></i></span>
                             </div>
                         </div>
-                        <p class="text-center mt-2 fs-13 font-weight-semibold">Bagi Hasil</p>
+                        <p class="text-center mt-2 fs-13 font-weight-semibold">Pindah Dana</p>
                         </a>
                     </div>
+
                 </div>
                 <div class="row px-2">
                     <div class="col-12 p-2">
