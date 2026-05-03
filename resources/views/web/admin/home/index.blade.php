@@ -22,11 +22,11 @@
                 .main-tab-nav {
                     display:flex; gap:10px;
                     background:transparent;
-                    padding:8px 0 4px 0;
+                    padding:8px 4px;
                     margin-bottom:4px;
                 }
                 .main-tab-btn {
-                    flex:1; text-align:center; padding:11px 12px;
+                    flex:1; text-align:center; padding:8px 8px;
                     border-radius:50px;
                     border:2px solid #d0d9e8;
                     background:#fff;
@@ -45,7 +45,6 @@
                     background: #343a40;
                     border-color: transparent;
                     color:#fff;
-                    box-shadow: 0 6px 20px rgba(0,0,0,0.30), 0 2px 6px rgba(0,0,0,0.15);
                     transform: translateY(-1px);
                 }
                 .main-tab-pane { display:none; }
