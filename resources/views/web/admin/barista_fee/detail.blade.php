@@ -11,7 +11,7 @@
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-8 mx-auto">
             <div class="card no-border shadow-none custom-square mt-4 mb-3">
-                <div class="card-body px-2 py-4">
+                <div class="card-body px-2 py-2">
                     <div class="row">
                         <div class="col-6">
                             <div class="form-group">
@@ -22,9 +22,9 @@
                                 <p class="px-2 mb-2">Total Potongan</p>
                                 <h6 class="px-2 m-0 font-weight-bold">Rp {{str_replace(",", ".", number_format($detail->total_potongan))}}</h6>
                             </div>
-                            <div class="form-group pt-3">
+                            <div class="form-group mb-1">
                                 <a href="{{(url('barista-fee-edit/'.$detail->id))}}" class="btn btn-outline-dark btn-sm mr-2"><i class="fe fe-edit fs-16"></i> Ubah</a>
-                            <a href="{{(url('barista-fee-delete/'.$detail->id))}}" data-title="{{$detail->periode}}" class="btn btn-outline-danger btn-sm btn-confirm"><i class="fe fe-trash fs-16"></i> Hapus</a>
+                                <a href="{{(url('barista-fee-delete/'.$detail->id))}}" data-title="{{$detail->periode}}" class="btn btn-outline-danger btn-sm btn-confirm"><i class="fe fe-trash fs-16"></i> Hapus</a>
                             </div>
                         </div>
                         <div class="col-6">
@@ -53,7 +53,7 @@
                     @else
                         @foreach ($contents as $content)
                             <div class="d-flex p-4 border-bottom align-items-center animate__animated animate__fadeIn list-item-custom">
-                                <div class="avatar-initial mr-3">
+                                <div class="avatar-initial  mr-3" style="background: linear-gradient(135deg, #E62129 0%, #E62129  100%);">
                                     {{ strtoupper(substr($content->employee, 0, 1)) }}
                                 </div>
                                 <div class="flex-grow-1 text-left">
@@ -72,10 +72,10 @@
                                     </div>
                                 </div>
                                 <div class="text-right">
-                                    <h5 class="font-weight-bold mb-0 text-success">
+                                    <h5 class="font-weight-bold mb-0">
                                         Rp {{str_replace(",", ".", number_format($content->total))}}
                                     </h5>
-                                    <a href="{{url('barista-fee-share-delete/'.$content->id)}}" data-title="{{$content->employee}}" class="text-danger btn-confirm mt-2 d-inline-block p-1" style="position: relative; z-index: 2;">
+                                    <a href="{{url('barista-fee-share-delete/'.$content->id)}}" data-title="{{$content->employee}}" class="btn btn-sm btn-outline-dark btn-confirm mt-2 d-inline-block py-0 px-1" style="position: relative; z-index: 2;">
                                         <i class="fe fe-trash-2 fs-14"></i>
                                     </a>
                                 </div>
