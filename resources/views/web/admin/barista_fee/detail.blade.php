@@ -51,28 +51,36 @@
                             <p class="mb-1 text-center">Tidak ada data</p>
                         </div>
                     @else
-                    <div class="card-body px-0 py-2">
-                        <table class="table card-table table-vcenter text-nowrap px-0 mb-0">
-                            <tr>
-                                <td class="text-left font-weight-bold">Barista</td>
-                                <td class="text-right font-weight-bold text-info">Subtotal</td>
-                                <td class="text-right font-weight-bold text-danger">Potongan</td>
-                                <td class="text-right font-weight-bold text-success">Total</td>
-                                <td class="text-right font-weight-bold">Aksi</td>
-                            </tr>
-                            @foreach ($contents as $content)
-                                    <tr>
-                                        <td class="text-left"><a href="{{url('barista-fee-person/'.$content->id.'?mid='.$content->bf_id)}}"><u>{{$content->employee}}</u></a></td>
-                                        <td class="text-right text-info">Rp {{str_replace(",", ".", number_format($content->sub_total))}}</td>
-                                        <td class="text-right text-danger">Rp {{str_replace(",", ".", number_format($content->potongan))}}</td>
-                                        <td class="text-right text-success font-weight-bold">Rp {{str_replace(",", ".", number_format($content->total))}}</td>
-                                        <td class="text-right">
-                                            <a href="{{url('barista-fee-share-delete/'.$content->id)}}" data-title="{{$content->employee}}" class="text-danger btn-confirm"><i class="fe fe-trash"></i></a>
-                                        </td>
-                                    </tr>
-                            @endforeach
-                        </table>
-                    </div>
+                        @foreach ($contents as $content)
+                            <div class="d-flex p-4 border-bottom align-items-center animate__animated animate__fadeIn list-item-custom">
+                                <div class="avatar-initial mr-3">
+                                    {{ strtoupper(substr($content->employee, 0, 1)) }}
+                                </div>
+                                <div class="flex-grow-1 text-left">
+                                    <h6 class="mb-1 font-weight-bold">
+                                        <a href="{{url('barista-fee-person/'.$content->id.'?mid='.$content->bf_id)}}" class="text-dark">
+                                            {{$content->employee}}
+                                        </a>
+                                    </h6>
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge badge-soft-info fs-10 mr-2 py-1 px-2 rounded-pill">
+                                            <i class="fe fe-trending-up mr-1"></i> Rp{{str_replace(",", ".", number_format($content->sub_total))}}
+                                        </span>
+                                        <span class="badge badge-soft-danger fs-10 py-1 px-2 rounded-pill">
+                                            <i class="fe fe-trending-down mr-1"></i> Rp{{str_replace(",", ".", number_format($content->potongan))}}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <h5 class="font-weight-bold mb-0 text-success">
+                                        Rp {{str_replace(",", ".", number_format($content->total))}}
+                                    </h5>
+                                    <a href="{{url('barista-fee-share-delete/'.$content->id)}}" data-title="{{$content->employee}}" class="text-danger btn-confirm mt-2 d-inline-block p-1">
+                                        <i class="fe fe-trash-2 fs-14"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        @endforeach
                     @endif
                 </div>
             </div>
@@ -82,6 +90,37 @@
         </div>
     </div>
 </div>
+<style>
+    .list-item-custom {
+        transition: all 0.2s ease;
+        position: relative;
+    }
+    .list-item-custom:hover {
+        background-color: #f8f9fa;
+    }
+    .avatar-initial {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #6c5ff7 0%, #424e79 100%);
+        color: white;
+        box-shadow: 0 4px 6px rgba(108, 95, 247, 0.2);
+    }
+    .badge-soft-info {
+        background-color: rgba(1, 184, 255, 0.1);
+        color: #01b8ff;
+        border: none;
+    }
+    .badge-soft-danger {
+        background-color: rgba(255, 91, 91, 0.1);
+        color: #ff5b5b;
+        border: none;
+    }
+</style>
 <script>
 $(document).off('click', '.btn-confirm').on('click', '.btn-confirm', function(e){
     e.preventDefault();

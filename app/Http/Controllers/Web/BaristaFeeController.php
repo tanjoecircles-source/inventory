@@ -24,20 +24,15 @@ class BaristaFeeController extends Controller
         $contents = DB::table('barista_fee AS sp')
                     ->leftJoin('periode AS p', 'p.id', '=', 'sp.periode_id')
                     ->select('sp.*', 'p.name AS periode')
-                    ->whereRaw('1 = 1')
-                    ->where(function($contents) use ($search){
-                        $contents->where('p.name', 'like', '%'.$search.'%');
+                    ->where(function($query) use ($search){
+                        if ($search) {
+                            $query->where('p.name', 'like', '%'.$search.'%');
+                        }
                     })
                     ->orderBy('sp.id', 'DESC')
                     ->paginate($limit);
 
-        $counts = DB::table('barista_fee AS sp')
-                ->leftJoin('periode AS p', 'p.id', '=', 'sp.periode_id')
-                ->where(function($contents) use ($search){
-                    $contents->where('p.name', 'like', '%'.$search.'%');
-                })
-                ->orderBy('sp.id', 'DESC')
-                ->count();
+        $counts = $contents->total();
 
         if(!empty($contents)){
             foreach ($contents as $key => $value) {
@@ -363,6 +358,7 @@ class BaristaFeeController extends Controller
             'sub_total' => str_replace('.', "", $data['sub_total']),
             'potongan' => str_replace('.', "", $data['potongan']),
             'bonus' => $bonus,
+            'bonus_desc' => $data['bonus_desc'],
             'total' => str_replace('.', "", $data['total']),
             'desc' => $data['desc'],
             'payment_status' => 'paid',

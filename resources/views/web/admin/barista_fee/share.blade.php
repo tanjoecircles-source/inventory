@@ -68,6 +68,11 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="form-label">Keterangan Bonus</label>
+                        <textarea class="form-control @error('bonus_desc') is-invalid @enderror" id="bonus_desc" name="bonus_desc"></textarea>
+                        @error('bonus_desc')<div class="text-danger">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="form-group">
                         <label class="form-label">Potongan Profit</label>
                         <div class="input-icon mb-3">
                             <span class="input-icon-addon fs-15">Rp</span>

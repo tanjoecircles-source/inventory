@@ -58,20 +58,34 @@
                         </div>
                     </div>
                 </div>
-                <div class="ajax-load text-center" style="">
-                    <p><i class="fa fa-circle-o-notch fa-spin fs-14"></i> Proses menampilkan ...</p>
+                <div class="ajax-load text-center py-4" style="display: none;">
+                    <div class="spinner-border text-primary spinner-border-sm mr-2" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <span class="text-muted font-weight-semibold">Memuat data...</span>
+                </div>
+                <div id="no-more-data" class="text-center py-4 text-muted" style="display: none;">
+                    <i class="fe fe-check-circle mr-1"></i> Semua data telah ditampilkan
                 </div>
             </div>
         </div>
     </div>
     <script>
+        var page = 1;
+        var isLoading = false;
+        var stopLoading = false;
+        var totalData = parseInt("{{$contents_count}}");
+        var limit = parseInt("{{$limit}}");
+
         $(document).ready(function () {
-            count = "{{$contents_count}}"
-            limit = "{{$limit}}"
-            if(count <= 10){
-                $('.ajax-load').hide();
+            if(totalData <= limit){
+                stopLoading = true;
+                if(totalData > 0) {
+                    $('#no-more-data').show();
+                }
             }
-            alert_success = $("#alert_success").val();
+
+            let alert_success = $("#alert_success").val();
             if(alert_success != undefined){
                 notif({
                     msg: alert_success,
@@ -81,10 +95,12 @@
             }
         });
         
-        var page = 1;
         $(window).scroll(function(){
+            if (stopLoading || isLoading) return;
+
             var key = '{{$keyword}}';
-            if ($(window).scrollTop() >= $(document).height() - $(window).height() - 1){
+            // Check if user is near bottom (200px buffer)
+            if ($(window).scrollTop() + $(window).height() >= $(document).height() - 200){
                 page++;
                 loadMoreData(page, key);
             }
@@ -95,19 +111,37 @@
                 url:'?page=' + page + '&keyword=' + key,
                 type:'get',
                 beforeSend: function(){
+                    isLoading = true;
                     $('.ajax-load').show();
+                    $('#no-more-data').hide();
                 }
             })
             .done(function(data){
-                if(data.html == ""){
-                    $('.ajax-load').html("No more records found");
+                isLoading = false;
+                $('.ajax-load').hide();
+
+                if(data.html == "" || data.html.trim() == ""){
+                    stopLoading = true;
+                    if($('#content-data .list-item-animate').length > 0) {
+                        $('#no-more-data').show();
+                    }
                     return;     
                 }
-                $('.ajax-load').hide();
+                
                 $('#content-data').append(data.html);
+                
+                // Check if we've reached the total data
+                // Need to see how many items are in the view (counting by class)
+                var currentCount = $('#content-data > a').length;
+                if(currentCount >= totalData){
+                    stopLoading = true;
+                    $('#no-more-data').show();
+                }
             })
             .fail(function(jqXHR,ajaxOptions,thrownError){
-                $('.ajax-load').html("server error");
+                isLoading = false;
+                $('.ajax-load').hide();
+                console.error("Failed to load data:", thrownError);
             });
         }
     </script>

@@ -90,8 +90,12 @@
                 <td width="15%" class="text-right">Rp {{str_replace(",", ".", number_format($person->fee_long))}}</td>
             </tr>
             <tr>
+                <td width="45%">Bonus<br><span class="text-small">{{$person->bonus_desc}}</span></td>
+                <td width="15%" class="text-right">Rp {{str_replace(",", ".", number_format($person->bonus))}}</td>
+            </tr>
+            <tr>
                 <td width="45%"><b>Total Penghasilan</b></td>
-                <td width="15%" class="text-right"><b>Rp {{str_replace(",", ".", number_format($person->sub_total))}}</b></td>
+                <td width="15%" class="text-right"><b>Rp {{str_replace(",", ".", number_format((INT)$person->sub_total + (INT)$person->bonus))}}</b></td>
             </tr>
         </table>
         <h3>Potongan</h3>
@@ -109,7 +113,7 @@
         <table class="table">
             <tr>
                 <td width="45%">Total Penghasilan</td>
-                <td width="15%" class="text-right">Rp {{str_replace(",", ".", number_format($person->sub_total))}}</td>
+                <td width="15%" class="text-right">Rp {{str_replace(",", ".", number_format((INT)$person->sub_total + (INT)$person->bonus))}}</td>
             </tr>
             <tr>
                 <td width="45%">Total Potongan</td>

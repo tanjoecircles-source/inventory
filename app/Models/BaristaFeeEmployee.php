@@ -30,6 +30,7 @@ class BaristaFeeEmployee extends Model
         'sub_total',
         'potongan',
         'bonus',
+        'bonus_desc',
         'total',
         'desc',
         'payment_status',

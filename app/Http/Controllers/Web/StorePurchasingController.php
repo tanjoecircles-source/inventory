@@ -21,24 +21,16 @@ class StorePurchasingController extends Controller
         $contents = DB::table('store_purchasing AS s')
                     ->leftJoin('vendor AS c', 'c.id', '=', 's.pur_vendor')
                     ->select('s.*', 'c.name AS vendor_name')
-                    ->whereRaw('1 = 1')
-                    ->where(function($contents) use ($search){
-                        $contents->where('s.pur_code', 'like', '%'.$search.'%')
-                                ->orWhere('c.name', 'like', '%'.$search.'%');
+                    ->where(function($query) use ($search){
+                        if ($search) {
+                            $query->where('s.pur_code', 'like', '%'.$search.'%')
+                                  ->orWhere('c.name', 'like', '%'.$search.'%');
+                        }
                     })
                     ->orderBy('s.pur_date', 'DESC')
                     ->paginate($limit);
 
-        $counts = DB::table('store_purchasing AS s')
-                    ->leftJoin('vendor AS c', 'c.id', '=', 's.pur_vendor')
-                    ->select('s.pur_id')
-                    ->whereRaw('1 = 1')
-                    ->where(function($contents) use ($search){
-                        $contents->where('s.pur_code', 'like', '%'.$search.'%')
-                                ->orWhere('c.name', 'like', '%'.$search.'%');
-                    })
-                ->orderBy('s.pur_date', 'DESC')
-                ->count();
+        $counts = $contents->total();
 
         if(!empty($contents)){
             foreach ($contents as $key => $value) {

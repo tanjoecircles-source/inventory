@@ -45,8 +45,8 @@
                         <p class="px-2 mb-2">Total Upah Shift</p>
                         <p class="px-2 ml-auto font-weight-bold">Rp {{str_replace(",", ".", number_format($person->sub_total))}}</p>
                     </div>
-                    <div class="d-flex">
-                        <p class="px-2 mb-2">Bonus</p>
+                    <div class="d-flex mb-2 border-bottom">
+                        <p class="px-2 mb-2">Bonus<br><span class="fs-11">{{$person->bonus_desc}}</span></p>
                         <p class="px-2 ml-auto font-weight-bold text-success">Rp {{str_replace(",", ".", number_format($person->bonus))}}</p>
                     </div>
                 </div>
