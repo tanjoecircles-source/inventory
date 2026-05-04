@@ -172,7 +172,7 @@
                 $sum_net += $net_diterima;
             @endphp
             <tr>
-                <td><strong>{{ $content->employee }}</strong></td>
+                <td><strong>{{ $content->employee }} ({{ round($percent * 100, 2) }}%)</strong></td>
                 <td class="text-right text-success">+ {{ number_format($gross_share, 0, ',', '.') }}</td>
                 <td class="text-right text-error">- {{ number_format($with_investor_share, 0, ',', '.') }}</td>
                 <td class="text-right text-error">- {{ $tabungan > 0 ? number_format($tabungan, 0, ',', '.') : '0' }}</td>
