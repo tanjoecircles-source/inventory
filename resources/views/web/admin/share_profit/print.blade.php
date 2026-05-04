@@ -147,17 +147,29 @@
         <tbody>
             @php 
                 $gross_revenue = ($bean_recap->profit ?? 0) + $detail->profit_toko;
-                $employee_count = count($contents);
-                $with_investor_share = $employee_count > 0 ? (isset($total_spending) ? $total_spending : 0) / $employee_count : 0;
+                $total_cost = isset($total_spending) ? $total_spending : 0;
+                
+                $sum_gross = 0;
+                $sum_with_investor = 0;
+                $sum_tabungan = 0;
+                $sum_net = 0;
             @endphp
             @foreach($contents as $content)
             @php
                 $percent = $detail->total_profit > 0 ? $content->sub_total / $detail->total_profit : 0;
                 $gross_share = $gross_revenue * $percent;
+                $with_investor_share = $total_cost * $percent;
                 $tabungan = $content->tabungan_credit > 0 ? $content->tabungan_credit : 0;
                 
-                // Recalculate Net Diterima dynamically based on the updated logic
+                // Net Diterima is proportional Gross minus proportional Cost minus Tabungan
+                // This perfectly matches ($content->sub_total - tabungan), which is $content->total
                 $net_diterima = $gross_share - $with_investor_share - $tabungan;
+
+                
+                $sum_gross += $gross_share;
+                $sum_with_investor += $with_investor_share;
+                $sum_tabungan += $tabungan;
+                $sum_net += $net_diterima;
             @endphp
             <tr>
                 <td><strong>{{ $content->employee }}</strong></td>
@@ -167,6 +179,13 @@
                 <td class="text-right font-bold">Rp {{ number_format($net_diterima, 0, ',', '.') }}</td>
             </tr>
             @endforeach
+            <tr class="total-row">
+                <td>Total</td>
+                <td class="text-right text-success">+ {{ number_format($sum_gross, 0, ',', '.') }}</td>
+                <td class="text-right text-error">- {{ number_format($sum_with_investor, 0, ',', '.') }}</td>
+                <td class="text-right text-error">- {{ number_format($sum_tabungan, 0, ',', '.') }}</td>
+                <td class="text-right font-bold">Rp {{ number_format($sum_net, 0, ',', '.') }}</td>
+            </tr>
         </tbody>
     </table>
 
