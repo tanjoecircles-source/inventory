@@ -22,7 +22,8 @@
         
         .total-row { background-color: #fafafa; font-weight: bold; }
         .total-row td { border-top: 1px solid #333; }
-        
+        .text-success { color: #28a745; }
+        .text-error { color: #dc3545; }
         .summary-box { background-color: #E62129; color: #fff; padding: 8px 12px; margin-top: 10px; display: table; width: 100%; box-sizing: border-box; }
         .summary-box .label { font-size: 8pt; opacity: 0.8; margin-bottom: 2px; }
         .summary-box .value { font-size: 13pt; font-weight: bold; }
@@ -52,7 +53,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>Total Pemasukan</th>
+                    <th>[+] Total Pemasukan</th>
                     <th class="text-right">Nominal (IDR)</th>
                 </tr>
             </thead>
@@ -66,8 +67,8 @@
                     <td class="text-right">{{ number_format($detail->profit_toko, 0, ',', '.') }}</td>
                 </tr>
                 <tr class="total-row">
-                    <td>Gross Revenue</td>
-                    <td class="text-right">{{ number_format(($bean_recap->profit ?? 0) + $detail->profit_toko, 0, ',', '.') }}</td>
+                    <td class="text-success">Gross Revenue</td>
+                    <td class="text-right text-success">{{ number_format(($bean_recap->profit ?? 0) + $detail->profit_toko, 0, ',', '.') }}</td>
                 </tr>
             </tbody>
         </table>
@@ -76,7 +77,7 @@
     <table>
         <thead>
             <tr>
-                <th>Pengeluaran with investor</th>
+                <th>[-] Non Operational Cost (With Investor)</th>
                 <th class="text-right">Nominal (IDR)</th>
             </tr>
         </thead>
@@ -90,8 +91,8 @@
             </tr>
             @endforeach
             <tr class="total-row">
-                <td>Total Operational Cost</td>
-                <td class="text-right">{{ number_format($total_spending, 0, ',', '.') }}</td>
+                <td class="text-error">Total Cost</td>
+                <td class="text-right text-error">{{ number_format($total_spending, 0, ',', '.') }}</td>
             </tr>
         </tbody>
     </table>
@@ -100,7 +101,7 @@
     <table>
         <thead>
             <tr>
-                <th>Potongan non investor</th>
+                <th>[-] Investment / Saving (Non Investor)</th>
                 <th class="text-right">Nominal (IDR)</th>
             </tr>
         </thead>
@@ -122,8 +123,8 @@
                 @php $total_spending_non_investor = $detail->potongan_non_investor; @endphp
             @endif
             <tr class="total-row">
-                <td>Total Deduction</td>
-                <td class="text-right">{{ number_format($total_spending_non_investor, 0, ',', '.') }}</td>
+                <td class="text-error">Total Investment / Saving</td>
+                <td class="text-right text-error">{{ number_format($total_spending_non_investor, 0, ',', '.') }}</td>
             </tr>
         </tbody>
     </table>
@@ -136,19 +137,34 @@
     <table class="employee-table">
         <thead>
             <tr>
-                <th>Rincian Pembagian Laba</th>
-                <th class="text-right">Basis Share</th>
-                <th class="text-right">Tabungan</th>
+                <th>Rincian Pembagian</th>
+                <th class="text-right">Gross Revenue</th>
+                <th class="text-right">Non Operational Cost</th>
+                <th class="text-right">Investment / Saving</th>
                 <th class="text-right">Net Diterima</th>
             </tr>
         </thead>
         <tbody>
+            @php 
+                $gross_revenue = ($bean_recap->profit ?? 0) + $detail->profit_toko;
+                $employee_count = count($contents);
+                $with_investor_share = $employee_count > 0 ? (isset($total_spending) ? $total_spending : 0) / $employee_count : 0;
+            @endphp
             @foreach($contents as $content)
+            @php
+                $percent = $detail->total_profit > 0 ? $content->sub_total / $detail->total_profit : 0;
+                $gross_share = $gross_revenue * $percent;
+                $tabungan = $content->tabungan_credit > 0 ? $content->tabungan_credit : 0;
+                
+                // Recalculate Net Diterima dynamically based on the updated logic
+                $net_diterima = $gross_share - $with_investor_share - $tabungan;
+            @endphp
             <tr>
                 <td><strong>{{ $content->employee }}</strong></td>
-                <td class="text-right">{{ $content->tabungan_credit > 0 ? number_format($content->sub_total - ($total_spending_non_investor / 4), 0, ',', '.') : '-' }}</td>
-                <td class="text-right">{{ $content->tabungan_credit > 0 ? number_format($content->tabungan_credit, 0, ',', '.') : '-' }}</td>
-                <td class="text-right font-bold">Rp {{ number_format($content->total, 0, ',', '.') }}</td>
+                <td class="text-right text-success">+ {{ number_format($gross_share, 0, ',', '.') }}</td>
+                <td class="text-right text-error">- {{ number_format($with_investor_share, 0, ',', '.') }}</td>
+                <td class="text-right text-error">- {{ $tabungan > 0 ? number_format($tabungan, 0, ',', '.') : '0' }}</td>
+                <td class="text-right font-bold">Rp {{ number_format($net_diterima, 0, ',', '.') }}</td>
             </tr>
             @endforeach
         </tbody>
