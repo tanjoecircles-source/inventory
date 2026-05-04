@@ -355,8 +355,24 @@ class ShareProfitController extends Controller
 
         $bean_recap = DB::table('bean_recap')->where('periode_id', $detail->pid)->first();
         $bean_spending = [];
+        $bean_spending_non_investor = [];
         if($bean_recap){
-            $bean_spending = DB::table('bean_recap_spending')->where('bean_recap_id', $bean_recap->id)->get();
+            $bean_spending = DB::table('bean_recap_spending')
+                ->where('bean_recap_id', $bean_recap->id)
+                ->where(function($q) {
+                    $q->where('is_non_investor', false)
+                      ->orWhere('is_non_investor', 0)
+                      ->orWhere('is_non_investor', 'false')
+                      ->orWhereNull('is_non_investor');
+                })->get();
+            
+            $bean_spending_non_investor = DB::table('bean_recap_spending')
+                ->where('bean_recap_id', $bean_recap->id)
+                ->where(function($q) {
+                    $q->where('is_non_investor', true)
+                      ->orWhere('is_non_investor', 1)
+                      ->orWhere('is_non_investor', 'true');
+                })->get();
         }
 
         $store_recap = DB::table('store_recap')->where('periode_id', $detail->pid)->first();
@@ -366,6 +382,7 @@ class ShareProfitController extends Controller
             'contents' => $contents,
             'bean_recap' => $bean_recap,
             'bean_spending' => $bean_spending,
+            'bean_spending_non_investor' => $bean_spending_non_investor,
             'store_recap' => $store_recap
         ];
 

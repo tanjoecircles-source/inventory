@@ -76,7 +76,7 @@
     <table>
         <thead>
             <tr>
-                <th>Pengeluaran Operasional</th>
+                <th>Pengeluaran with investor</th>
                 <th class="text-right">Nominal (IDR)</th>
             </tr>
         </thead>
@@ -100,39 +100,37 @@
     <table>
         <thead>
             <tr>
-                <th>Potongan Tambahan & Kewajiban</th>
+                <th>Potongan non investor</th>
                 <th class="text-right">Nominal (IDR)</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>Potongan KUR (Co-Founders Liability)</td>
-                <td class="text-right">{{ number_format($detail->potongan_non_investor, 0, ',', '.') }}</td>
-            </tr>
-            @php
-                $total_tabungan = 0;
-                $count_tabungan = 0;
-                foreach($contents as $c) {
-                    if($c->tabungan_credit > 0) {
-                        $total_tabungan += $c->tabungan_credit;
-                        $count_tabungan++;
-                    }
-                }
-            @endphp
-            <tr>
-                <td>Akumulasi Tabungan Personil ({{ $count_tabungan }} Person)</td>
-                <td class="text-right">{{ number_format($total_tabungan, 0, ',', '.') }}</td>
-            </tr>
+            @php $total_spending_non_investor = 0; @endphp
+            @if(isset($bean_spending_non_investor) && count($bean_spending_non_investor) > 0)
+                @foreach($bean_spending_non_investor as $spend)
+                @php $total_spending_non_investor += $spend->amount; @endphp
+                <tr>
+                    <td>{{ $spend->name }}</td>
+                    <td class="text-right">{{ number_format($spend->amount, 0, ',', '.') }}</td>
+                </tr>
+                @endforeach
+            @else
+                <tr>
+                    <td>Potongan KUR (Co-Founders Liability)</td>
+                    <td class="text-right">{{ number_format($detail->potongan_non_investor, 0, ',', '.') }}</td>
+                </tr>
+                @php $total_spending_non_investor = $detail->potongan_non_investor; @endphp
+            @endif
             <tr class="total-row">
                 <td>Total Deduction</td>
-                <td class="text-right">{{ number_format($detail->potongan_non_investor + $total_tabungan, 0, ',', '.') }}</td>
+                <td class="text-right">{{ number_format($total_spending_non_investor, 0, ',', '.') }}</td>
             </tr>
         </tbody>
     </table>
 
     <div class="summary-box">
         <div class="label">LABA BERSIH SIAP DIBAGIKAN (NET PROFIT SHARE)</div>
-        <div class="value">Rp {{ number_format($detail->total_profit - $detail->potongan_non_investor - $total_tabungan, 0, ',', '.') }}</div>
+        <div class="value">Rp {{ number_format($detail->total_profit - $total_spending_non_investor, 0, ',', '.') }}</div>
     </div>
 
     <table class="employee-table">
@@ -148,7 +146,7 @@
             @foreach($contents as $content)
             <tr>
                 <td><strong>{{ $content->employee }}</strong></td>
-                <td class="text-right">{{ $content->tabungan_credit > 0 ? number_format($content->sub_total - ($detail->potongan_non_investor / 4), 0, ',', '.') : '-' }}</td>
+                <td class="text-right">{{ $content->tabungan_credit > 0 ? number_format($content->sub_total - ($total_spending_non_investor / 4), 0, ',', '.') : '-' }}</td>
                 <td class="text-right">{{ $content->tabungan_credit > 0 ? number_format($content->tabungan_credit, 0, ',', '.') : '-' }}</td>
                 <td class="text-right font-bold">Rp {{ number_format($content->total, 0, ',', '.') }}</td>
             </tr>
