@@ -134,9 +134,11 @@ class SalesController extends Controller
                     ->leftJoin('users AS u', 'u.id', '=', 's.author')
                     ->select('s.*', 'c.name AS cust_name', 'u.name AS inv_author')
                     ->where(['s.inv_status_payment' => 'paid'])
-                    ->where(function($contents) use ($search){
-                        $contents->where('s.inv_code', 'like', '%'.$search.'%')
-                                ->orWhere('c.name', 'like', '%'.$search.'%');
+                    ->where(function($query) use ($search){
+                        if ($search) {
+                            $query->where('s.inv_code', 'like', '%'.$search.'%')
+                                  ->orWhere('c.name', 'like', '%'.$search.'%');
+                        }
                     });
         if(!empty($startdate)){
             $contents = $contents->where('s.inv_date', '>=', date('Y-m-d', strtotime($startdate)));
@@ -152,28 +154,7 @@ class SalesController extends Controller
         }
         $contents = $contents->orderBy('s.inv_date', 'DESC')->paginate($limit);
 
-        $counts = DB::table('sales AS s')
-                    ->leftJoin('customer AS c', 'c.id', '=', 's.inv_cust')
-                    ->leftJoin('users AS u', 'u.id', '=', 's.author')
-                    ->select('s.inv_id')
-                    ->where(['s.inv_status_payment' => 'paid'])
-                    ->where(function($contents) use ($search){
-                        $contents->where('s.inv_code', 'like', '%'.$search.'%')
-                                ->orWhere('c.name', 'like', '%'.$search.'%');
-                    });
-        if(!empty($startdate)){
-            $counts = $counts->where('s.inv_date', '>=', date('Y-m-d', strtotime($startdate)));
-        }
-        if(!empty($enddate)){
-            $counts = $counts->where('s.inv_date', '<=', date('Y-m-d', strtotime($enddate)));
-        }
-        if(!empty($author)){
-            $counts = $counts->where(['s.author' => $author]);
-        }
-        if (Gate::denies('isAdmin')){
-            $counts = $counts->where(['s.author' => Auth::user()->id]);
-        }
-        $counts = $counts->count();
+        $counts = $contents->total();
 
         if(!empty($contents)){
             foreach ($contents as $key => $value) {
