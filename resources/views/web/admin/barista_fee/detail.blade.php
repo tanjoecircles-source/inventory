@@ -58,7 +58,7 @@
                                 </div>
                                 <div class="flex-grow-1 text-left">
                                     <h6 class="mb-1 font-weight-bold">
-                                        <a href="{{url('barista-fee-person/'.$content->id.'?mid='.$content->bf_id)}}" class="text-dark">
+                                        <a href="{{url('barista-fee-person/'.$content->id.'?mid='.$content->bf_id)}}" class="text-dark stretched-link">
                                             {{$content->employee}}
                                         </a>
                                     </h6>
@@ -75,7 +75,7 @@
                                     <h5 class="font-weight-bold mb-0 text-success">
                                         Rp {{str_replace(",", ".", number_format($content->total))}}
                                     </h5>
-                                    <a href="{{url('barista-fee-share-delete/'.$content->id)}}" data-title="{{$content->employee}}" class="text-danger btn-confirm mt-2 d-inline-block p-1">
+                                    <a href="{{url('barista-fee-share-delete/'.$content->id)}}" data-title="{{$content->employee}}" class="text-danger btn-confirm mt-2 d-inline-block p-1" style="position: relative; z-index: 2;">
                                         <i class="fe fe-trash-2 fs-14"></i>
                                     </a>
                                 </div>
