@@ -1,8 +1,8 @@
 @foreach ($contents as $content)
-    <a href="{{ url('share-profit-detail/'.$content->id) }}" class="d-flex align-items-center p-3 border-bottom" style="text-decoration: none; color: inherit;">
+    <a href="{{ url('share-profit-detail/'.$content->id) }}" class="d-flex align-items-center p-2 border-bottom" style="text-decoration: none; color: inherit;">
         <div class="mr-auto">
-            <h6 class="mb-0 font-weight-bold text-dark">Periode {{$content->periode}}</h6>
-            <div class="d-flex align-items-center mt-1">
+            <h6 class="mb-0 mt-3 font-weight-bold text-dark">Periode {{$content->periode}}</h6>
+            <div class="d-flex align-items-center mt-0">
                 @if($content->status == 'Published')
                     <span class="badge badge-success">Published</span>
                 @else
