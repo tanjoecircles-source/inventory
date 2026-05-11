@@ -44,6 +44,8 @@ Route::get('greenbeans', 'AuthController@gb_pricelist')->middleware('guest')->na
 Route::get('roastedbeans', 'AuthController@roasted_pricelist')->middleware('guest')->name('roastedbeans');
 Route::get('roasted-b2b', 'AuthController@roastedb2b_pricelist')->middleware('guest')->name('roastedb2b');
 
+Route::get('pricelist', 'PricelistController@index')->middleware('guest')->name('pricelist.index');
+
 Route::post('auth-process', 'AuthController@auth_process');
 Route::get('charity', 'CharityController@index')->middleware('guest');
 Route::middleware(['auth:web'])->group(function(){
