@@ -92,6 +92,11 @@ class HomeController extends Controller
         return view('web.admin.home.menu');
     }
 
+    public function tools(){
+        if (Gate::denies('isAdmin')) return view('error_authorize');
+        return view('web.admin.home.tools');
+    }
+
     public function mapstorage(){
         $data = [
             'map_belakang_kiri' => DB::table('gb_map AS g')->where('location', '001-belakang-kiri')->select('g.id AS id', 'p.name AS name')->leftJoin('product_group AS p', 'p.id', '=', 'g.product')->get(),

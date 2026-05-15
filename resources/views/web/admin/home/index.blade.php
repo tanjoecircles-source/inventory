@@ -141,13 +141,13 @@
                     </div>
 
                     <div class="col-3 p-2">
-                        <a href="{{url('switch-money-list')}}">
+                        <a href="{{url('tools')}}">
                         <div class="card mb-0">
                             <div class="card-body text-center p-2">
-                                <span class="fs-30 icon-muted"><i class="fe fe-repeat icon-dropshadow-info text-primary"></i></span>
+                                <span class="fs-30 icon-muted"><i class="fe fe-command icon-dropshadow-info text-primary"></i></span>
                             </div>
                         </div>
-                        <p class="text-center mt-2 fs-13 font-weight-semibold">Pindah Dana</p>
+                        <p class="text-center mt-2 fs-13 font-weight-semibold">Tools</p>
                         </a>
                     </div>
 

@@ -57,6 +57,9 @@ Route::middleware(['auth:web'])->group(function(){
     
     Route::get('news-detail/{app_id}', 'HomeController@news_detail')->name('home-news');
     Route::get('menu', 'HomeController@menu');
+    Route::get('tools', 'HomeController@tools');
+    Route::get('admin/qrcode', 'AdminQrCodeController@index');
+    Route::post('admin/qrcode/generate', 'AdminQrCodeController@generate');
     Route::get('map-storage', 'HomeController@mapstorage');
     Route::get('recapitulation', 'HomeController@recapitulation');
     Route::get('menu-recipe', 'HomeController@menurecipe');
