@@ -372,22 +372,30 @@ class SalesController extends Controller
         if ($valid->fails()) {
             return redirect()->back()->withErrors($valid)->withInput();
         }
-        $data = $request->only('inv_hpp', 'inv_sub_total', 'inv_discount', 'inv_expedition', 'inv_total');
+
         DB::beginTransaction();
-        $update = Sales::where('id', $id)->update([
-            'inv_hpp' => $data['inv_hpp'],
-            'inv_sub_total' => $data['inv_sub_total'],
-            'inv_discount' => !empty($data['inv_discount']) ? $data['inv_discount'] : 0,
-            'inv_expedition' => !empty($data['inv_expedition']) ? $data['inv_expedition'] : 0,
-            'inv_total' => $data['inv_total']
-        ]);
-        if ($update){
+        $result = $this->saveSalesData($request, $id);
+
+        if ($result){
             DB::commit();
             return redirect('sales-detail/'.$id)->with('success','Data has been updated');
         }else{
             DB::rollback();
             return redirect()->back()->with('danger', 'Data failed to update, try again later');
         }
+    }
+
+    private function saveSalesData(Request $request, $id)
+    {
+        $data = $request->only('inv_hpp', 'inv_sub_total', 'inv_discount', 'inv_expedition', 'inv_total');
+        
+        return Sales::where('id', $id)->update([
+            'inv_hpp' => str_replace('.', '', $data['inv_hpp']),
+            'inv_sub_total' => str_replace('.', '', $data['inv_sub_total']),
+            'inv_discount' => !empty($data['inv_discount']) ? str_replace('.', '', $data['inv_discount']) : 0,
+            'inv_expedition' => !empty($data['inv_expedition']) ? str_replace('.', '', $data['inv_expedition']) : 0,
+            'inv_total' => str_replace('.', '', $data['inv_total'])
+        ]);
     }
     
     public function updateHpp(Request $request, $id)
@@ -416,8 +424,13 @@ class SalesController extends Controller
         }
     }
 
-    public function publish($id)
+    public function publish(Request $request, $id)
     {
+        DB::beginTransaction();
+        if ($request->isMethod('post')) {
+            $this->saveSalesData($request, $id);
+        }
+
         $detail = DB::table('sales AS s')
             ->leftJoin('customer AS c', 'c.id', '=', 's.inv_cust')
             ->select('s.*', 'c.name AS cust_name')
@@ -430,7 +443,6 @@ class SalesController extends Controller
             ->where(['s.itm_inv_id' => $id])
             ->get();
 
-        DB::beginTransaction();
         $update = Sales::where('id', $id)->update([
             'inv_status' => 'Publish'
         ]);

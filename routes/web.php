@@ -335,7 +335,7 @@ Route::middleware(['auth:web'])->group(function(){
     Route::post('sales-update/{app_id}', 'SalesController@update');
     Route::post('sales-update-final/{app_id}', 'SalesController@updateFinal');
     Route::post('sales-update-hpp/{app_id}', 'SalesController@updateHpp');
-    Route::get('sales-publish/{app_id}', 'SalesController@publish');
+    Route::match(['get', 'post'], 'sales-publish/{app_id}', 'SalesController@publish');
     Route::get('sales-drafting/{app_id}', 'SalesController@drafting');
     Route::get('sales-print/{app_id}', 'SalesController@print');
     Route::get('sales-payment/{app_id}', 'SalesController@payment');

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
 use App\Models\SalesItem;
 use App\Models\Product;
+use App\Models\Sales;
 use Illuminate\Support\Facades\Auth;
 
 class SalesItemController extends Controller
@@ -106,6 +107,30 @@ class SalesItemController extends Controller
         $update_stock = (FLOAT)$product_stock - (FLOAT)$data['itm_qty'];
         $result = $insert && Product::where('id', $data['itm_product'])->update(['stock' => $update_stock]);
         if ($result){
+            // Recalculate Sales Totals
+            $items = DB::table('sales_items AS s')
+                        ->leftJoin('product AS p', 'p.id', '=', 's.itm_product')
+                        ->select('s.*', 'p.price_hpp')
+                        ->where(['s.itm_inv_id' => $data['inv_id']])
+                        ->get();
+
+            $new_sub_total = 0;
+            $new_hpp = 0;
+            foreach ($items as $item) {
+                $new_sub_total += (int)$item->itm_total;
+                $new_hpp += (int)$item->price_hpp * (float)$item->itm_qty;
+            }
+
+            $sale = Sales::find($data['inv_id']);
+            if ($sale) {
+                $new_total = $new_sub_total - (int)$sale->inv_discount + (int)$sale->inv_expedition;
+                $sale->update([
+                    'inv_sub_total' => $new_sub_total,
+                    'inv_hpp' => $new_hpp,
+                    'inv_total' => $new_total
+                ]);
+            }
+
             DB::commit();
             return redirect('sales-detail/'.$data['inv_id'])->with('success','Data has been created');
         }else{
@@ -177,6 +202,31 @@ class SalesItemController extends Controller
             $product_stock = Product::where('id', $data['itm_product'])->value('stock');
             $update_stock = (FLOAT)$product_stock + (FLOAT)$data['itm_qty'];
             Product::where('id', $data['itm_product'])->update(['stock' => $update_stock]);
+
+            // Recalculate Sales Totals
+            $items = DB::table('sales_items AS s')
+                        ->leftJoin('product AS p', 'p.id', '=', 's.itm_product')
+                        ->select('s.*', 'p.price_hpp')
+                        ->where(['s.itm_inv_id' => $inv_id])
+                        ->get();
+
+            $new_sub_total = 0;
+            $new_hpp = 0;
+            foreach ($items as $item) {
+                $new_sub_total += (int)$item->itm_total;
+                $new_hpp += (int)$item->price_hpp * (float)$item->itm_qty;
+            }
+
+            $sale = Sales::find($inv_id);
+            if ($sale) {
+                $new_total = $new_sub_total - (int)$sale->inv_discount + (int)$sale->inv_expedition;
+                $sale->update([
+                    'inv_sub_total' => $new_sub_total,
+                    'inv_hpp' => $new_hpp,
+                    'inv_total' => $new_total
+                ]);
+            }
+
             return redirect('sales-detail/'.$inv_id)->with('success','Data has been deleted.');
         }
     }

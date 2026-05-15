@@ -225,6 +225,7 @@ $(document).off('click', '.btn-confirm').on('click', '.btn-confirm', function(e)
     e.preventDefault();
     $('#modal-confirm .modal-body').html('You will delete data <b>'+$(this).data('title')+'</b>?');
     $('#modal-confirm .btn-action').attr('href', $(this).attr('href'));
+    $('#modal-confirm .btn-action').removeClass('btn-confirm-publish');
     var myModal = new bootstrap.Modal(document.getElementById('modal-confirm'), {
         keyboard: false
     });
@@ -234,17 +235,27 @@ $(document).off('click', '.btn-confirm').on('click', '.btn-confirm', function(e)
 $(document).off('click', '.btn-publish').on('click', '.btn-publish', function(e){
     e.preventDefault();
     $('#modal-confirm .modal-body').html('You will publish data <b>'+$(this).data('title')+'</b>?');
-    $('#modal-confirm .btn-action').attr('href', $(this).attr('href'));
+    $('#modal-confirm .btn-action').attr('href', 'javascript:void(0)');
+    $('#modal-confirm .btn-action').addClass('btn-confirm-publish');
+    $('#modal-confirm .btn-action').attr('data-url', $(this).attr('href'));
     var myModal = new bootstrap.Modal(document.getElementById('modal-confirm'), {
         keyboard: false
     });
     myModal.show();
 });
 
+$(document).on('click', '.btn-confirm-publish', function(e){
+    e.preventDefault();
+    var url = $(this).attr('data-url');
+    $('#sales-form').attr('action', url);
+    $('#sales-form').submit();
+});
+
 $(document).off('click', '.btn-draft').on('click', '.btn-draft', function(e){
     e.preventDefault();
     $('#modal-confirm .modal-body').html('You will drafting data <b>'+$(this).data('title')+'</b>?');
     $('#modal-confirm .btn-action').attr('href', $(this).attr('href'));
+    $('#modal-confirm .btn-action').removeClass('btn-confirm-publish');
     var myModal = new bootstrap.Modal(document.getElementById('modal-confirm'), {
         keyboard: false
     });
@@ -255,6 +266,7 @@ $(document).off('click', '.btn-unpay').on('click', '.btn-unpay', function(e){
     e.preventDefault();
     $('#modal-confirm .modal-body').html('Apakah anda yakin ingin membatalkan pembayaran untuk invoice <b>'+$(this).data('title')+'</b>?');
     $('#modal-confirm .btn-action').attr('href', $(this).attr('href'));
+    $('#modal-confirm .btn-action').removeClass('btn-confirm-publish');
     var myModal = new bootstrap.Modal(document.getElementById('modal-confirm'), {
         keyboard: false
     });
