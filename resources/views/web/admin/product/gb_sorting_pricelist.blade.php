@@ -23,7 +23,7 @@
                                             <p class="mb-0 text-muted fs-12"><i>{{$value->origin}} | {{$value->varietal}}</i></p>
                                         </div>
                                         <div class="text-right" style="max-width: 35%;">
-                                            <p class="mb-1 text-primary font-weight-bold">Rp {{str_replace(",", ".", number_format($value->price))}}</p>
+                                            <p class="mb-1 font-weight-bold">Rp {{str_replace(",", ".", number_format($value->price))}}</p>
                                             <span class="badge badge-pill badge-{{$value->stock_color}} px-2 py-1 fs-10"><i class="fe {{$value->stock_icon}}"></i> {{$value->stock_lable}}</span>
                                             <span class="badge badge-pill badge-order-index ml-1 px-2 py-1 fs-10">#{{$value->order_pricelist}}</span>
                                         </div>
