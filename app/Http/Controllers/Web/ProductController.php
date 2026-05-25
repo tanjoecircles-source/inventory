@@ -69,6 +69,7 @@ class ProductController extends Controller
                             'p.process',
                             'p.processor',
                             'p.harvest',
+                            'p.order_pricelist',
                             'p.desc',
                             'p.price as price',
                             'p.price_grosir15 as price_grosir15',
@@ -93,7 +94,7 @@ class ProductController extends Controller
             $value->stock_color = ($value->stock > 0) ? 'info' : 'danger';
         }
         $data = ['stok_gb' => $stok_gb];
-        return view('core.gb_pricelist', $data);
+        return view('web.admin.product.gb_pricelist', $data);
     }
 
     public function priceroasted(){
@@ -171,7 +172,7 @@ class ProductController extends Controller
             'stok_filter' => $stok_filter,
             'stok_spro' => $stok_spro
         ];
-        return view('core.roasted_pricelist', $data);
+        return view('web.admin.product.roasted_pricelist', $data);
     }
 
     public function detail_json(Request $request){

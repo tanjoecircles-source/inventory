@@ -162,7 +162,7 @@
                         <div class="card overflow-hidden">
                             <img src="{{ asset('assets/images/products/greenbean.png') }}" alt="image" class="img-height">
                             <div class="card-body p-2">
-                                <a href="{{url('product-price-gb')}}" class="card-title mb-1 mt-0 fs-15 font-weight-semibold">Green Bean</a>
+                                <a href="{{url('product-price-gb')}}" target="_blank" class="card-title mb-1 mt-0 fs-15 font-weight-semibold">Green Bean</a>
                                 <p class="card-text fs-12 text-muted mb-2">Daftar Harga Green Beans Periode Okt - Des 2025</p>
                                 <a href="https://wa.me/?text=Berikut%20Daftar%20Harga%20Green%20Bean%20Aceh%20Gayo%20Toko%20Kopi%20Tanjoe%20{{ urlencode('https://app.tanjoecoffee.com/greenbeans') }}" target="_blank" class="btn btn-dark btn-sm"><i class="fe fe-share"></i></a>
                                 <a id="copyurlgreen" class="btn btn-white btn-sm"><i class="fe fe-copy"></i></a>
@@ -173,7 +173,7 @@
                         <div class="card overflow-hidden">
                             <img src="{{ asset('assets/images/products/roasted.png') }}" alt="image" class="img-height">
                             <div class="card-body p-2">
-                                <a href="{{url('product-price-roasted')}}" class="card-title mb-1 mt-0 fs-15 font-weight-semibold">Roasted Bean</a>
+                                <a href="{{url('product-price-roasted')}}" target="_blank" class="card-title mb-1 mt-0 fs-15 font-weight-semibold">Roasted Bean</a>
                                 <p class="card-text fs-12 text-muted mb-2">Daftar Harga Green Beans Periode Okt - Des 2025</p>
                                 <a href="https://wa.me/?text=Berikut%20Daftar%20Harga%20Roasted%20Bean%20Aceh%20Gayo%20Toko%20Kopi%20Tanjoe%20{{ urlencode('https://app.tanjoecoffee.com/roastedbeans') }}" target="_blank" class="btn btn-dark btn-sm"><i class="fe fe-share"></i></a>
                                 <a id="copyurlroasted" class="btn btn-white btn-sm"><i class="fe fe-copy"></i></a>
