@@ -248,7 +248,11 @@ Route::middleware(['auth:web'])->group(function(){
     Route::post('product-combo', 'ProductController@combo');
     Route::post('product-combo-gb', 'ProductController@combogb');
     Route::get('product-price-gb', 'ProductController@pricegb')->name('product-price-gb');
+    Route::get('product-sorting-pricegb', 'ProductController@sortingPriceGb')->name('product-sorting-pricegb');
+    Route::post('product-sorting-pricegb/save', 'ProductController@saveSortingPriceGb')->name('product-sorting-pricegb.save');
     Route::get('product-price-roasted', 'ProductController@priceroasted')->name('product-price-roasted');
+    Route::get('product-sorting-priceroasted', 'ProductController@sortingPriceRoasted')->name('product-sorting-priceroasted');
+    Route::post('product-sorting-priceroasted/save', 'ProductController@saveSortingPriceRoasted')->name('product-sorting-priceroasted.save');
     Route::get('product-search', 'ProductController@search')->name('product-search');
     Route::post('product-search-result', 'ProductController@search_result')->name('product-search-result');
     Route::get('product-list', 'ProductController@list')->name('product-list');

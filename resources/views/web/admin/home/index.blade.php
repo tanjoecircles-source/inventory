@@ -166,6 +166,7 @@
                                 <p class="card-text fs-12 text-muted mb-2">Daftar Harga Green Beans Periode Okt - Des 2025</p>
                                 <a href="https://wa.me/?text=Berikut%20Daftar%20Harga%20Green%20Bean%20Aceh%20Gayo%20Toko%20Kopi%20Tanjoe%20{{ urlencode('https://app.tanjoecoffee.com/greenbeans') }}" target="_blank" class="btn btn-dark btn-sm"><i class="fe fe-share"></i></a>
                                 <a id="copyurlgreen" class="btn btn-white btn-sm"><i class="fe fe-copy"></i></a>
+                                <a href="{{url('product-sorting-pricegb')}}" class="btn btn-success btn-sm"><i class="fe fe-sliders"></i></a>
                             </div>
                         </div>
                     </div>
@@ -177,6 +178,7 @@
                                 <p class="card-text fs-12 text-muted mb-2">Daftar Harga Green Beans Periode Okt - Des 2025</p>
                                 <a href="https://wa.me/?text=Berikut%20Daftar%20Harga%20Roasted%20Bean%20Aceh%20Gayo%20Toko%20Kopi%20Tanjoe%20{{ urlencode('https://app.tanjoecoffee.com/roastedbeans') }}" target="_blank" class="btn btn-dark btn-sm"><i class="fe fe-share"></i></a>
                                 <a id="copyurlroasted" class="btn btn-white btn-sm"><i class="fe fe-copy"></i></a>
+                                <a href="{{url('product-sorting-priceroasted')}}" class="btn btn-success btn-sm"><i class="fe fe-sliders"></i></a>
                             </div>
                         </div>
                     </div>

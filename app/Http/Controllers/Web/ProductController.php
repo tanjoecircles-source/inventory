@@ -97,6 +97,68 @@ class ProductController extends Controller
         return view('web.admin.product.gb_pricelist', $data);
     }
 
+    public function sortingPriceGb(){
+        $stok_gb = DB::table('product as p')
+                    ->select(
+                            'p.id as id',
+                            'p.name_pl as name',
+                            'p.origin',
+                            'p.elevation',
+                            'p.varietal',
+                            'p.process',
+                            'p.processor',
+                            'p.harvest',
+                            'p.order_pricelist',
+                            'p.desc',
+                            'p.price as price',
+                            'p.price_grosir15 as price_grosir15',
+                            'p.price_grosir50 as price_grosir50',
+                            'p.is_new as is_new',
+                            'p.stock as stock',
+                            'p.photo_thumbnail as photo'
+                            )
+                    ->where([
+                        'p.type' => '1',
+                        'p.status' => 'Active',
+                        'p.is_pricelist' => 'true'
+                    ])
+                    ->orderBy('order_pricelist', 'ASC')
+                    ->get();
+        
+        foreach ($stok_gb as $key => $value) {
+            $value->is_new = ($value->is_new == 'true') ? 'New' : '';
+            $value->stock_lable = ($value->stock > 0) ? 'Ready' : 'Sold';
+            $value->stock_icon = ($value->stock > 0) ? 'fe-check-circle' : 'fe-x-circle';
+            $value->stock_color = ($value->stock > 0) ? 'info' : 'danger';
+        }
+        $data = ['stok_gb' => $stok_gb];
+        return view('web.admin.product.gb_sorting_pricelist', $data);
+    }
+
+    public function saveSortingPriceGb(Request $request){
+        $ids = $request->input('ids');
+        if (empty($ids) || !is_array($ids)) {
+            return response()->json(['success' => false, 'message' => 'Data tidak valid']);
+        }
+        
+        DB::beginTransaction();
+        try {
+            foreach ($ids as $index => $id) {
+                DB::table('product')
+                    ->where('id', $id)
+                    ->update([
+                        'order_pricelist' => $index + 1,
+                        'updated_at' => Carbon::now()->toDateTimeString()
+                    ]);
+            }
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Urutan pricelist berhasil disimpan']);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['success' => false, 'message' => 'Gagal menyimpan urutan: ' . $e->getMessage()], 500);
+        }
+    }
+
     public function priceroasted(){
         $stok_filter = DB::table('product as p')
                     ->select(
@@ -173,6 +235,108 @@ class ProductController extends Controller
             'stok_spro' => $stok_spro
         ];
         return view('web.admin.product.roasted_pricelist', $data);
+    }
+
+    public function sortingPriceRoasted(){
+        $stok_filter = DB::table('product as p')
+                    ->select(
+                            'p.id as id',
+                            'p.name_pl as name',
+                            'p.origin',
+                            'p.elevation',
+                            'p.varietal',
+                            'p.process',
+                            'p.processor',
+                            'p.harvest',
+                            'p.order_pricelist',
+                            'p.desc',
+                            'p.price as price',
+                            'p.price_grosir15 as price_grosir15',
+                            'p.price_grosir50 as price_grosir50',
+                            'p.is_new as is_new',
+                            'p.stock as stock',
+                            'p.photo_thumbnail as photo'
+                            )
+                    ->where([
+                        'p.type' => '2',
+                        'p.status' => 'Active',
+                        'p.is_pricelist' => 'true'
+                    ])
+                    ->orderBy('order_pricelist', 'ASC')
+                    ->get();
+        
+        foreach ($stok_filter as $key => $value) {
+            $value->is_new = ($value->is_new == 'true') ? 'New' : '';
+            $value->stock_lable = ($value->stock > 0) ? 'Ready' : 'Sold Out';
+            $value->stock_icon = ($value->stock > 0) ? 'fe-check-circle' : 'fe-x-circle';
+            $value->stock_color = ($value->stock > 0) ? 'success' : 'danger';
+            $value->order_pricelist = empty($value->order_pricelist) ? 0 : $value->order_pricelist;
+        }
+
+        $stok_spro = DB::table('product as p')
+                    ->select(
+                            'p.id as id',
+                            'p.name_pl as name',
+                            'p.category as category',
+                            'p.origin',
+                            'p.elevation',
+                            'p.varietal',
+                            'p.process',
+                            'p.processor',
+                            'p.harvest',
+                            'p.order_pricelist',
+                            'p.desc',
+                            'p.price as price',
+                            'p.price_grosir15 as price_grosir15',
+                            'p.price_grosir50 as price_grosir50',
+                            'p.is_new as is_new',
+                            'p.stock as stock',
+                            'p.photo_thumbnail as photo'
+                            )
+                    ->where([
+                        'p.type' => '3',
+                        'p.status' => 'Active',
+                        'p.is_pricelist' => 'true'
+                    ])
+                    ->orderBy('order_pricelist', 'ASC')
+                    ->get();
+        foreach ($stok_spro as $key => $value) {
+            $value->is_new = ($value->is_new == 'true') ? 'New' : '';
+            $value->stock_lable = ($value->stock > 0) ? 'Ready' : 'Pre Order';
+            $value->stock_icon = ($value->stock > 0) ? 'fe-check-circle' : 'fe-thumbs-up';
+            $value->stock_color = ($value->stock > 0) ? 'success' : 'warning';
+            $value->order_pricelist = empty($value->order_pricelist) ? 0 : $value->order_pricelist;
+        }
+
+        $data = [
+            'stok_filter' => $stok_filter,
+            'stok_spro' => $stok_spro
+        ];
+        return view('web.admin.product.roasted_sorting_pricelist', $data);
+    }
+
+    public function saveSortingPriceRoasted(Request $request){
+        $ids = $request->input('ids');
+        if (empty($ids) || !is_array($ids)) {
+            return response()->json(['success' => false, 'message' => 'Data tidak valid']);
+        }
+        
+        DB::beginTransaction();
+        try {
+            foreach ($ids as $index => $id) {
+                DB::table('product')
+                    ->where('id', $id)
+                    ->update([
+                        'order_pricelist' => $index + 1,
+                        'updated_at' => Carbon::now()->toDateTimeString()
+                    ]);
+            }
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Urutan pricelist berhasil disimpan']);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['success' => false, 'message' => 'Gagal menyimpan urutan: ' . $e->getMessage()], 500);
+        }
     }
 
     public function detail_json(Request $request){
