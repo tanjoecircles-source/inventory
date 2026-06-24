@@ -33,6 +33,10 @@
             @if($detail->pur_status == 'Draft')
             <div class="card text-center no-border shadow-none custom-square mb-7">
                 <div class="card-body p-0">
+                    <a href="{{(url('store-purchasing-item-edit/'.$detail->id.'?pur='.$detail->itm_pur_id))}}" class="d-flex p-4 border-bottom">
+                        <i class="fe fe-edit fs-16 mr-2"></i>
+                        <h6 class="mb-1 font-weight-semibold">Edit Data</h6>
+                    </a>
                     <a href="{{(url('store-purchasing-item-delete/'.$detail->id.'?pur='.$detail->itm_pur_id))}}" data-title="{{$detail->itm_product}}" class="d-flex p-4 border-bottom btn-confirm">
                         <i class="fe fe-trash fs-16 mr-2"></i>
                         <h6 class="mb-1 font-weight-semibold">Hapus Data</h6>

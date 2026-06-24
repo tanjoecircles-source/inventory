@@ -374,10 +374,13 @@ Route::middleware(['auth:web'])->group(function(){
     Route::get('store-purchasing-item-add/{app_id}', 'StorePurchasingController@itemAdd');
     Route::post('store-purchasing-item-create', 'StorePurchasingController@itemCreate');
     Route::get('store-purchasing-item-detail/{app_id}', 'StorePurchasingController@itemDetail');
+    Route::get('store-purchasing-item-edit/{app_id}', 'StorePurchasingController@itemEdit');
+    Route::post('store-purchasing-item-update/{app_id}', 'StorePurchasingController@itemUpdate');
     Route::get('store-purchasing-item-delete/{app_id}', 'StorePurchasingController@itemDelete');
     Route::get('store-purchasing-detail/{app_id}', 'StorePurchasingController@detail');
     Route::get('store-purchasing-edit/{app_id}', 'StorePurchasingController@edit');
     Route::post('store-purchasing-update/{app_id}', 'StorePurchasingController@update');
+    Route::post('store-purchasing-update-draft/{app_id}', 'StorePurchasingController@updateDraft');
     Route::post('store-purchasing-update-final/{app_id}', 'StorePurchasingController@updateFinal');
     Route::get('store-purchasing-publish/{app_id}', 'StorePurchasingController@publish');
     Route::get('store-purchasing-drafting/{app_id}', 'StorePurchasingController@drafting');
@@ -508,6 +511,26 @@ Route::middleware(['auth:web'])->group(function(){
     Route::get('bean-recap-spending-delete/{app_id}', 'BeanRecapController@SpendingDelete');
     Route::get('bean-recap-publish/{app_id}', 'BeanRecapController@publish');
     Route::get('bean-recap-delete/{app_id}', 'BeanRecapController@delete');
+
+    // Admin - Stock Submission Approval
+    Route::get('admin/stock-submission-list', 'AdminStockSubmissionController@list')->name('admin-stock-submission-list');
+    Route::get('admin/stock-submission-detail/{app_id}', 'AdminStockSubmissionController@detail')->name('admin-stock-submission-detail');
+    Route::get('admin/stock-submission-approve-form/{app_id}', 'AdminStockSubmissionController@approveForm')->name('admin-stock-submission-approve-form');
+    Route::post('admin/stock-submission-approve-process/{app_id}', 'AdminStockSubmissionController@approveProcess')->name('admin-stock-submission-approve-process');
+    Route::get('admin/stock-submission-reject/{app_id}', 'AdminStockSubmissionController@reject')->name('admin-stock-submission-reject');
+
+    // Stock Submission (Pengajuan Stok)
+    Route::get('stock-submission-list', 'StockSubmissionController@list')->name('stock-submission-list');
+    Route::get('stock-submission-add', 'StockSubmissionController@add')->name('stock-submission-add');
+    Route::post('stock-submission-create', 'StockSubmissionController@create')->name('stock-submission-create');
+    Route::get('stock-submission-detail/{app_id}', 'StockSubmissionController@detail')->name('stock-submission-detail');
+    Route::get('stock-submission-item-add/{app_id}', 'StockSubmissionController@itemAdd')->name('stock-submission-item-add');
+    Route::post('stock-submission-item-create/{app_id}', 'StockSubmissionController@itemCreate')->name('stock-submission-item-create');
+    Route::get('stock-submission-item-delete/{app_id}/{item_id}', 'StockSubmissionController@itemDelete')->name('stock-submission-item-delete');
+    Route::get('stock-submission-submit/{app_id}', 'StockSubmissionController@submit')->name('stock-submission-submit');
+    Route::get('stock-submission-delete/{app_id}', 'StockSubmissionController@delete')->name('stock-submission-delete');
+    Route::post('stock-submission-combo', 'StockSubmissionController@combo')->name('stock-submission-combo');
+    Route::post('stock-submission-get-product', 'StockSubmissionController@getProductJson')->name('stock-submission-get-product');
 
     // Store Recap
     Route::get('store-recap-list', 'StoreRecapController@list');

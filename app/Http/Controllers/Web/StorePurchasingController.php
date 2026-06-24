@@ -153,6 +153,48 @@ class StorePurchasingController extends Controller
         }
     }
 
+    public function itemEdit($id)
+    {
+        $pur_id = $_GET['pur'];
+        $detail = DB::table('store_purchasing_items AS s')
+            ->leftJoin('store_purchasing AS c', 'c.id', '=', 's.itm_pur_id')
+            ->select('s.*','c.pur_status')
+            ->where(['s.id' => $id, 's.itm_pur_id' => $pur_id])
+            ->first();
+        $data = ['detail' => $detail];
+        return view('web.admin.store_purchasing.item_edit', $data);
+    }
+
+    public function itemUpdate(Request $request, $id)
+    {
+        $pur_id = $_GET['pur'];
+        $valid = validator($request->only('itm_product', 'itm_price', 'itm_qty', 'itm_total'), [
+            'itm_product' => 'required',
+            'itm_price' => 'required',
+            'itm_qty' => 'required',
+            'itm_total' => 'required',
+        ]);
+
+        if ($valid->fails()) {
+            return redirect()->back()->withErrors($valid)->withInput();
+        }
+        $data = $request->only('itm_product', 'itm_price', 'itm_qty', 'itm_total');
+        DB::beginTransaction();
+        $update = StorePurchasingItem::where('id', $id)->update([
+            'itm_product' => $data['itm_product'],
+            'itm_price' => str_replace('.', "", $data['itm_price']),
+            'itm_qty' => $data['itm_qty'],
+            'itm_total' => str_replace('.', "", $data['itm_total'])
+        ]);
+        if ($update){
+            DB::commit();
+            return redirect('store-purchasing-detail/'.$pur_id)->with('success','Data has been updated');
+        }else{
+            DB::rollback();
+            return redirect()->back()->with('danger', 'Data failed to update, try again later');
+        }
+    }
+
     public function itemDetail($id)
     {
         $pur_id = $_GET['pur'];
@@ -249,6 +291,35 @@ class StorePurchasingController extends Controller
         }
     }
 
+    public function updateDraft(Request $request, $id)
+    {
+        $valid = validator($request->only('pur_sub_total', 'pur_total'), [
+            'pur_sub_total' => 'required',
+            'pur_total' => 'required'
+        ]);
+        if ($valid->fails()) {
+            return redirect()->back()->withErrors($valid)->withInput();
+        }
+        $data = $request->only('pur_sub_total', 'pur_discount', 'pur_total');
+        if($data['pur_total'] == 0){
+            return redirect()->back()->with('danger', 'Product is not empty');
+        }
+        DB::beginTransaction();
+        $update = StorePurchasing::where('id', $id)->update([
+            'pur_sub_total' => $data['pur_sub_total'],
+            'pur_discount' => !empty($data['pur_discount']) ? $data['pur_discount'] : 0,
+            'pur_total' => $data['pur_total'],
+            'pur_status' => 'Draft'
+        ]);
+        if ($update){
+            DB::commit();
+            return redirect('store-purchasing-detail/'.$id)->with('success','Data has been saved as Draft');
+        }else{
+            DB::rollback();
+            return redirect()->back()->with('danger', 'Data failed to update, try again later');
+        }
+    }
+
     public function updateFinal(Request $request, $id)
     {
         $valid = validator($request->only('pur_sub_total', 'pur_total'), [
@@ -271,7 +342,7 @@ class StorePurchasingController extends Controller
         ]);
         if ($update){
             DB::commit();
-            return redirect('store-purchasing-detail/'.$id)->with('success','Data has been updated');
+            return redirect('store-purchasing-detail/'.$id)->with('success','Data has been published');
         }else{
             DB::rollback();
             return redirect()->back()->with('danger', 'Data failed to update, try again later');

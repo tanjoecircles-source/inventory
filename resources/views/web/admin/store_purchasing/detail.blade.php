@@ -91,7 +91,7 @@
             </div>
             <div class="card text-center no-border shadow-none custom-square mb-2">
                 <div class="card-body p-2">
-                    <form id="store-purchasing-form" name="store-purchasing-form" action="{{url('store-purchasing-update-final/'.$store_purchasing->id)}}" method="POST" enctype="multipart/form-data" >
+                    <form id="store-purchasing-form" name="store-purchasing-form" action="{{url('store-purchasing-update-draft/'.$store_purchasing->id)}}" method="POST" enctype="multipart/form-data" >
                     @csrf
                     <div class="d-flex title-bar py-2">
                         <div class="mr-auto text-left">
@@ -136,7 +136,7 @@
                     @if($store_purchasing->pur_status == 'Draft')
                         <button type="submit" class="btn btn-primary btn-block" id="btn-update" name="btn-update">Simpan</button>
                         @if($store_purchasing->pur_total != 0)
-                        <a href="{{url('store-purchasing-publish/'.$store_purchasing->id)}}" data-title="{{$store_purchasing->pur_code}}" class="btn btn-outline-dark btn-block btn-publish" id="btn-publish" name="btn-publish">Publish</a>
+                        <button type="submit" formaction="{{url('store-purchasing-update-final/'.$store_purchasing->id)}}" class="btn btn-outline-dark btn-block mt-2" id="btn-publish" name="btn-publish">Publish</button>
                         @endif
                     @endif
                     
@@ -193,16 +193,6 @@
 $(document).off('click', '.btn-confirm').on('click', '.btn-confirm', function(e){
     e.preventDefault();
     $('#modal-confirm .modal-body').html('You will delete data <b>'+$(this).data('title')+'</b>?');
-    $('#modal-confirm .btn-action').attr('href', $(this).attr('href'));
-    var myModal = new bootstrap.Modal(document.getElementById('modal-confirm'), {
-        keyboard: false
-    });
-    myModal.show();
-});
-
-$(document).off('click', '.btn-publish').on('click', '.btn-publish', function(e){
-    e.preventDefault();
-    $('#modal-confirm .modal-body').html('You will publish data <b>'+$(this).data('title')+'</b>?');
     $('#modal-confirm .btn-action').attr('href', $(this).attr('href'));
     var myModal = new bootstrap.Modal(document.getElementById('modal-confirm'), {
         keyboard: false
