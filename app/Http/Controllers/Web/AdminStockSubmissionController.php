@@ -105,7 +105,7 @@ class AdminStockSubmissionController extends Controller
             foreach ($submission->items as $item) {
                 StorePurchasingItem::create([
                     'itm_pur_id' => $storePurchasing->id,
-                    'itm_product' => $item->product_name,
+                    'itm_product' => $submission->type . ' - ' . $item->product_name,
                     'itm_price' => 0,
                     'itm_qty' => $item->quantity,
                     'itm_total' => 0,
