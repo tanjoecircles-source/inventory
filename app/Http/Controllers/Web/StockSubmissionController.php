@@ -22,8 +22,10 @@ class StockSubmissionController extends Controller
 
         $submissions = StockSubmission::where('user_id', $user->id)
             ->when($search, function ($query, $search) {
-                return $query->where('author', 'like', '%' . $search . '%')
-                    ->orWhere('status', 'like', '%' . $search . '%');
+                return $query->where(function ($q) use ($search) {
+                    $q->where('author', 'like', '%' . $search . '%')
+                      ->orWhere('status', 'like', '%' . $search . '%');
+                });
             })
             ->orderBy('created_at', 'desc')
             ->withCount('items')
@@ -33,6 +35,11 @@ class StockSubmissionController extends Controller
             'submissions' => $submissions,
             'search' => $search
         ];
+
+        if($request->ajax()){
+            $view = view('web.agent.stock_submission.paginate', $data)->render();
+            return response()->json(['html' => $view]);
+        }
 
         return view('web.agent.stock_submission.list', $data);
     }

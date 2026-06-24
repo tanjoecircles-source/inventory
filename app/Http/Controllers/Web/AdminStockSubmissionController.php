@@ -24,8 +24,10 @@ class AdminStockSubmissionController extends Controller
 
         $submissions = StockSubmission::with('user')
             ->when($search, function ($query, $search) {
-                return $query->where('author', 'like', '%' . $search . '%')
-                    ->orWhere('type', 'like', '%' . $search . '%');
+                return $query->where(function ($q) use ($search) {
+                    $q->where('author', 'like', '%' . $search . '%')
+                      ->orWhere('type', 'like', '%' . $search . '%');
+                });
             })
             ->when($status, function ($query, $status) {
                 return $query->where('status', $status);
@@ -40,6 +42,11 @@ class AdminStockSubmissionController extends Controller
             'search' => $search,
             'filter_status' => $status
         ];
+
+        if($request->ajax()){
+            $view = view('web.admin.stock_submission.paginate', $data)->render();
+            return response()->json(['html' => $view]);
+        }
 
         return view('web.admin.stock_submission.list', $data);
     }
