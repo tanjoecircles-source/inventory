@@ -87,12 +87,33 @@ class ProductController extends Controller
                     ->orderBy('order_pricelist', 'ASC')
                     ->get();
         
+        // Load images for each product
+        $productIds = $stok_gb->pluck('id')->toArray();
+        $images = ProductImage::whereIn('product_id', $productIds)
+                    ->orderBy('sort_order', 'ASC')
+                    ->get()
+                    ->groupBy('product_id');
+        
         foreach ($stok_gb as $key => $value) {
             $value->is_new = ($value->is_new == 'true') ? 'New' : '';
             
             $value->stock_lable = ($value->stock > 0) ? 'Ready' : 'Sold';
             $value->stock_icon = ($value->stock > 0) ? 'fe-check-circle' : 'fe-x-circle';
             $value->stock_color = ($value->stock > 0) ? 'info' : 'danger';
+            
+            // Attach images
+            $productImages = $images->get($value->id, collect());
+            $value->images = $productImages->map(function($img) {
+                $img->image_url = url('storage/' . $img->image_path);
+                return $img;
+            });
+            
+            if ($productImages->isEmpty() && !empty($value->photo)) {
+                $defaultImg = new \stdClass();
+                $defaultImg->image_url = asset('assets/images/products/' . $value->photo);
+                $defaultImg->is_primary = 'true';
+                $value->images = collect([$defaultImg]);
+            }
         }
         $data = ['stok_gb' => $stok_gb];
         return view('web.admin.product.gb_pricelist', $data);

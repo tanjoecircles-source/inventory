@@ -1,5 +1,56 @@
 <x-layouts.public header="">
 
+<style>
+    .gb-slider .swiper-slide {
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8f9fa;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .gb-slider .swiper-slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .gb-slider .swiper-button-next,
+    .gb-slider .swiper-button-prev {
+        width: 30px;
+        height: 30px;
+        background: rgba(0,0,0,0.4);
+        border-radius: 50%;
+    }
+    .gb-slider .swiper-button-next::after,
+    .gb-slider .swiper-button-prev::after {
+        font-size: 14px;
+        color: #fff;
+    }
+    .gb-slider .swiper-pagination {
+        position: absolute;
+        bottom: 5px;
+    }
+    .gb-slider .swiper-pagination-bullet {
+        width: 8px;
+        height: 8px;
+    }
+    .gb-slider .swiper-pagination-bullet-active {
+        background: #E62129;
+    }
+    .img-count-badge {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        background: rgba(0,0,0,0.6);
+        color: #fff;
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 10px;
+        z-index: 10;
+    }
+</style>
+
 @if(session()->has('success'))
     <script>
         $(function () {
@@ -52,23 +103,25 @@
                         <div class="card-body px-2 pt-1 pb-3">
                             <div class="row">
                                 <div class="col-sm-5">
-                                    <a class="img-open" imgdata="{{ asset('assets/images/products/'.$value->photo) }}" imgtitle="{{$value->name}}">
-                                        <img src="{{ asset('assets/images/products/'.$value->photo) }}" alt="image" class="w-100 rounded">
-                                    </a>
-                                    <div class="modal" id="modal-{{$value->id}}">
-                                        <div class="modal-dialog modal-lg" role="document">
-                                            <div class="modal-content modal-content-demo">
-                                                <div class="modal-header">
-                                                    <h6 class="modal-title">{{$value->name}}</h6><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <img src="{{ asset('assets/images/products/'.$value->photo) }}" alt="image" class="w-100 rounded">
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button class="btn btn-light" data-dismiss="modal" type="button">Close</button>
-                                                </div>
+                                    <!-- Swiper Slider -->
+                                    <div class="swiper gb-slider position-relative rounded">
+                                        <div class="swiper-wrapper">
+                                            @forelse($value->images as $img)
+                                            <div class="swiper-slide">
+                                                <img src="{{ $img->image_url }}" alt="{{$value->name}}">
                                             </div>
+                                            @empty
+                                            <div class="swiper-slide">
+                                                <img src="{{ asset('assets/images/products/noimages.png') }}" alt="{{$value->name}}">
+                                            </div>
+                                            @endforelse
                                         </div>
+                                        <div class="swiper-button-next"></div>
+                                        <div class="swiper-button-prev"></div>
+                                        <div class="swiper-pagination"></div>
+                                        @if(count($value->images) > 1)
+                                        <span class="img-count-badge"><i class="fe fe-image"></i> {{count($value->images)}}</span>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="col-sm-7 fs-12 pl-0">
@@ -161,26 +214,22 @@
     </div>
 </div>
 
-
-<div class="modal fade" id="modal-image" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered text-center" role="document">
-        <div class="modal-content modal-content-demo">
-            <div class="modal-header">
-                Loading
-            </div>
-            <div class="modal-body">Pelase Wait</div>
-        </div>
-    </div>
-</div>
 <script>
-$(document).off('click', '.img-open').on('click', '.img-open', function(e){
-    e.preventDefault();
-    $('#modal-image .modal-body').html('<img src="'+$(this).attr('imgdata')+'">');
-    $('#modal-image .modal-header').html('<h5 class="modal-title">'+$(this).attr('imgtitle')+'</h5><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>');
-    var myModal = new bootstrap.Modal(document.getElementById('modal-image'), {
-        keyboard: false
+$(document).ready(function() {
+    // Initialize Swiper for each product's slider
+    $('.gb-slider').each(function() {
+        var swiper = new Swiper(this, {
+            loop: false,
+            navigation: {
+                nextEl: $(this).find('.swiper-button-next')[0],
+                prevEl: $(this).find('.swiper-button-prev')[0],
+            },
+            pagination: {
+                el: $(this).find('.swiper-pagination')[0],
+                clickable: true,
+            },
+        });
     });
-    myModal.show();
 });
 </script>
 </x-layouts>
