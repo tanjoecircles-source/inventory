@@ -110,7 +110,7 @@ class ProductController extends Controller
             
             if ($productImages->isEmpty() && !empty($value->photo)) {
                 $defaultImg = new \stdClass();
-                $defaultImg->image_url = asset('assets/images/products/noimages.png');
+                $defaultImg->image_url = asset('assets/images/products/noimage.png');
                 $defaultImg->is_primary = 'true';
                 $value->images = collect([$defaultImg]);
             }
