@@ -753,13 +753,13 @@ class AuthController extends Controller
                 
                 $productImages = $allImages->get($value->id, collect());
                 $value->images = $productImages->map(function($img) {
-                    $img->image_url = url('storage/' . $img->image_path);
+                    $img->image_url = url('storage/public/' . $img->image_path);
                     return $img;
                 });
                 
                 if ($productImages->isEmpty() && !empty($value->photo)) {
                     $defaultImg = new \stdClass();
-                    $defaultImg->image_url = asset('assets/images/products/' . $value->photo);
+                    $defaultImg->image_url = asset('assets/images/products/no-image.png');
                     $defaultImg->is_primary = 'true';
                     $value->images = collect([$defaultImg]);
                 }

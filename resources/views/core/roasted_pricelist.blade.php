@@ -250,8 +250,8 @@
                                                     <img src="{{ $img->image_url }}" alt="{{$value->name}}">
                                                 </div>
                                                 @empty
-                                                <div class="swiper-slide" data-img="{{ asset('assets/images/products/noimages.png') }}" data-product="{{$value->name}}" data-index="0" data-images='["{{ asset('assets/images/products/noimages.png') }}"]'>
-                                                    <img src="{{ asset('assets/images/products/noimages.png') }}" alt="{{$value->name}}">
+                                                <div class="swiper-slide" data-img="{{ asset('assets/images/products/no-image.png') }}" data-product="{{$value->name}}" data-index="0" data-images='["{{ asset('assets/images/products/no-image.png') }}"]'>
+                                                    <img src="{{ asset('assets/images/products/no-image.png') }}" alt="{{$value->name}}">
                                                 </div>
                                                 @endforelse
                                             </div>
