@@ -104,13 +104,13 @@ class ProductController extends Controller
             // Attach images
             $productImages = $images->get($value->id, collect());
             $value->images = $productImages->map(function($img) {
-                $img->image_url = url('storage/' . $img->image_path);
+                $img->image_url = url('storage/public/' . $img->image_path);
                 return $img;
             });
             
             if ($productImages->isEmpty() && !empty($value->photo)) {
                 $defaultImg = new \stdClass();
-                $defaultImg->image_url = asset('assets/images/products/' . $value->photo);
+                $defaultImg->image_url = asset('assets/images/products/noimages.png');
                 $defaultImg->is_primary = 'true';
                 $value->images = collect([$defaultImg]);
             }
@@ -208,14 +208,6 @@ class ProductController extends Controller
                     ])
                     ->orderBy('order_pricelist', 'ASC')
                     ->get();
-        
-        foreach ($stok_filter as $key => $value) {
-            $value->is_new = ($value->is_new == 'true') ? 'New' : '';
-            $value->stock_lable = ($value->stock > 0) ? 'Ready' : 'Sold Out';
-            $value->stock_icon = ($value->stock > 0) ? 'fe-check-circle' : 'fe-x-circle';
-            $value->stock_color = ($value->stock > 0) ? 'success' : 'danger';
-            $value->order_pricelist = empty($value->order_pricelist) ? 0 : $value->order_pricelist;
-        }
 
         $stok_spro = DB::table('product as p')
                     ->select(
@@ -244,13 +236,40 @@ class ProductController extends Controller
                     ])
                     ->orderBy('order_pricelist', 'ASC')
                     ->get();
-        foreach ($stok_spro as $key => $value) {
-            $value->is_new = ($value->is_new == 'true') ? 'New' : '';
-            $value->stock_lable = ($value->stock > 0) ? 'Ready' : 'Pre Order';
-            $value->stock_icon = ($value->stock > 0) ? 'fe-check-circle' : 'fe-thumbs-up';
-            $value->stock_color = ($value->stock > 0) ? 'success' : 'warning';
-            $value->order_pricelist = empty($value->order_pricelist) ? 0 : $value->order_pricelist;
-        }
+
+        // Load images for all products
+        $allProducts = $stok_filter->merge($stok_spro);
+        $productIds = $allProducts->pluck('id')->unique()->toArray();
+        $allImages = ProductImage::whereIn('product_id', $productIds)
+                    ->orderBy('sort_order', 'ASC')
+                    ->get()
+                    ->groupBy('product_id');
+
+        $attachImages = function($products, $stockLabelReady, $stockLabelEmpty, $stockColor) use ($allImages) {
+            foreach ($products as $value) {
+                $value->is_new = ($value->is_new == 'true') ? 'New' : '';
+                $value->order_pricelist = empty($value->order_pricelist) ? 0 : $value->order_pricelist;
+                $value->stock_lable = ($value->stock > 0) ? $stockLabelReady : $stockLabelEmpty;
+                $value->stock_icon = ($value->stock > 0) ? 'fe-check-circle' : 'fe-x-circle';
+                $value->stock_color = ($value->stock > 0) ? $stockColor : 'danger';
+                
+                $productImages = $allImages->get($value->id, collect());
+                $value->images = $productImages->map(function($img) {
+                    $img->image_url = url('storage/' . $img->image_path);
+                    return $img;
+                });
+                
+                if ($productImages->isEmpty() && !empty($value->photo)) {
+                    $defaultImg = new \stdClass();
+                    $defaultImg->image_url = asset('assets/images/products/' . $value->photo);
+                    $defaultImg->is_primary = 'true';
+                    $value->images = collect([$defaultImg]);
+                }
+            }
+        };
+
+        $attachImages($stok_filter, 'Ready', 'Sold Out', 'success');
+        $attachImages($stok_spro, 'Ready', 'Pre Order', 'success');
 
         $data = [
             'stok_filter' => $stok_filter,
