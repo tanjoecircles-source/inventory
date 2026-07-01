@@ -288,6 +288,13 @@ Route::middleware(['auth:web'])->group(function(){
     Route::get('product-print/{app_id}', 'ProductController@print');
     Route::get('product-delete/{app_id}', 'ProductController@delete')->name('product-delete');
 
+    // Product Images (Multiple Photos)
+    Route::get('product-images/{app_id}', 'ProductController@images')->name('product-images');
+    Route::post('product-images-upload/{app_id}', 'ProductController@uploadImages')->name('product-images-upload');
+    Route::post('product-images-set-primary/{app_id}', 'ProductController@setPrimaryImage')->name('product-images-set-primary');
+    Route::get('product-images-delete/{app_id}', 'ProductController@deleteImage')->name('product-images-delete');
+    Route::post('product-images-reorder/{app_id}', 'ProductController@reorderImages')->name('product-images-reorder');
+
     //body type
     Route::get('body-type-list', 'RefBodyTypeController@list');
     Route::get('body-type-add', 'RefBodyTypeController@add');

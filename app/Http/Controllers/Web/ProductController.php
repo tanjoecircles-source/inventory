@@ -17,6 +17,7 @@ use App\Models\ProductHpp;
 use App\Models\RefSatuan;
 use App\Models\RefProductType;
 use App\Models\ProductPaymentType;
+use App\Models\ProductImage;
 use Barryvdh\DomPDF\Facade\Pdf;
 //use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -1075,5 +1076,170 @@ class ProductController extends Controller
 			$count = Product::where('code', $random_str)->count();
 		} while($count !== FALSE && $count > 0);
 		return $random_str;
+    }
+
+    // ===== MULTIPLE PRODUCT IMAGES =====
+    
+    public function images($id)
+    {
+        $product = Product::with('images')->find($id);
+        if (is_null($product)){
+            return redirect('product-list')->with('danger', 'Produk tidak ditemukan');
+        }
+        $data = [
+            'product' => $product,
+            'id_produk' => $id
+        ];
+        return view('web.admin.product.images', $data);
+    }
+
+    public function uploadImages(Request $request, $id)
+    {
+        $product = Product::find($id);
+        if (is_null($product)){
+            return response()->json(['success' => false, 'message' => 'Produk tidak ditemukan'], 404);
+        }
+
+        $request->validate([
+            'images' => 'required|array',
+            'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120'
+        ]);
+
+        $uploaded = [];
+        DB::beginTransaction();
+        try {
+            $maxSort = ProductImage::where('product_id', $id)->max('sort_order') ?? 0;
+            
+            foreach ($request->file('images') as $file) {
+                $filename = 'product_' . $id . '_' . time() . '_' . Str::random(6) . '.' . $file->extension();
+                $path = $file->storeAs('public/product_images', $filename);
+                
+                $maxSort++;
+                
+                $image = ProductImage::create([
+                    'product_id' => $id,
+                    'image_path' => str_replace('public/', '', $path),
+                    'is_primary' => 'false',
+                    'sort_order' => $maxSort,
+                    'author' => Auth::user()->id
+                ]);
+                
+                // If first image, set as primary
+                if ($maxSort == 1) {
+                    $image->update(['is_primary' => 'true']);
+                    $product->update(['photo_thumbnail' => $image->image_path]);
+                }
+                
+                $uploaded[] = [
+                    'id' => $image->id,
+                    'path' => url('storage/' . $image->image_path),
+                    'is_primary' => $image->is_primary
+                ];
+            }
+            
+            DB::commit();
+            return response()->json([
+                'success' => true, 
+                'message' => count($uploaded) . ' foto berhasil diupload',
+                'images' => $uploaded
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['success' => false, 'message' => 'Gagal upload: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function setPrimaryImage(Request $request, $id)
+    {
+        $image = ProductImage::with('product')->find($id);
+        if (is_null($image)){
+            return response()->json(['success' => false, 'message' => 'Foto tidak ditemukan'], 404);
+        }
+
+        DB::beginTransaction();
+        try {
+            // Reset all images for this product to non-primary
+            ProductImage::where('product_id', $image->product_id)
+                ->update(['is_primary' => 'false']);
+            
+            // Set this image as primary
+            $image->update(['is_primary' => 'true']);
+            
+            // Update product thumbnail
+            Product::where('id', $image->product_id)
+                ->update(['photo_thumbnail' => $image->image_path]);
+            
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Foto utama berhasil diubah']);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['success' => false, 'message' => 'Gagal: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function deleteImage($id)
+    {
+        $image = ProductImage::find($id);
+        if (is_null($image)){
+            return response()->json(['success' => false, 'message' => 'Foto tidak ditemukan'], 404);
+        }
+
+        $productId = $image->product_id;
+        $wasPrimary = ($image->is_primary == 'true');
+
+        DB::beginTransaction();
+        try {
+            // Delete file
+            $filePath = storage_path('app/public/' . $image->image_path);
+            if (File::exists($filePath)) {
+                File::delete($filePath);
+            }
+            
+            $image->delete();
+            
+            // If deleted image was primary, set next available as primary
+            if ($wasPrimary) {
+                $nextImage = ProductImage::where('product_id', $productId)
+                    ->orderBy('sort_order', 'ASC')
+                    ->first();
+                    
+                if ($nextImage) {
+                    $nextImage->update(['is_primary' => 'true']);
+                    Product::where('id', $productId)
+                        ->update(['photo_thumbnail' => $nextImage->image_path]);
+                } else {
+                    Product::where('id', $productId)
+                        ->update(['photo_thumbnail' => null]);
+                }
+            }
+            
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Foto berhasil dihapus']);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['success' => false, 'message' => 'Gagal: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function reorderImages(Request $request, $id)
+    {
+        $request->validate([
+            'image_ids' => 'required|array',
+            'image_ids.*' => 'integer|exists:product_images,id'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            foreach ($request->image_ids as $order => $imageId) {
+                ProductImage::where('id', $imageId)
+                    ->where('product_id', $id)
+                    ->update(['sort_order' => $order + 1]);
+            }
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Urutan foto berhasil disimpan']);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['success' => false, 'message' => 'Gagal: ' . $e->getMessage()], 500);
+        }
     }
 }

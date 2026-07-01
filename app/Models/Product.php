@@ -100,6 +100,16 @@ class Product extends Model
         return $this->hasOne(User::class, 'id', 'author');
     }
 
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class, 'product_id', 'id')->orderBy('sort_order', 'ASC');
+    }
+
+    public function primaryImage()
+    {
+        return $this->hasOne(ProductImage::class, 'product_id', 'id')->where('is_primary', 'true');
+    }
+
     public function detailEtalase(){
         return $this->hasOne(Etalase::class, 'product', 'id');
     }
