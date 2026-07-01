@@ -267,7 +267,7 @@ class ProfileController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Foto profil berhasil diubah',
-                'thumbnail_url' => url('storage/user/thumbnail/'.$imageName)
+                'thumbnail_url' => url('storage/public/user/thumbnail/'.$imageName)
             ]);
         }else{
             return response()->json([
