@@ -372,8 +372,6 @@
                                                 </div>
                                                 @endforelse
                                             </div>
-                                            <div class="swiper-button-next"></div>
-                                            <div class="swiper-button-prev"></div>
                                             <div class="swiper-pagination"></div>
                                             @if(count($value->images) > 1)
                                             <span class="img-count-badge"><i class="fe fe-image"></i> {{count($value->images)}}</span>
