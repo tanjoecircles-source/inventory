@@ -39,7 +39,7 @@ class ProfileController extends Controller
         }
 
         if(!empty($user->avatar) && File::exists(storage_path('app/public/user/thumbnail/'.$user->avatar))) 
-            $user->avatar = url('storage/user/thumbnail/'.$user->avatar);
+            $user->avatar = url('storage/public/user/thumbnail/'.$user->avatar);
         else
             $user->avatar = url('assets/images/users/1.jpg');
 
