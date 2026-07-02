@@ -72,6 +72,9 @@
             margin-top: 10px;
             color: #6c757d;
         }
+        .image-item {
+            touch-action: none;
+        }
         .image-item.ui-sortable-helper {
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             transform: scale(1.02);
@@ -166,7 +169,7 @@
                                                 <i class="fe fe-trash-2"></i>
                                             </button>
                                         </div>
-                                        <img src="{{ url('storage/public/'.$image->image_path) }}" alt="Product Image" class="img-thumb">
+                                        <img src="{{ url('storage/'.$image->image_path) }}" alt="Product Image" class="img-thumb">
                                         <div class="image-info">
                                             <small><i class="fe fe-move"></i> Seret untuk urutkan</small>
                                         </div>
@@ -223,6 +226,14 @@
     </div>
 
     <script>
+    // jQuery UI Touch Punch for mobile drag support
+    try {
+        // Load jQuery UI Touch Punch from CDN
+        var touchPunchScript = document.createElement('script');
+        touchPunchScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js';
+        document.head.appendChild(touchPunchScript);
+    } catch(e) {}
+
     var deleteImageId = null;
     var productId = {{ $id_produk }};
 
