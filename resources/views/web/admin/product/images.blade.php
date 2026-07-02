@@ -169,7 +169,7 @@
                                                 <i class="fe fe-trash-2"></i>
                                             </button>
                                         </div>
-                                        <img src="{{ url('storage/'.$image->image_path) }}" alt="Product Image" class="img-thumb">
+                                        <img src="{{ url('storage/public/'.$image->image_path) }}" alt="Product Image" class="img-thumb">
                                         <div class="image-info">
                                             <small><i class="fe fe-move"></i> Seret untuk urutkan</small>
                                         </div>
