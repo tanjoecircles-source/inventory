@@ -226,28 +226,29 @@
     </div>
 
     <script>
-    // jQuery UI Touch Punch for mobile drag support
-    try {
-        // Load jQuery UI Touch Punch from CDN
-        var touchPunchScript = document.createElement('script');
-        touchPunchScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js';
-        document.head.appendChild(touchPunchScript);
-    } catch(e) {}
-
     var deleteImageId = null;
     var productId = {{ $id_produk }};
 
     $(document).ready(function() {
-        // Make sortable
-        $('#imageGallery').sortable({
-            handle: '.image-item',
-            placeholder: 'image-item ui-state-highlight col-6 col-md-4 col-lg-3',
-            opacity: 0.7,
-            update: function() {
-                // Enable save button when order changes
-                $('#btnSaveOrder').prop('disabled', false).removeClass('btn-outline-primary').addClass('btn-primary');
-            }
-        });
+        // Function to initialize sortable
+        function initSortable() {
+            $('#imageGallery').sortable({
+                handle: '.image-item',
+                placeholder: 'image-item ui-state-highlight col-6 col-md-4 col-lg-3',
+                opacity: 0.7,
+                update: function() {
+                    // Enable save button when order changes
+                    $('#btnSaveOrder').prop('disabled', false).removeClass('btn-outline-primary').addClass('btn-primary');
+                }
+            });
+        }
+
+        // Load jQuery UI Touch Punch from CDN, then initialize sortable
+        // This ensures Touch Punch is loaded after jQuery UI is loaded and executed
+        $.getScript('https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js')
+            .always(function() {
+                initSortable();
+            });
 
         // File upload handler
         $('#fileInput').on('change', function() {
