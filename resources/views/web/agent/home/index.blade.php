@@ -99,7 +99,7 @@
                 </div>
             </div>
             <div class="row px-2">
-                <div class="col-3 p-2">
+                <div class="col-4 p-2">
                     <a href="{{url('customer-store-list')}}">
                     <div class="card mb-0">
                         <div class="card-body text-center p-2">
@@ -109,7 +109,7 @@
                     <p class="text-center mt-2 mb-0 fs-13 font-weight-semibold">Member</p>
                     </a>
                 </div>
-                <div class="col-3 p-2">
+                <div class="col-4 p-2">
                     <a href="{{url('report-store')}}">
                     <div class="card mb-0">
                         <div class="card-body text-center p-2">
@@ -119,17 +119,17 @@
                     <p class="text-center mt-2 mb-0 fs-13 font-weight-semibold">Laporan Toko</p>
                     </a>
                 </div>
-                {{-- <div class="col-4 p-2">
+                <div class="col-4 p-2">
                     <a href="{{url('menu-recipe')}}">
                     <div class="card mb-0">
                         <div class="card-body text-center p-2">
-                            <span class="fs-30 icon-muted"><i class="fe fe-map icon-dropshadow-info text-primary"></i></span>
+                            <span class="fs-30 icon-muted"><i class="fe fe-feather icon-dropshadow-info text-primary"></i></span>
                         </div>
                     </div>
-                    <p class="text-center mt-2 fs-13 font-weight-semibold">Menu Recipe</p>
+                    <p class="text-center mt-2 mb-0 fs-13 font-weight-semibold">Resep Menu</p>
                     </a>
-                </div> --}}
-                <div class="col-3 p-2">
+                </div>
+                <div class="col-4 p-2">
                     <a href="{{url('roasting-list')}}">
                     <div class="card mb-0">
                         <div class="card-body text-center p-2">
@@ -139,7 +139,7 @@
                     <p class="text-center mt-2 fs-13 font-weight-semibold">Roasting</p>
                     </a>
                 </div>
-                <div class="col-3 p-2">
+                <div class="col-4 p-2">
                     <a href="{{url('map-storage')}}">
                     <div class="card mb-0">
                         <div class="card-body text-center p-2">
@@ -149,7 +149,7 @@
                     <p class="text-center mt-2 fs-13 font-weight-semibold">Map Storage</p>
                     </a>
                 </div>
-                <div class="col-3 p-2">
+                {{-- <div class="col-4 p-2">
                     <a href="{{url('pos')}}">
                     <div class="card mb-0">
                         <div class="card-body text-center p-2">
@@ -158,8 +158,8 @@
                     </div>
                     <p class="text-center mt-2 mb-0 fs-13 font-weight-semibold">POS</p>
                     </a>
-                </div>
-                <div class="col-3 p-2">
+                </div> --}}
+                <div class="col-4 p-2">
                     <a href="{{url('stock-submission-list')}}">
                     <div class="card mb-0">
                         <div class="card-body text-center p-2">

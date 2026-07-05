@@ -115,6 +115,7 @@ class HomeController extends Controller
 
     public function menurecipe(){
         $data = [];
+        if (Gate::allows('isAgent')) return view('web.agent.home.menurecipe', $data);
         return view('web.admin.home.menurecipe', $data);
     }
 
