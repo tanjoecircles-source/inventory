@@ -1,5 +1,5 @@
 @foreach ($contents as $item)
-<div class="d-flex align-items-center py-3 border-bottom">
+<div class="d-flex align-items-center py-3 border-top">
     <div class="flex-grow-1">
         <h6 class="mb-1 font-weight-semibold">{{ $item->customer_name ?? '-' }}</h6>
         <div class="d-flex justify-content-between align-items-center">
