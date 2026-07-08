@@ -286,6 +286,7 @@ Route::middleware(['auth:web'])->group(function(){
     Route::get('product-choosed/{app_id}', 'ProductController@choosed')->name('product-choosed');
     Route::get('product-sold/{app_id}', 'ProductController@sold')->name('product-sold');
     Route::get('product-print/{app_id}', 'ProductController@print');
+    Route::get('product-sales-history/{app_id}', 'ProductController@salesHistory')->name('product-sales-history');
     Route::get('product-delete/{app_id}', 'ProductController@delete')->name('product-delete');
 
     // Product Images (Multiple Photos)

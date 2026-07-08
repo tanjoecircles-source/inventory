@@ -1073,6 +1073,44 @@ class ProductController extends Controller
         }
     }
 
+    public function salesHistory(Request $request, $id)
+    {
+        $limit = 10;
+        $contents = DB::table('sales_items AS si')
+                    ->leftJoin('sales AS s', 's.id', '=', 'si.itm_inv_id')
+                    ->leftJoin('customer AS c', 'c.id', '=', 's.inv_cust')
+                    ->leftJoin('users AS u', 's.author', '=', 'u.id')
+                    ->select(
+                        'c.name AS customer_name',
+                        's.inv_date',
+                        'si.itm_qty',
+                        'u.name AS author_name'
+                    )
+                    ->where('si.itm_product', $id)
+                    ->orderBy('s.inv_date', 'DESC')
+                    ->orderBy('s.id', 'DESC')
+                    ->paginate($limit);
+
+        $product = DB::table('product')
+                    ->select('name', 'code')
+                    ->where('id', $id)
+                    ->first();
+
+        $data = [
+            'id_produk' => $id,
+            'product' => $product,
+            'contents' => $contents,
+            'limit' => $limit
+        ];
+
+        if($request->ajax()){
+            $view = view('web.admin.product.sales-history-paginate', $data)->render();
+            return response()->json(['html' => $view]);
+        }
+
+        return view('web.admin.product.sales-history', $data);
+    }
+
     public function print($id)
     {
         $detail = DB::table('product AS p')
