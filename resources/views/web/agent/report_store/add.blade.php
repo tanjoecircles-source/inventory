@@ -38,7 +38,10 @@
                         <label class="form-label">Nama Barista</label>
                         <select class="form-control @error('employee_id') is-invalid @enderror" name="employee_id" id="employee_id" placeholder="Pilih Barista">
                             @foreach($employee as $value)
-                                @if(old('employee_id') == $value->id)
+                                @php
+                                    $isSelected = old('employee_id') == $value->id || (isset($preset_employee_id) && $preset_employee_id == $value->id);
+                                @endphp
+                                @if($isSelected)
                                     <option value="{{ $value->id }}" selected>{{ $value->name }}</option>
                                 @endif
                             @endforeach

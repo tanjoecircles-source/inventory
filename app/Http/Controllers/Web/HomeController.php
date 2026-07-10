@@ -9,6 +9,9 @@ use App\Models\Product;
 use App\Models\Etalase;
 use App\Models\User;
 use App\Models\GbMap;
+use App\Models\ShiftSchedule;
+use App\Models\ShiftPeriod;
+use App\Models\Employee;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -49,6 +52,40 @@ class HomeController extends Controller
         //     }
         // }
        
+        // Get today's shift schedule ONLY for the logged-in user
+        $todayShift = null;
+        $employeeId = null;
+        $employee = Employee::where('user_id', auth()->id())->first();
+        if ($employee) {
+            $employeeId = $employee->id;
+            $schedule = ShiftSchedule::where('shift_date', date('Y-m-d'))
+                ->where(function($q) use ($employee) {
+                    $q->where('shift1_employee', $employee->name)
+                      ->orWhere('shift2_employee', $employee->name);
+                })
+                ->first();
+            
+            if ($schedule) {
+                // Create a filtered object with only the user's shift data
+                $todayShift = new \stdClass();
+                $todayShift->shift_date = $schedule->shift_date;
+                
+                if ($schedule->shift1_employee == $employee->name) {
+                    $todayShift->shift_employee = $schedule->shift1_employee;
+                    $todayShift->shift_number = 1;
+                    $todayShift->shift_type = $schedule->shift1_type;
+                    $todayShift->shift_start = $schedule->shift1_start;
+                    $todayShift->shift_end = $schedule->shift1_end;
+                } else {
+                    $todayShift->shift_employee = $schedule->shift2_employee;
+                    $todayShift->shift_number = 2;
+                    $todayShift->shift_type = $schedule->shift2_type;
+                    $todayShift->shift_start = $schedule->shift2_start;
+                    $todayShift->shift_end = $schedule->shift2_end;
+                }
+            }
+        }
+
         $data = [
             'stok_gb' => $stok_gb,
             'stok_rsf' => $stok_rsf,
@@ -63,7 +100,9 @@ class HomeController extends Controller
             'map_tengah_kiri' => GbMap::where('location', 'tengah-kiri')->get(),
             'map_tengah_kanan' => GbMap::where('location', 'tengah-kanan')->get(),
             'map_depan_kiri' => GbMap::where('location', 'depan-kiri')->get(),
-            'map_depan_kanan' => GbMap::where('location', 'depan-kanan')->get()
+            'map_depan_kanan' => GbMap::where('location', 'depan-kanan')->get(),
+            'todayShift' => $todayShift,
+            'employeeId' => $employeeId,
         ];
         if (Gate::allows('isSeller') || Gate::allows('isSellerDealer')) return view('web.seller.home.index', $data);
         if (Gate::allows('isAgent')) return view('web.agent.home.index', $data);
@@ -117,6 +156,29 @@ class HomeController extends Controller
         $data = [];
         if (Gate::allows('isAgent')) return view('web.agent.home.menurecipe', $data);
         return view('web.admin.home.menurecipe', $data);
+    }
+
+    public function myShiftDetail()
+    {
+        $employee = Employee::where('user_id', auth()->id())->first();
+        $userEmployeeName = $employee ? $employee->name : null;
+
+        // Find active period
+        $activePeriod = ShiftPeriod::where('start_date', '<=', date('Y-m-d'))
+            ->where('end_date', '>=', date('Y-m-d'))
+            ->first();
+
+        if (!$activePeriod) {
+            return redirect('home')->with('danger', 'Tidak ada periode shift yang aktif.');
+        }
+
+        // Get ALL schedules for this period
+        $schedules = ShiftSchedule::with('period')
+            ->where('shift_period_id', $activePeriod->id)
+            ->orderBy('shift_date', 'asc')
+            ->get();
+
+        return view('web.agent.home.my_shift_detail', compact('activePeriod', 'schedules', 'userEmployeeName'));
     }
 
     public function recapitulation(){

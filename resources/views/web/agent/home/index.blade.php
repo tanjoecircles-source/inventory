@@ -29,75 +29,75 @@
         });
     </script>
 @endif
-<style>
-.swipeInfo {
-    width: 100%;
-}
-
-.swipeInfo .swiper-slide img {
-    border-radius: 8px !important;
-    border: 2px solid #eee;
-    object-fit: cover;
-}
-
-.swiperEtalase {
-    width: 100%;
-    padding: 0px;
-    margin: 0px;
-}
-
-.swiperEtalase .swiper-slide img {
-    width: 300px;
-    border-radius: 6px 6px 0px 0px;
-    object-fit: cover;
-}
-
-.swiperChoosed {
-    width: 100%;
-    padding: 0px;
-    margin: 0px;
-}
-
-.swiperChoosed .swiper-slide img {
-    width: 300px;
-    border-radius: 6px 6px 0px 0px;
-    object-fit: cover;
-}
-
-.swiperNews {
-    width: 100%;
-    padding: 0px;
-    margin: 0px;
-}
-
-.swiperNews .swiper-slide img {
-    width: 300px;
-    border-radius: 6px 6px 0px 0px;
-    object-fit: cover;
-}
-</style>
 <div class="container">
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-8 mx-auto">
-            <div class="swiper swipeInfo">
-                <div class="swiper-wrapper mb-6 text-center">
-                    <div class="swiper-slide"><img src="{{ asset('assets/images/pattern/slide-agent-1.png') }}" alt="tag" ></div>
-                    <div class="swiper-slide"><img src="{{ asset('assets/images/pattern/slide-agent-2.png') }}" alt="tag" ></div>
+            <div class="row px-2">
+                <div class="col-12 p-2">
+                    <h5 class="text-left mt-2 mb-0">Hello, {{Auth::user()->name}}</h5>
+                    <p class="mt-1 mb-2">Please manage tanjoe's store system</p>
                 </div>
-                <div class="swiper-pagination"></div>
             </div>
+            @if($todayShift)
+            @php
+                $shiftBadge = '';
+                if ($todayShift->shift_type == 'Long') $shiftBadge = 'badge-warning';
+                elseif ($todayShift->shift_type == 'Short') $shiftBadge = 'badge-info';
+                else $shiftBadge = 'badge-secondary';
+            @endphp
+            <div class="card bg-white">
+                <div class="card-body px-4 py-4">
+                    <div class="d-flex align-items-center">
+                        <div class="mr-3 text-center bg-light" style="width:64px; height:64px; border-radius:14px; display:flex; align-items:center; justify-content:center;">
+                            <i class="fe fe-clock fs-35 text-primary"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <p class="mb-1" style="font-size:13px; opacity:0.8;">Jadwal Shift Hari Ini</p>
+                            <h5 class="mb-1 font-weight-bold">{{ date('d M Y') }}</h5>
+                            <span style="opacity:0.9;">
+                                {{ $todayShift->shift_start ? date('H:i', strtotime($todayShift->shift_start)) : '-' }}
+                                -
+                                {{ $todayShift->shift_end ? date('H:i', strtotime($todayShift->shift_end)) : '-' }}
+                            </span>
+                        </div>
+                        <div class="text-right">
+                            <span class="badge badge-pill {{ $shiftBadge }} px-3 py-2 text-white">
+                                Shift {{ $todayShift->shift_number }} - {{ $todayShift->shift_type ?? '-' }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="mt-3 d-flex">
+                        <a href="{{url('my-shift-detail')}}" class="btn btn-sm btn-primary mr-2" style="flex:1;border-radius:6px; text-decoration:none;">
+                            <i class="fe fe-file-text mr-1"></i> Detail
+                        </a>
+                        <a href="{{url('report-store-add?date=' . date('d-m-Y') . '&employee_id=' . ($employeeId ?? ''))}}" class="btn btn-sm btn-dark" style="flex:1;border-radius:6px; text-decoration:none;color:#fff;">
+                            <i class="fe fe-flag mr-1"></i> Lapor
+                        </a>
+                    </div>
+                </div>
+            </div>
+            @else
+            <div class="card overflow-hidden" style="border:none; border-radius:16px; background: linear-gradient(135deg, #6c757d 0%, #495057 100%);">
+                <div class="card-body px-4 py-4 text-white">
+                    <div class="d-flex align-items-center">
+                        <div class="mr-3 text-center" style="width:48px; height:48px; border-radius:14px; background: rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center;">
+                            <i class="fe fe-clock" style="font-size:24px;"></i>
+                        </div>
+                        <div>
+                            <p class="mb-0" style="font-size:13px; opacity:0.8;">Jadwal Shift Hari Ini</p>
+                            <h5 class="mb-0 font-weight-bold">{{ date('d M Y') }}</h5>
+                            <span class="badge badge-light text-muted mt-1 px-3 py-1">Tidak Ada Jadwal</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 </div>
 <div class="container">
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-8 mx-auto">
-            <div class="row px-2">
-                <div class="col-12 p-2">
-                            <h5 class="text-left mt-2 mb-0">Hello, {{Auth::user()->name}}</h5>
-                            <p class="mt-1 mb-2">Please manage tanjoe's store system</p>
-                </div>
-            </div>
             <div class="row px-2">
                 <div class="col-4 p-2">
                     <a href="{{url('customer-store-list')}}">
@@ -149,16 +149,6 @@
                     <p class="text-center mt-2 fs-13 font-weight-semibold">Map Storage</p>
                     </a>
                 </div>
-                {{-- <div class="col-4 p-2">
-                    <a href="{{url('pos')}}">
-                    <div class="card mb-0">
-                        <div class="card-body text-center p-2">
-                            <span class="fs-30 icon-muted"><i class="fe fe-shopping-cart icon-dropshadow-info text-primary"></i></span>
-                        </div>
-                    </div>
-                    <p class="text-center mt-2 mb-0 fs-13 font-weight-semibold">POS</p>
-                    </a>
-                </div> --}}
                 <div class="col-4 p-2">
                     <a href="{{url('stock-submission-list')}}">
                     <div class="card mb-0">
@@ -251,24 +241,10 @@
                     </div>  
                 </div>
             </div>
-            <div class="row px-2">
-                <div class="col-12 p-2">
-                    <h5 class="text-left mt-2 mb-0">Jadwal Operasional Toko</h5>
-                </div>
-            </div>
-            <iframe src="https://calendar.google.com/calendar/embed?src=2ee29115c7b770944890e774b4a1bf7b5b288c627a0e7212c72b41600199fad4%40group.calendar.google.com&ctz=Asia%2FJakarta" style="border: 0" width="100%" height="620" frameborder="0" scrolling="no"></iframe>
-            <div class="row py-5">&nbsp;</div>  
         </div>
     </div>
 </div>
 <script>
-var swiper = new Swiper(".swipeInfo", {
-    pagination: {
-        el: ".swiper-pagination",
-        dynamicBullets: false,
-        spaceBetween: 8, // Space between the slides
-    },
-});
 document.getElementById('copyurlroasted').addEventListener('click', async () => {
     try {
         await navigator.clipboard.writeText('https://app.tanjoecoffee.com/roastedbeans');

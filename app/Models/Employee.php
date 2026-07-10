@@ -23,8 +23,14 @@ class Employee extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'user_id',
         'name',
         'phone',
         'position'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

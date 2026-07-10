@@ -316,6 +316,16 @@
                         <p class="text-center mt-2 fs-13 font-weight-semibold">Approval Stok</p>
                         </a>
                     </div>
+                    <div class="col-4 p-2">
+                        <a href="{{url('shift-period-list')}}">
+                        <div class="card mb-0">
+                            <div class="card-body text-center p-2">
+                                <span class="fs-30 icon-muted"><i class="fe fe-clock icon-dropshadow-info text-primary"></i></span>
+                            </div>
+                        </div>
+                        <p class="text-center mt-2 fs-13 font-weight-semibold">Atur Jadwal Shift</p>
+                        </a>
+                    </div>
                 </div>
                 <div class="row px-2">
                     <div class="col-12 p-2">

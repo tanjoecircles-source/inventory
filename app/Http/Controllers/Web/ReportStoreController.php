@@ -109,13 +109,17 @@ class ReportStoreController extends Controller
         return response()->json(['results' => $contents ? $contents : array()]);
     }
 
-    public function add()
+    public function add(Request $request)
     {
+        $presetDate = $request->query('date', date('d-m-Y'));
+        $presetEmployeeId = $request->query('employee_id');
+
         $data = [
             'pur_code' => 'PUR/TC'.date('y').'/'.date('mdhis'),
-            'date' => date('d-m-Y'),
+            'date' => $presetDate,
             'employee' => Employee::all(),
-            'shift' => ShiftStore::all()
+            'shift' => ShiftStore::all(),
+            'preset_employee_id' => $presetEmployeeId,
         ];
         return view('web.agent.report_store.add', $data);
     }
