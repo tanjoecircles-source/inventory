@@ -1,7 +1,7 @@
 
 <style>
     @page {
-        margin: 16mm 6mm 2mm 6mm; /* atas, kanan, bawah, kiri */
+        margin: 10mm 6mm 2mm 6mm; /* atas, kanan, bawah, kiri */
     }
     body {
       font-family: Arial, Helvetica, sans-serif;
@@ -67,7 +67,7 @@
     <body>
         <table class="layout">
             <tr>
-                <td width="100%" class="text-center"><img src="{{public_path('/assets/images/brand/logo.png')}}" class="icon-blue" style="height:8rem;margin-bottom:25px;" alt=""></td>
+                <td width="100%" class="text-center"><img src="{{public_path('/assets/images/brand/logo-bw.png')}}" class="icon-blue" style="height:10rem;margin-bottom:10px;" alt=""></td>
             </tr>
         </table>
         <h2 class="text-center">COFFEE INFO</h2>
