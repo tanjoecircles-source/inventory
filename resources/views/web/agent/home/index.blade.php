@@ -89,6 +89,11 @@
                             <span class="badge badge-light text-muted mt-1 px-3 py-1">Tidak Ada Jadwal</span>
                         </div>
                     </div>
+                    <div class="mt-3 d-flex">
+                        <a href="{{url('my-shift-detail')}}" class="btn btn-sm btn-dark mr-2" style="flex:1;border-radius:6px; text-decoration:none;">
+                            <i class="fe fe-file-text mr-1"></i> Detail
+                        </a>
+                    </div>
                 </div>
             </div>
             @endif
