@@ -199,6 +199,21 @@
                         </a>
                     </div>
                 </div>
+                @else
+                <div class="card text-center no-border shadow-none custom-square my-2">
+                    <div class="card-body p-0">
+                        <a href="{{(url('product-sales-history/'.$id_produk))}}" class="d-flex p-4 border-bottom">
+                            <i class="fe fe-shopping-cart fs-16 mr-2"></i>
+                            <p class="mb-1 font-weight-semibold">History Penjualan</p>
+                        </a>
+                        @if($info['kategori'] == 'Green Beans')
+                        <a href="{{(url('product-print/'.$id_produk))}}" class="d-flex p-4 border-bottom">
+                            <i class="fe fe-printer fs-16 mr-2"></i>
+                            <p class="mb-1 font-weight-semibold">Cetak Info</p>
+                        </a>
+                        @endif
+                    </div>
+                </div>
                 @endif
             </div>
         </div>
