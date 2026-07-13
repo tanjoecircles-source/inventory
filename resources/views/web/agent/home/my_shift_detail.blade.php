@@ -35,19 +35,19 @@
                 $isMyShift2 = $userEmployeeName && $schedule->shift2_employee == $userEmployeeName;
                 
                 $shift1Badge = 'badge-light';
-                if ($schedule->shift1_type == 'Long') $shift1Badge = 'badge-warning';
-                elseif ($schedule->shift1_type == 'Short') $shift1Badge = 'badge-info';
+                if ($schedule->shift1_type == 'Long') $shift1Badge = 'badge-danger';
+                elseif ($schedule->shift1_type == 'Short') $shift1Badge = 'badge-dark';
                 elseif ($schedule->shift1_type == 'Off') $shift1Badge = 'badge-secondary';
                 
                 $shift2Badge = 'badge-light';
-                if ($schedule->shift2_type == 'Long') $shift2Badge = 'badge-warning';
-                elseif ($schedule->shift2_type == 'Short') $shift2Badge = 'badge-info';
+                if ($schedule->shift2_type == 'Long') $shift2Badge = 'badge-danger';
+                elseif ($schedule->shift2_type == 'Short') $shift2Badge = 'badge-dark';
                 elseif ($schedule->shift2_type == 'Off') $shift2Badge = 'badge-secondary';
             @endphp
             <div class="card mb-3">
                 <div class="card-body px-3 py-3">
                     {{-- Header Tanggal --}}
-                    <div class="d-flex align-items-center mb-2 pb-2 border-bottom">
+                    <div class="d-flex align-items-center mb-1 pb-1">
                         <div class="ml-4 mr-4">
                             <div class="text-center text-primary" style="width:40px;">
                                 <span class="font-weight-bold text-primary" style="font-size:18px;">{{ date('d', strtotime($schedule->shift_date)) }}</span>
@@ -60,27 +60,27 @@
                     </div>
                     {{-- Shift 1 --}}
                     @if($schedule->shift1_employee)
-                    <div class="d-flex align-items-center mb-1 {{ $isMyShift1 ? 'bg-light' : '' }} px-2 py-2">
+                    <div class="d-flex align-items-center mb-1 {{ $isMyShift1 ? 'bg-light' : '' }} px-2 py-1" style="border-top:1px solid #eee;">
                         <div class="mr-2 text-center" style="width:56px;">
                             <span class="font-weight-bold"> Shift 1</span>
                         </div>
                         <div class="flex-grow-1 d-flex align-items-center">
                             <div class="flex-grow-1">
                                 <span class="font-weight-semibold">{{ $schedule->shift1_employee }}</span>
-                                <div class="text-muted fs-12">
+                                <div class="">
                                     <i class="fe fe-clock mr-1"></i>
                                     {{ $schedule->shift1_start ? date('H:i', strtotime($schedule->shift1_start)) : '-' }}
                                     -
                                     {{ $schedule->shift1_end ? date('H:i', strtotime($schedule->shift1_end)) : '-' }}
                                 </div>
                             </div>
-                            <span class="badge {{ $shift1Badge }} px-2" style="font-size:10px;">{{ $schedule->shift1_type ?? '-' }}</span>
+                            <span class="badge {{ $shift1Badge }} px-2">{{ $schedule->shift1_type ?? '-' }}</span>
                         </div>
                     </div>
                     @endif
                     {{-- Shift 2 --}}
                     @if($schedule->shift2_employee)
-                    <div class="d-flex align-items-center {{ $isMyShift2 ? 'bg-light' : '' }} px-2 py-2">
+                    <div class="d-flex align-items-center {{ $isMyShift2 ? 'bg-light' : '' }} px-2 py-1" style="border-top:1px solid #eee;">
                         <div class="mr-2 text-center" style="width:56px;">
                             <span class="font-weight-bold"> Shift 2</span>
                         </div>
@@ -88,14 +88,14 @@
                             <div class="flex-grow-1">
                                 <span class="font-weight-semibold">{{ $schedule->shift2_employee }}</span>
                                 
-                                <div class="text-muted fs-12">
+                                <div class="">
                                     <i class="fe fe-clock mr-1"></i>
                                     {{ $schedule->shift2_start ? date('H:i', strtotime($schedule->shift2_start)) : '-' }}
                                     -
                                     {{ $schedule->shift2_end ? date('H:i', strtotime($schedule->shift2_end)) : '-' }}
                                 </div>
                             </div>
-                            <span class="badge {{ $shift2Badge }} px-2" style="font-size:10px;">{{ $schedule->shift2_type ?? '-' }}</span>
+                            <span class="badge {{ $shift2Badge }} px-2">{{ $schedule->shift2_type ?? '-' }}</span>
                         </div>
                     </div>
                     @endif
