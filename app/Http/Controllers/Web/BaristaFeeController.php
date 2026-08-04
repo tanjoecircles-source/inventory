@@ -117,7 +117,7 @@ class BaristaFeeController extends Controller
                     ->whereIn('rs.shift_id', ['2', '3'])
                     ->count();
 
-        // Calculate Bonus: 60% x (Total - 250,000) if Total > 250,000 per day
+        // Calculate Bonus: 50% x (Total - 300,000) if Total > 300,000 per day
         $reports = DB::table('report_store AS rs')
                     ->select('rs.cash', 'rs.qris')
                     ->where(['rs.employee_id' => $request->id_employee, ['rs.date', '>=', $periode->periode_start], ['rs.date', '<=', $periode->periode_end]])
@@ -126,8 +126,8 @@ class BaristaFeeController extends Controller
         $bonus_total = 0;
         foreach($reports as $rp){
             $total_harian = (FLOAT)$rp->cash + (FLOAT)$rp->qris;
-            if($total_harian > 250000){
-                $bonus_total += (0.6 * ($total_harian - 250000));
+            if($total_harian > 300000){
+                $bonus_total += (0.5 * ($total_harian - 300000));
             }
         }
 
