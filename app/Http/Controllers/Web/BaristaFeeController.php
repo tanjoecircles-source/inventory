@@ -126,7 +126,7 @@ class BaristaFeeController extends Controller
         $bonus_total = 0;
         foreach($reports as $rp){
             $total_harian = (FLOAT)$rp->cash + (FLOAT)$rp->qris;
-            if($total_harian > 350000){
+            if($total_harian > 3000000){
                 $bonus_total += (0.4 * ($total_harian - 350000));
             }
         }
