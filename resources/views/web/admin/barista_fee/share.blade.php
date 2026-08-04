@@ -61,7 +61,7 @@
                         @error('sub_total')<div class="text-danger">{{ $message }}</div>@enderror
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Bonus (40% Revenue > 350k)</label>
+                        <label class="form-label">Bonus (50% Revenue > 350k)</label>
                         <div class="input-icon mb-3">
                             <span class="input-icon-addon fs-15">Rp</span>
                             <input type="text" class="form-control masked" id="bonus" name="bonus" value="0">
