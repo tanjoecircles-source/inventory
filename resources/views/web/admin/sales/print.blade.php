@@ -82,9 +82,10 @@
         <table class="table">
             <tr>
                 <td width="45%"><b>Barang</b></td>
-                <td width="10%" class="text-center"><b>Kuantitas</b></td>
-                <td width="15%" class="text-right"><b>Harga</b></td>
+                <td width="10%" class="text-center"><b>Qty</b></td>
+                <td width="15%" class="text-right"><b>Harga<br>Retail</b></td>
                 <td width="15%" class="text-right"><b>Diskon</b></td>
+                <td width="15%" class="text-right"><b>Harga<br>Akhir</b></td>
                 <td width="15%" class="text-right"><b>Jumlah</b></td>
             </tr>
             @foreach ($item as $item)
@@ -93,6 +94,7 @@
                 <td class="text-center">{{$item->itm_qty}}</td>
                 <td class="text-right">Rp {{str_replace(",", ".", number_format($item->product_price))}}</td>
                 <td class="text-right">Rp {{str_replace(",", ".", number_format($item->product_disc))}}</td>
+                <td class="text-right">Rp {{str_replace(",", ".", number_format($item->product_price - $item->product_disc))}}</td>
                 <td class="text-right">Rp {{str_replace(",", ".", number_format($item->itm_total))}}</td>
             
             </tr>
@@ -100,9 +102,13 @@
         </table>
         <table class="layout">
             <tr>
-                <td width="60%" rowspan="4" style="vertical-align:bottom"><b>Instruksi Pembayaran</b><p style="margin-top:6px;margin-bottom:0px">Transfer Bank melalui No. Rekening berikut :</p></td>
-                <td width="25%" class="text-right">Sub Total</td>
-                <td width="15%" class="text-right">Rp {{str_replace(",", ".", number_format($detail->inv_sub_total))}}</td>
+                <td width="60%" rowspan="5" style="vertical-align:bottom"><b>Instruksi Pembayaran</b><p style="margin-top:6px;margin-bottom:0px">Transfer Bank melalui No. Rekening berikut :</p></td>
+                <td width="25%" class="text-right">Total Diskon Item</td>
+                <td width="15%" class="text-right">Rp {{str_replace(",", ".", number_format($total_item_disc))}}</td>
+            </tr>
+            <tr>
+                <td class="text-right">Total Harga Sebelum Diskon</td>
+                <td class="text-right">Rp {{str_replace(",", ".", number_format($total_before_discount))}}</td>
             </tr>
             @if(!empty($detail->inv_discount))
             <tr>

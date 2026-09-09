@@ -505,14 +505,18 @@ class SalesController extends Controller
             ->orderBy('id', 'DESC')
             ->get();
 
+        $total_item_disc = 0;
         foreach($product as $key => $v) {
             $v->disc = ((INT)$v->product_price - (INT)$v->itm_price) * (INT)$v->itm_qty;
             $v->product_disc = ($v->disc < 0) ? 0 : $v->disc;
+            $total_item_disc += (INT)$v->product_disc;
         }
             
         $data = [
             'detail' => $detail,
-            'item' => $product
+            'item' => $product,
+            'total_item_disc' => $total_item_disc,
+            'total_before_discount' => (INT)$detail->inv_sub_total + (INT)$total_item_disc
         ];
         
         $pdf = Pdf::loadView('web.admin.sales.print', $data);
