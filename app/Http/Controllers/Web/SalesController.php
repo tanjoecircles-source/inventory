@@ -507,9 +507,9 @@ class SalesController extends Controller
 
         $total_item_disc = 0;
         foreach($product as $key => $v) {
-            $v->disc = ((INT)$v->product_price - (INT)$v->itm_price) * (INT)$v->itm_qty;
+            $v->disc = ((INT)$v->product_price - (INT)$v->itm_price);
             $v->product_disc = ($v->disc < 0) ? 0 : $v->disc;
-            $total_item_disc += (INT)$v->product_disc;
+            $total_item_disc += (INT)$v->product_disc * (INT)$v->itm_qty;
         }
             
         $data = [
@@ -645,7 +645,7 @@ class SalesController extends Controller
         DB::beginTransaction();
         $update = Sales::where('id', $id)->update([
             'inv_expedition' => preg_replace('/[^0-9]/', '', $data['inv_expedition']),
-            'inv_discount' => preg_replace('/[^0-9]/', '', $data['inv_discount']),
+            'inv_discount' => 0,//preg_replace('/[^0-9]/', '', $data['inv_discount'])
             'inv_desc' => $data['inv_desc']
         ]);
         if ($update){

@@ -20,8 +20,8 @@
     }
     .layout td{
         border: 0;
-        padding : 4px 8px;
-        vertical-align: top;
+        padding : 3px 6px;
+        vertical-align: middle;
     }
     .text-center{
         text-align: center;
@@ -81,20 +81,20 @@
         </table>
         <table class="table">
             <tr>
-                <td width="45%"><b>Barang</b></td>
-                <td width="10%" class="text-center"><b>Qty</b></td>
-                <td width="15%" class="text-right"><b>Harga<br>Retail</b></td>
-                <td width="15%" class="text-right"><b>Diskon</b></td>
-                <td width="15%" class="text-right"><b>Harga<br>Akhir</b></td>
-                <td width="15%" class="text-right"><b>Jumlah</b></td>
+                <td width="44%"><b>Item Barang</b></td>
+                <td width="14%" class="text-right"><b>Harga<br>Retail</b></td>
+                <td width="14%" class="text-right"><b>Item<br>Diskon</b></td>
+                <td width="14%" class="text-right"><b>Harga<br>Akhir</b></td>
+                <td width="10%" class="text-center"><b>Item Qty</b></td>
+                <td width="14%" class="text-right"><b>Jumlah</b></td>
             </tr>
             @foreach ($item as $item)
             <tr>
-                <td>{{$item->product_name}}<br><p class="text-muted text-small">{{$item->product_desc}}</p></td>
-                <td class="text-center">{{$item->itm_qty}}</td>
+                <td>{{$item->product_name}}@if (!empty($item->product_desc)) <br><p class="text-muted text-small">{{$item->product_desc}}</p>@endif</td>
                 <td class="text-right">Rp {{str_replace(",", ".", number_format($item->product_price))}}</td>
                 <td class="text-right">Rp {{str_replace(",", ".", number_format($item->product_disc))}}</td>
                 <td class="text-right">Rp {{str_replace(",", ".", number_format($item->product_price - $item->product_disc))}}</td>
+                <td class="text-center">{{$item->itm_qty}}</td>
                 <td class="text-right">Rp {{str_replace(",", ".", number_format($item->itm_total))}}</td>
             
             </tr>
@@ -111,7 +111,7 @@
                 <td class="text-right" style="color:#008000">- Rp {{str_replace(",", ".", number_format($total_item_disc))}}</td>
             </tr>
             <tr>
-                <td class="text-right">Total Jumlah Harga Akhir</td>
+                <td class="text-right">Total Harga Akhir</td>
                 <td class="text-right">Rp {{str_replace(",", ".", number_format($detail->inv_sub_total))}}</td>
             </tr>
             @if(!empty($detail->inv_expedition))
