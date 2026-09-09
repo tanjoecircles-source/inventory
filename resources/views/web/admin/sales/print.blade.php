@@ -3,7 +3,7 @@
     body {
       font-family: Arial, Helvetica, sans-serif;
       margin: 0px; 
-      font-size: 13px;
+      font-size: 12px;
     }
     h2, h4{
         margin: 0px;
@@ -20,7 +20,7 @@
     }
     .layout td{
         border: 0;
-        padding : 6px 10px;
+        padding : 4px 8px;
         vertical-align: top;
     }
     .text-center{
@@ -102,29 +102,27 @@
         </table>
         <table class="layout">
             <tr>
-                <td width="60%" rowspan="5" style="vertical-align:bottom"><b>Instruksi Pembayaran</b><p style="margin-top:6px;margin-bottom:0px">Transfer Bank melalui No. Rekening berikut :</p></td>
-                <td width="25%" class="text-right">Total Diskon Item</td>
-                <td width="15%" class="text-right">Rp {{str_replace(",", ".", number_format($total_item_disc))}}</td>
+                <td width="50%" rowspan="6" style="vertical-align:bottom"><b>Instruksi Pembayaran</b><p style="margin-top:6px;margin-bottom:0px">Transfer Bank melalui No. Rekening berikut :</p></td>
+                <td width="35%" class="text-right">Total Harga Retail</td>
+                <td width="15%" class="text-right">Rp {{str_replace(",", ".", number_format($total_before_discount))}}</td>
             </tr>
             <tr>
-                <td class="text-right">Total Harga Sebelum Diskon</td>
-                <td class="text-right">Rp {{str_replace(",", ".", number_format($total_before_discount))}}</td>
+                <td class="text-right" style="color:#008000">Total Diskon</td>
+                <td class="text-right" style="color:#008000">- Rp {{str_replace(",", ".", number_format($total_item_disc))}}</td>
             </tr>
-            @if(!empty($detail->inv_discount))
             <tr>
-                <td class="text-right">Diskon</td>
-                <td class="text-right">Rp {{str_replace(",", ".", number_format($detail->inv_discount))}}</td>
+                <td class="text-right">Total Jumlah Harga Akhir</td>
+                <td class="text-right">Rp {{str_replace(",", ".", number_format($detail->inv_sub_total))}}</td>
             </tr>
-            @endif
             @if(!empty($detail->inv_expedition))
             <tr>
-                <td class="text-right">Pengiriman</td>
-                <td class="text-right">Rp {{str_replace(",", ".", number_format($detail->inv_expedition))}}</td>
+                <td class="text-right" style="color:#b70909">Biaya Pengiriman</td>
+                <td class="text-right" style="color:#b70909">+ Rp {{str_replace(",", ".", number_format($detail->inv_expedition))}}</td>
             </tr>
             @endif
             <tr>
-                <td class="text-right">Total</td>
-                <td class="text-right">Rp {{str_replace(",", ".", number_format($detail->inv_total))}}</td>
+                <td class="text-right"><b>Total Tagihan</b></td>
+                <td class="text-right"><b>Rp {{str_replace(",", ".", number_format($detail->inv_total))}}</b></td>
             </tr>
         </table>
         <table class="layout invoice-info">
