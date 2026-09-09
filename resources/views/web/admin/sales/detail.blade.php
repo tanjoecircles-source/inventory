@@ -128,6 +128,7 @@
                             <p class="mb-0 font-weight-bold">Rp {{str_replace(",", ".", number_format($inv_total))}}</p>
                         </div>
                     </div>
+                    @if(Gate::denies('isAgent'))
                     <div class="d-flex title-bar py-2 border-top">
                         <div class="mr-auto text-left">
                             <p class="mb-1 italic"><i>Total HPP</i>
@@ -149,6 +150,7 @@
                             <p class="mb-0"><i>Rp {{str_replace(",", ".", number_format($estimasi_profit))}}</i></p>
                         </div>
                     </div>
+                    @endif
                     @if($invoice->inv_status == 'Draft')
                         <button type="submit" class="btn btn-primary btn-block" id="btn-update" name="btn-update">Simpan</button>
                         @if($invoice->inv_total != 0)
