@@ -679,6 +679,66 @@ class AuthController extends Controller
         return view('core.gb_pricelist', $data);
     }
 
+    public function gb_offer(){
+        $stok_gb = DB::table('product as p')
+                    ->select(
+                            'p.id as id',
+                            'p.name_pl as name',
+                            'p.origin',
+                            'p.elevation',
+                            'p.varietal',
+                            'p.process',
+                            'p.processor',
+                            'p.harvest',
+                            'p.desc',
+                            'p.price as price',
+                            'p.price_grosir15 as price_grosir15',
+                            'p.price_grosir50 as price_grosir50',
+                            'p.is_new as is_new',
+                            'p.stock as stock',
+                            'p.photo_thumbnail as photo'
+                            )
+                    ->where([
+                        'p.type' => '1',
+                        'p.status' => 'Active',
+                        'p.is_pricelist' => 'true'
+                    ])
+                    ->orderBy('order_pricelist', 'ASC')
+                    ->get();
+        
+        // Load images for each product
+        $productIds = $stok_gb->pluck('id')->toArray();
+        $images = ProductImage::whereIn('product_id', $productIds)
+                    ->orderBy('sort_order', 'ASC')
+                    ->get()
+                    ->groupBy('product_id');
+        
+        foreach ($stok_gb as $key => $value) {
+            $value->is_new = ($value->is_new == 'true') ? 'New' : '';
+            
+            $value->stock_lable = ($value->stock > 0) ? 'Ready' : 'Sold';
+            $value->stock_icon = ($value->stock > 0) ? 'fe-check-circle' : 'fe-x-circle';
+            $value->stock_color = ($value->stock > 0) ? 'info' : 'danger';
+            
+            // Attach images to product
+            $productImages = $images->get($value->id, collect());
+            $value->images = $productImages->map(function($img) {
+                $img->image_url = url('storage/public/' . $img->image_path);
+                return $img;
+            });
+            
+            // If no images from product_images table, use the photo_thumbnail fallback
+            if ($productImages->isEmpty() && !empty($value->photo)) {
+                $defaultImg = new \stdClass();
+                $defaultImg->image_url = asset('assets/images/products/noimage.png');
+                $defaultImg->is_primary = 'true';
+                $value->images = collect([$defaultImg]);
+            }
+        }
+        $data = ['stok_gb' => $stok_gb];
+        return view('core.gb_offer', $data);
+    }
+
     public function roasted_pricelist(){
         $stok_filter = DB::table('product as p')
                     ->select(
@@ -868,6 +928,100 @@ class AuthController extends Controller
             'stok_spro' => $stok_spro
         ];
         return view('core.roastedb2b_pricelist', $data);
+    }
+
+    public function roasted_offer(){
+        $stok_filter = DB::table('product as p')
+                    ->select(
+                            'p.id as id',
+                            'p.name_pl as name',
+                            'p.origin',
+                            'p.elevation',
+                            'p.varietal',
+                            'p.process',
+                            'p.processor',
+                            'p.harvest',
+                            'p.order_pricelist',
+                            'p.desc',
+                            'p.price_grosir50 as price',
+                            'p.is_new as is_new',
+                            'p.stock as stock',
+                            'p.photo_thumbnail as photo'
+                            )
+                    ->where([
+                        'p.type' => '2',
+                        'p.status' => 'Active',
+                        'p.is_pricelist' => 'true'
+                    ])
+                    ->orderBy('order_pricelist', 'ASC')
+                    ->get();
+
+        $stok_spro = DB::table('product as p')
+                    ->select(
+                            'p.id as id',
+                            'p.name_pl as name',
+                            'p.category as category',
+                            'p.origin',
+                            'p.elevation',
+                            'p.varietal',
+                            'p.process',
+                            'p.processor',
+                            'p.harvest',
+                            'p.order_pricelist',
+                            'p.desc',
+                            'p.price_grosir50 as price',
+                            'p.is_new as is_new',
+                            'p.stock as stock',
+                            'p.photo_thumbnail as photo'
+                            )
+                    ->where([
+                        'p.type' => '3',
+                        'p.status' => 'Active',
+                        'p.is_pricelist' => 'true'
+                    ])
+                    ->orderBy('order_pricelist', 'ASC')
+                    ->get();
+
+        // Load images for all products (filter + espresso)
+        $allProducts = $stok_filter->merge($stok_spro);
+        $productIds = $allProducts->pluck('id')->unique()->toArray();
+        $allImages = ProductImage::whereIn('product_id', $productIds)
+                    ->orderBy('sort_order', 'ASC')
+                    ->get()
+                    ->groupBy('product_id');
+
+        $attachImages = function($products, $stockLabelReady, $stockLabelEmpty, $stockColor) use ($allImages) {
+            foreach ($products as $value) {
+                $value->is_new = ($value->is_new == 'true') ? 'New' : '';
+                $value->price = empty($value->price) ? 0 : $value->price;
+                $value->order_pricelist = empty($value->order_pricelist) ? 0 : $value->order_pricelist;
+                $value->stock_lable = ($value->stock > 0) ? $stockLabelReady : $stockLabelEmpty;
+                $value->stock_icon = ($value->stock > 0) ? 'fe-check-circle' : 'fe-x-circle';
+                $value->stock_color = ($value->stock > 0) ? $stockColor : 'danger';
+                
+                $productImages = $allImages->get($value->id, collect());
+                $value->images = $productImages->map(function($img) {
+                    $img->image_url = url('storage/public/' . $img->image_path);
+                    return $img;
+                });
+                
+                if ($productImages->isEmpty() && !empty($value->photo)) {
+                    $defaultImg = new \stdClass();
+                    $defaultImg->image_url = asset('assets/images/products/no-image.png');
+                    $defaultImg->is_primary = 'true';
+                    $value->images = collect([$defaultImg]);
+                }
+            }
+        };
+
+        $attachImages($stok_filter, 'Ready', 'Sold Out', 'success');
+        $attachImages($stok_spro, 'Ready', 'Pre Order', 'success');
+
+        $data = [
+            'stok_filter' => $stok_filter,
+            'stok_spro' => $stok_spro
+        ];
+        return view('core.roasted_offer', $data);
     }
 
     // public function upload_condition($path, $code, $filedata){

@@ -41,8 +41,10 @@ Route::post('account-verification-email', 'AuthController@account_verification_e
 Route::get('gb-pricelist', 'AuthController@gb_pricelist')->middleware('guest')->name('gb_pricelist');
 Route::get('roasted-pricelist', 'AuthController@roasted_pricelist')->middleware('guest')->name('roasted_pricelist');
 Route::get('greenbeans', 'AuthController@gb_pricelist')->middleware('guest')->name('greenbeans');
+Route::get('gboffer', 'AuthController@gb_offer')->middleware('guest')->name('gboffer');
 Route::get('roastedbeans', 'AuthController@roasted_pricelist')->middleware('guest')->name('roastedbeans');
 Route::get('roasted-b2b', 'AuthController@roastedb2b_pricelist')->middleware('guest')->name('roastedb2b');
+Route::get('roastedoffer', 'AuthController@roasted_offer')->middleware('guest')->name('roastedoffer');
 
 Route::get('pricelist', 'PricelistController@index')->middleware('guest')->name('pricelist.index');
 
