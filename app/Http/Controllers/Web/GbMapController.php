@@ -80,11 +80,11 @@ class GbMapController extends Controller
     {
         $data = GbMap::find($id);
         if (is_null($data)){
-            return redirect('home')->with('danger','Something Wrong, data not found.');
+            return redirect('map-storage')->with('danger','Something Wrong, data not found.');
         }elseif (!$data->delete()){
-            return redirect('home')->with('danger','Something Wrong, Data failed to delete.');
+            return redirect('map-storage')->with('danger','Something Wrong, Data failed to delete.');
         }else{
-            return redirect('home')->with('success','Data has been deleted.');
+            return redirect('map-storage')->with('success','Data has been deleted.');
         }
     }
 }
