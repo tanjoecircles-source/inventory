@@ -311,7 +311,7 @@
                                     <div class="col-sm-12">
                                         <p class="my-2 text-justify">{!!$value->desc!!}</p>
                                         <hr class="my-2">
-                                        <a class="btn btn-success btn-block" href="https://wa.me/6285974607547?text=Halo,%20Saya%20Ingin%20Menanyakan%20Produk%20Roasted%20Beans%20Kopi%20Gayo%20{{$value->name}}." target="_blank"><i class="fa fa-whatsapp"></i> WhatsApp Order</a>
+                                        <a class="btn btn-success btn-block" href="https://wa.me/6281330998147?text=Halo,%20Saya%20Ingin%20Menanyakan%20Produk%20Roasted%20Beans%20Kopi%20Gayo%20{{$value->name}}." target="_blank"><i class="fa fa-whatsapp"></i> WhatsApp Order</a>
                                     </div>
                                 </div>
                             </div>
