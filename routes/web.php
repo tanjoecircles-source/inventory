@@ -20,6 +20,7 @@ Route::get('mitra-product', 'AgentCatalogueController@product');
 Route::get('login', 'AuthController@index')->middleware('guest')->name('login');
 Route::get('login-google', 'AuthController@login_google')->middleware('guest')->name('login_google');
 Route::get('callback-google-oauth', 'AuthController@callback_google_oauth')->middleware('guest')->name('callback_google_oauth');
+Route::get('callback-consumer-google-oauth', 'AuthController@callback_google_oauth')->middleware('guest')->name('callback_consumer_google_oauth');
 Route::get('register', 'AuthController@register')->middleware('guest')->name('register');
 Route::post('register-form', 'AuthController@register_form')->middleware('guest')->name('register_form');
 Route::get('register-form-agent', 'AuthController@register_form_agent')->middleware('guest')->name('register_form_agent');
@@ -46,6 +47,12 @@ Route::get('roastedbeans', 'AuthController@roasted_pricelist')->middleware('gues
 Route::get('roasted-b2b', 'AuthController@roastedb2b_pricelist')->middleware('guest')->name('roastedb2b');
 Route::get('roastedoffer', 'AuthController@roasted_offer')->middleware('guest')->name('roastedoffer');
 
+Route::get('shop', 'ShopController@index')->name('shop');
+Route::get('shop-checkout', 'CheckoutController@index')->name('shop.checkout');
+Route::post('shop/save-shipping-address', 'CheckoutController@saveShippingAddress')->name('shop.save_shipping');
+Route::post('shop/process-checkout', 'CheckoutController@processCheckout')->name('shop.process_checkout');
+Route::get('transaction-history', 'OrderHistoryController@index')->name('transaction.history');
+Route::get('transaction-history/{id}', 'OrderHistoryController@detail')->name('transaction.history.detail');
 Route::get('pricelist', 'PricelistController@index')->middleware('guest')->name('pricelist.index');
 
 Route::post('auth-process', 'AuthController@auth_process');
@@ -65,7 +72,7 @@ Route::middleware(['auth:web'])->group(function(){
     Route::get('map-storage', 'HomeController@mapstorage');
     Route::get('recapitulation', 'HomeController@recapitulation');
     Route::get('menu-recipe', 'HomeController@menurecipe');
-    Route::get('logout', 'AuthController@logout');
+    Route::get('logout', 'AuthController@logout')->name('logout');
     Route::get('profile-reminder', 'ProfileController@reminder')->name('profile-reminder');
     Route::get('profile-agent-reminder', 'ProfileController@agent_reminder')->name('profile-agent-reminder');
     Route::get('profile', 'ProfileController@index')->name('profile-index');

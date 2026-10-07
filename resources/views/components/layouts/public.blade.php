@@ -18,6 +18,7 @@
     </script>
     @endif
     <meta charset="utf-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <meta name="description" content="{{$metadesc ?? 'Curating Gayo’s Finest, Distributing with Purpose'}}">
@@ -132,7 +133,52 @@
                 {{ $slot }}
                 {{-- <div class="h-100h"></div>   --}}
                 <!-- END Main content -->
-                <!-- Bottom bar -->
+                <!-- Bottom bar for logged-in users -->
+                @auth
+                <div id="bottom-bar">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-12 col-lg-8 mx-auto">
+                                <div class="d-flex bg-white text-primary mt-3">
+                                    <x-bottom-menu></x-bottom-menu>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                // Update bottom bar cart badge from localStorage
+                (function() {
+                    function updateBottomBarCartBadge() {
+                        try {
+                            var raw = localStorage.getItem('tanjoe_cart_items_v2');
+                            var cart = raw ? JSON.parse(raw) : [];
+                            var totalQty = 0;
+                            cart.forEach(function(item) {
+                                totalQty += (parseInt(item.quantity) || 1);
+                            });
+                            var badge = document.getElementById('bottomBarCartBadge');
+                            if (badge) {
+                                badge.textContent = totalQty > 99 ? '99+' : totalQty;
+                                badge.style.display = totalQty > 0 ? 'inline-block' : 'none';
+                            }
+                        } catch(e) {}
+                    }
+                    // Run on load
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', updateBottomBarCartBadge);
+                    } else {
+                        updateBottomBarCartBadge();
+                    }
+                    // Listen for storage changes (cross-tab)
+                    window.addEventListener('storage', function(e) {
+                        if (e.key === 'tanjoe_cart_items_v2') {
+                            updateBottomBarCartBadge();
+                        }
+                    });
+                })();
+                </script>
+                @endauth
             </div>
         </div>
     </div>

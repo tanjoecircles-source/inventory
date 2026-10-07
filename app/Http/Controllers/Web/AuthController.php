@@ -19,6 +19,9 @@ use App\Models\ProductImage;
 use Carbon\Carbon;
 use ImageResize;
 
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+
 class AuthController extends Controller
 {
     public function index(){
@@ -27,83 +30,208 @@ class AuthController extends Controller
         return view('core.login', $data);
     }
 
-    // private function google_client(){
-    //     $client = new \Google\Client();
-    //     $client->setAuthConfig(public_path('assets/oauth-client-google/client_secret_121604557497-a8ck7aq2jehgfe39fdp6drif6ccuuonn.apps.googleusercontent.com.json'));
-    //     $client->setScopes('profile email');
-    //     $url = url('callback-google-oauth');
-    //     if (strpos($url, 'http://') !== false && strpos($url, 'localhost') == false){
-    //         $url = str_replace('http://', 'https://', $url);
-    //     }
-    //     $client->setRedirectUri($url);
-    //     return $client;
-    // }
+    private function get_google_oauth_config(){
+        $clientId = env('GOOGLE_CLIENT_ID');
+        $clientSecret = env('GOOGLE_CLIENT_SECRET');
+        $redirectUri = env('GOOGLE_REDIRECT_URI');
+
+        if (empty($clientId) || empty($clientSecret)) {
+            $jsonPath = public_path('assets/oauth-client-google/client_secret_121604557497-a8ck7aq2jehgfe39fdp6drif6ccuuonn.apps.googleusercontent.com.json');
+            if (file_exists($jsonPath)) {
+                $json = json_decode(file_get_contents($jsonPath), true);
+                if (isset($json['web'])) {
+                    $clientId = $clientId ?: ($json['web']['client_id'] ?? null);
+                    $clientSecret = $clientSecret ?: ($json['web']['client_secret'] ?? null);
+                }
+            }
+        }
+
+        if (empty($redirectUri)) {
+            $redirectUri = url('callback-google-oauth');
+        }
+
+        return [
+            'client_id' => $clientId,
+            'client_secret' => $clientSecret,
+            'redirect_uri' => $redirectUri,
+        ];
+    }
 
     private function auto_login_google(Request $request, $userId){
-        $credentials = User::where('email', session('google')['email'])
-            ->where('login_method', 'google')
-            ->first();
-        $oauthGoogle = new OauthGoogle();
-        $oauthGoogle->user_id = $userId;
-        $oauthGoogle->access_token = session('google')['access_token'];
-        $oauthGoogle->id_token = session('google')['id_token'];
-        $session = session('google');
-        $oauthGoogle->save();
-        Auth::login($credentials);
+        $credentials = User::where('id', $userId)->first();
+        if (!$credentials && session('google.email')) {
+            $credentials = User::where('email', session('google')['email'])
+                ->where('login_method', 'google')
+                ->first();
+        }
+
+        if (!$credentials) {
+            return redirect('login')->with('error_login', 'Akun tidak ditemukan.');
+        }
+
+        try {
+            if (session('google.access_token')) {
+                $oauthGoogle = new OauthGoogle();
+                $oauthGoogle->user_id = $userId;
+                $oauthGoogle->access_token = session('google')['access_token'] ?? '';
+                $oauthGoogle->id_token = session('google')['id_token'] ?? '';
+                $oauthGoogle->save();
+            }
+        } catch (\Exception $e) {
+            Log::warning('OauthGoogle save error: ' . $e->getMessage());
+        }
+
+        Auth::login($credentials, true);
         if(Auth::check()){
             $request->session()->regenerate();
-            session([
-                'google' => [
-                    'access_token' => $session['access_token'],
-                    'id_token' => $session['id_token'],
-                    'name' => $session['name'],
-                    'email' => $session['email'],
-                    'expires_in' => $session['expires_in']
-                ]
-            ]);
-            return redirect()->intended('/home');
+            $destination = session('google_auth_redirect', url('home'));
+            session()->forget('google_auth_redirect');
+            return redirect()->to($destination);
         }else{
             return redirect('login')->with('error_login', 'Gagal Login');
         }
     }
 
-    public function login_google(){
-        $client = $this->google_client();
-        $auth_url = $client->createAuthUrl();
-        return redirect()->to(filter_var($auth_url, FILTER_SANITIZE_URL));
+    public function login_google(Request $request){
+        $config = $this->get_google_oauth_config();
+
+        if ($request->has('redirect')) {
+            $redirect = $request->get('redirect');
+            if ($redirect === 'checkout' || $redirect === 'shop-checkout') {
+                session(['google_auth_redirect' => url('shop-checkout')]);
+            } elseif ($redirect === 'shop') {
+                session(['google_auth_redirect' => url('shop')]);
+            } else {
+                session(['google_auth_redirect' => $redirect]);
+            }
+        } else {
+            $prev = url()->previous();
+            if ($prev && !str_contains($prev, 'login') && !str_contains($prev, 'register')) {
+                session(['google_auth_redirect' => $prev]);
+            } else {
+                session(['google_auth_redirect' => url('home')]);
+            }
+        }
+
+        $state = Str::random(40);
+        session(['oauth2state' => $state]);
+
+        $params = [
+            'client_id' => $config['client_id'],
+            'redirect_uri' => $config['redirect_uri'],
+            'response_type' => 'code',
+            'scope' => 'openid profile email',
+            'access_type' => 'offline',
+            'state' => $state,
+            'prompt' => 'select_account',
+        ];
+
+        $authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' . http_build_query($params);
+
+        return redirect()->away($authUrl);
     }
 
-    // public function callback_google_oauth(Request $request){
-    //     $client = $this->google_client();
-    //     if (!isset($request->code)){
-    //         return $this->login_google();
-    //     }
-    //     $client->authenticate($request->code);
-    //     $accessToken = $client->getAccessToken();
-    //     $idToken = $client->getOAuth2Service()->getIdToken();
-    //     $googleService = new \Google\Service\Oauth2($client);
-    //     $tokenData = $googleService->userinfo->get(); //get user info
-    //     $expireIn = strtotime(date('Y-m-d H:i:s')) + $accessToken['expires_in'];
-    //     //store session
-    //     session([
-    //         'google' => [
-    //             'access_token' => $accessToken['access_token'],
-    //             'id_token' => $accessToken['id_token'],
-    //             'name' => $tokenData->givenName,
-    //             'email' => $tokenData->email,
-    //             'expires_in' => $expireIn
-    //         ]
-    //     ]);
-    //     //create account or direct auto login
-    //     if (User::where('email', $tokenData->email)->where('login_method', 'google')->count() > 0){
-    //         $credentials = User::where('email', $tokenData->email)
-    //             ->where('login_method', 'google')
-    //             ->first();
-    //         return $this->auto_login_google($request, $credentials->id);
-    //     }else{
-    //         return redirect('register');
-    //     }
-    // }
+    public function callback_google_oauth(Request $request){
+        if (!$request->has('code')) {
+            return redirect()->route('login')->with('error_login', 'Gagal otentikasi Google (Kode otorisasi tidak ditemukan).');
+        }
+
+        $config = $this->get_google_oauth_config();
+
+        try {
+            $response = Http::asForm()->post('https://oauth2.googleapis.com/token', [
+                'code' => $request->get('code'),
+                'client_id' => $config['client_id'],
+                'client_secret' => $config['client_secret'],
+                'redirect_uri' => $config['redirect_uri'],
+                'grant_type' => 'authorization_code',
+            ]);
+
+            if (!$response->successful()) {
+                Log::error('Google OAuth Token Error', ['status' => $response->status(), 'body' => $response->body()]);
+                return redirect()->route('login')->with('error_login', 'Gagal mendapatkan token dari Google: ' . $response->body());
+            }
+
+            $tokenData = $response->json();
+            $accessToken = $tokenData['access_token'] ?? null;
+            $idToken = $tokenData['id_token'] ?? null;
+            $expiresIn = isset($tokenData['expires_in']) ? (time() + $tokenData['expires_in']) : (time() + 3600);
+
+            $userResponse = Http::withToken($accessToken)->get('https://www.googleapis.com/oauth2/v3/userinfo');
+            if (!$userResponse->successful()) {
+                Log::error('Google OAuth UserInfo Error', ['status' => $userResponse->status(), 'body' => $userResponse->body()]);
+                return redirect()->route('login')->with('error_login', 'Gagal mengambil data profil Google.');
+            }
+
+            $googleUser = $userResponse->json();
+            $email = $googleUser['email'] ?? null;
+            $name = $googleUser['name'] ?? ($googleUser['given_name'] ?? 'User');
+            $picture = $googleUser['picture'] ?? null;
+
+            if (empty($email)) {
+                return redirect()->route('login')->with('error_login', 'Email Google tidak ditemukan.');
+            }
+
+            session([
+                'google' => [
+                    'access_token' => $accessToken,
+                    'id_token' => $idToken,
+                    'name' => $name,
+                    'email' => $email,
+                    'expires_in' => $expiresIn,
+                    'picture' => $picture,
+                ]
+            ]);
+
+            $user = User::where('email', $email)->first();
+
+            if (!$user) {
+                $user = User::create([
+                    'name' => $name,
+                    'email' => $email,
+                    'password' => bcrypt(Str::random(24) . '@!#123'),
+                    'phone' => null,
+                    'address' => null,
+                    'type' => 'user',
+                    'ifseller' => 'independent',
+                    'term' => 'true',
+                    'otp' => strtoupper(Str::random(6)),
+                    'email_verified_at' => Carbon::now(),
+                    'login_method' => 'google',
+                ]);
+            } else {
+                if (empty($user->email_verified_at)) {
+                    $user->email_verified_at = Carbon::now();
+                }
+                $user->login_method = 'google';
+                $user->save();
+            }
+
+            try {
+                if ($accessToken) {
+                    $oauthGoogle = new OauthGoogle();
+                    $oauthGoogle->user_id = $user->id;
+                    $oauthGoogle->access_token = $accessToken;
+                    $oauthGoogle->id_token = $idToken ?: '';
+                    $oauthGoogle->save();
+                }
+            } catch (\Exception $e) {
+                Log::warning('OauthGoogle save error: ' . $e->getMessage());
+            }
+
+            Auth::login($user, true);
+            $request->session()->regenerate();
+
+            $destination = session('google_auth_redirect', url('home'));
+            session()->forget('google_auth_redirect');
+
+            return redirect()->to($destination);
+
+        } catch (\Exception $e) {
+            Log::error('Google OAuth Exception: ' . $e->getMessage());
+            return redirect()->route('login')->with('error_login', 'Terjadi kesalahan saat login Google: ' . $e->getMessage());
+        }
+    }
 
     function sendtele($pesan)
     {
@@ -140,6 +268,15 @@ class AuthController extends Controller
             $msg = $user->name." Login Invoice App\n".
                     "pada ".date('d M Y H:i');
             $this->sendtele($msg);
+            if ($request->filled('redirect')) {
+                $redir = $request->get('redirect');
+                if ($redir === 'checkout' || $redir === 'shop-checkout') {
+                    return redirect('shop-checkout');
+                } elseif ($redir === 'shop') {
+                    return redirect('shop');
+                }
+                return redirect($redir);
+            }
             return redirect()->intended('/home');
         }
 

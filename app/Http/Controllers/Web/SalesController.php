@@ -349,8 +349,7 @@ class SalesController extends Controller
             'inv_category' => $data['inv_category'],
             'inv_code' => $data['inv_code'],
             'inv_date' => date('Y-m-d', strtotime($data['inv_date'])),
-            'inv_cust' => $data['inv_cust'],
-            'author' => Auth::user()->id
+            'inv_cust' => $data['inv_cust']
         ]);
         if ($update){
             DB::commit();

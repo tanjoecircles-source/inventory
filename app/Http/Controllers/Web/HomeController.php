@@ -107,10 +107,7 @@ class HomeController extends Controller
         if (Gate::allows('isSeller') || Gate::allows('isSellerDealer')) return view('web.seller.home.index', $data);
         if (Gate::allows('isAgent')) return view('web.agent.home.index', $data);
         if (Gate::allows('isUser')) {
-            if (request()->ajax()) {
-                return view('web.user.home.product_list', $data);
-            }
-            return view('web.user.home.index', $data);
+            return app(ShopController::class)->index(request());
         }
         return view('web.admin.home.index', $data);
     }
