@@ -32,7 +32,7 @@ class CheckoutController extends Controller
             'authUser' => Auth::user(),
         ];
 
-        return view('core.checkout_public', $data);
+        return view('web.user.checkout.checkout', $data);
     }
 
     /**
@@ -167,12 +167,36 @@ class CheckoutController extends Controller
             foreach ($items as $it) {
                 $productId = $it['id'];
                 $qty = (float)($it['quantity'] ?? 1);
-                $price = (float)($it['price'] ?? 0);
+                $product = Product::find($productId);
+
+                // Calculate wholesale / bundling tiered pricing
+                $p15 = ($product && !empty($product->price_grosir15)) ? (float)$product->price_grosir15 : 0;
+                $p50 = ($product && !empty($product->price_grosir50)) ? (float)$product->price_grosir50 : 0;
+                $basePrice = $product ? (float)$product->price : (float)($it['price'] ?? 0);
+                $productType = $product ? (string)$product->type : '2';
+
+                if ($productType === '1') {
+                    // Green Beans: >=50kg, >=15kg
+                    if ($qty >= 50 && $p50 > 0) {
+                        $price = $p50;
+                    } else if ($qty >= 15 && $p15 > 0) {
+                        $price = $p15;
+                    } else {
+                        $price = $basePrice;
+                    }
+                } else {
+                    // Roasted Filter (2) & Espresso (3) Beans: Bundling (>= 2 Pack)
+                    if ($qty >= 2 && $p15 > 0) {
+                        $price = $p15;
+                    } else {
+                        $price = $basePrice;
+                    }
+                }
+
                 $itemTotal = $price * $qty;
                 $variant = $it['variant'] ?? 'Whole Beans (Biji Utuh)';
                 $note = $it['note'] ?? '';
 
-                $product = Product::find($productId);
                 $productName = $product ? $product->name : ($it['name'] ?? 'Roasted Beans');
                 $hpp = $product ? (float)$product->price_hpp : 0;
 

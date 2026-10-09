@@ -794,7 +794,7 @@
     
     <!-- Clean Checkout Header -->
     <div class="checkout-simple-header mb-3">
-        <a href="{{ url('/shop?tab=cart') }}" class="btn-checkout-back" title="Kembali">
+        <a href="{{ route('shop.cart') }}" class="btn-checkout-back" title="Kembali ke Keranjang">
             <i class="fe fe-arrow-left"></i>
         </a>
         <h1 class="checkout-header-title">Checkout</h1>
@@ -994,11 +994,11 @@
         <!-- 5. Public Auth / Login Card ("Satu Langkah Lagi Menuju Seduhan") -->
         <div class="auth-main-card">
             <div class="auth-card-title">
-                <i class="fe fe-coffee"></i>
-                <span>Satu Langkah Lagi Menuju Seduhan</span>
+                <i class="fe fe-lock"></i>
+                <span>Satu Langkah Lagi Untuk Bawa Pulang Kopimu</span>
             </div>
             <p class="auth-card-desc">
-                Masuk akun untuk menyimpan alamat pengiriman roastery otomatis, melacak batch roasting, dan mengumpulkan Tanjoe Bean Points.
+                Masuk akun untuk menyimpan profil, alamat pengiriman, dan melacak transaksi anda.
             </p>
 
             <!-- Tab Switcher -->
@@ -1126,10 +1126,10 @@
             <div>
                 <div class="express-title">Pesan Kilat Tanpa Akun?</div>
                 <p class="express-desc">
-                    Sedang buru-buru? Hubungi Roaster Tanjoe via WhatsApp. Keranjang <b id="expressWaTotalDisplay">Rp 0</b> Anda otomatis diformat ke pesan chat.
+                    Sedang buru-buru? Hubungi Admin Tanjoe via WhatsApp
                 </p>
                 <a href="#" target="_blank" class="express-wa-link" id="btnExpressCheckoutWhatsApp">
-                    <span>Kirim Keranjang ke Admin WhatsApp</span>
+                    <span>Kirim Keranjang Pesanan ke Admin via WhatsApp</span>
                     <i class="fe fe-arrow-up-right"></i>
                 </a>
             </div>
@@ -1281,11 +1281,7 @@ function handleSaveShipping(e) {
 }
 
 function handleExecutePayment() {
-    var cart = [];
-    try {
-        var raw = localStorage.getItem('tanjoe_cart_items_v2');
-        cart = raw ? JSON.parse(raw) : [];
-    } catch(e){}
+    var cart = window.TanjoeCart ? TanjoeCart.getCart() : [];
 
     var selectedItems = cart.filter(function(i) { return i.selected !== false; });
     if (selectedItems.length === 0) selectedItems = cart;
@@ -1337,11 +1333,10 @@ function handleExecutePayment() {
             $btn.prop('disabled', false).html(origHtml);
 
             if (res && res.success) {
-                // Clear all checked-out cart items
-                try {
-                    var remainingCart = cart.filter(function(i) { return i.selected === false; });
-                    localStorage.setItem('tanjoe_cart_items_v2', JSON.stringify(remainingCart));
-                } catch(e) {}
+                // Clear all checked-out cart items via TanjoeCart
+                if (window.TanjoeCart) {
+                    TanjoeCart.clearSelected();
+                }
 
                 // Redirect to order history page (no WhatsApp auto-open)
                 window.location.href = '{{ url("/transaction-history") }}';
@@ -1370,19 +1365,10 @@ function handleExecutePayment() {
 }
 
 $(document).ready(function() {
-    var CART_KEY = 'tanjoe_cart_items_v2';
-
-    function getCart() {
-        try {
-            var raw = localStorage.getItem(CART_KEY);
-            return raw ? JSON.parse(raw) : [];
-        } catch(e) {
-            return [];
-        }
-    }
+    function getCart() { return window.TanjoeCart ? TanjoeCart.getCart() : []; }
 
     function formatRupiah(num) {
-        return 'Rp ' + (num || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        return window.TanjoeCart ? TanjoeCart.formatRupiah(num) : 'Rp ' + num;
     }
 
     // Populate order summary in checkout
@@ -1400,8 +1386,14 @@ $(document).ready(function() {
         $drawer.empty();
 
         selectedItems.forEach(function(item, idx) {
-            totalQty += (parseInt(item.quantity) || 1);
-            var itemTotal = item.price * item.quantity;
+            var qty = (parseInt(item.quantity) || 1);
+            totalQty += qty;
+            var basePrice = parseFloat(item.price) || 0;
+            var unitPrice = window.TanjoeCart ? TanjoeCart.getEffectiveUnitPrice(item, qty) : basePrice;
+            var isDiscounted = (unitPrice < basePrice && basePrice > 0);
+            var itemTotal = unitPrice * qty;
+            var originalTotal = basePrice * qty;
+            var badgeLabel = window.TanjoeCart ? TanjoeCart.getTierLabel(item, qty) : (String(item.type) === '1' ? 'Grosir' : 'Bundling');
             rawSubtotal += itemTotal;
 
             if (idx < 3) {
@@ -1412,11 +1404,15 @@ $(document).ready(function() {
             var itemRow = `
                 <div class="order-breakdown-item">
                     <div>
-                        <b>${item.name}</b> (${item.quantity}x)
+                        <b>${item.name}</b> (${qty}x)
+                        ${isDiscounted ? `<span class="badge badge-success px-2 py-1 rounded-pill ml-1" style="font-size: 9px; background: #10B981; color: #fff;">${badgeLabel}</span>` : ''}
                         <div class="text-muted fs-11">${item.variant}</div>
                         ${item.note ? '<div class="text-secondary fs-10">Note: ' + item.note + '</div>' : ''}
                     </div>
-                    <div class="font-weight-bold text-right">${formatRupiah(itemTotal)}</div>
+                    <div class="font-weight-bold text-right">
+                        ${isDiscounted ? `<div style="font-size: 11px; color: #9CA3AF; text-decoration: line-through; font-weight: normal;">${formatRupiah(originalTotal)}</div>` : ''}
+                        <div class="${isDiscounted ? 'text-success' : ''}">${formatRupiah(itemTotal)}</div>
+                    </div>
                 </div>
             `;
             $drawer.append(itemRow);
@@ -1444,10 +1440,19 @@ $(document).ready(function() {
         // Format WA message for express guest checkout
         var waMessage = "Halo Toko Kopi Tanjoe,\nSaya ingin melakukan pemesanan kilat via WhatsApp:\n\n";
         selectedItems.forEach(function(item, idx) {
-            var itemTotal = item.price * item.quantity;
+            var qty = (parseInt(item.quantity) || 1);
+            var basePrice = parseFloat(item.price) || 0;
+            var unitPrice = window.TanjoeCart ? TanjoeCart.getEffectiveUnitPrice(item, qty) : basePrice;
+            var isDiscounted = (unitPrice < basePrice && basePrice > 0);
+            var itemTotal = unitPrice * qty;
+            var badgeLabel = window.TanjoeCart ? TanjoeCart.getTierLabel(item, qty) : (String(item.type) === '1' ? 'Grosir' : 'Bundling');
+
             waMessage += `${idx + 1}. *${item.name}* (${item.weight || '200g'})\n`;
             waMessage += `   • Varian: ${item.variant}\n`;
-            waMessage += `   • Jumlah: ${item.quantity} pack @ ${formatRupiah(item.price)} = *${formatRupiah(itemTotal)}*\n`;
+            if (isDiscounted) {
+                waMessage += `   • Promo: ${badgeLabel}\n`;
+            }
+            waMessage += `   • Jumlah: ${qty} pack @ ${formatRupiah(unitPrice)} = *${formatRupiah(itemTotal)}*\n`;
             if (item.note) waMessage += `   • Catatan: ${item.note}\n`;
             waMessage += `\n`;
         });

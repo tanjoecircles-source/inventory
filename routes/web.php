@@ -48,6 +48,9 @@ Route::get('roasted-b2b', 'AuthController@roastedb2b_pricelist')->middleware('gu
 Route::get('roastedoffer', 'AuthController@roasted_offer')->middleware('guest')->name('roastedoffer');
 
 Route::get('shop', 'ShopController@index')->name('shop');
+Route::get('shop/product/{id}', 'ShopController@detail')->name('shop.detail');
+Route::get('shop-cart', 'ShopCartController@index')->name('shop.cart');
+Route::get('shop/cart', 'ShopCartController@index');
 Route::get('shop-checkout', 'CheckoutController@index')->name('shop.checkout');
 Route::post('shop/save-shipping-address', 'CheckoutController@saveShippingAddress')->name('shop.save_shipping');
 Route::post('shop/process-checkout', 'CheckoutController@processCheckout')->name('shop.process_checkout');

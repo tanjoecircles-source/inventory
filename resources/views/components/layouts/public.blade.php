@@ -19,6 +19,7 @@
     @endif
     <meta charset="utf-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="auth-user-id" content="{{ Auth::id() ?? '' }}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <meta name="description" content="{{$metadesc ?? 'Curating Gayo’s Finest, Distributing with Purpose'}}">
@@ -106,6 +107,8 @@
     <script src="{{ asset('assets/js/vendors/jquery-3.5.1.min.js') }}"></script>
     <script src="{{ asset('assets/js/inputmask.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+    <!-- Tanjoe Cart Manager -->
+    <script src="{{ asset('assets/js/tanjoe_cart.js') }}"></script>
     <style>
     .page-header {
     margin: 0.5rem 0 0;
@@ -147,35 +150,19 @@
                     </div>
                 </div>
                 <script>
-                // Update bottom bar cart badge from localStorage
+                // Update bottom bar cart badge via TanjoeCart
                 (function() {
-                    function updateBottomBarCartBadge() {
-                        try {
-                            var raw = localStorage.getItem('tanjoe_cart_items_v2');
-                            var cart = raw ? JSON.parse(raw) : [];
-                            var totalQty = 0;
-                            cart.forEach(function(item) {
-                                totalQty += (parseInt(item.quantity) || 1);
-                            });
-                            var badge = document.getElementById('bottomBarCartBadge');
-                            if (badge) {
-                                badge.textContent = totalQty > 99 ? '99+' : totalQty;
-                                badge.style.display = totalQty > 0 ? 'inline-block' : 'none';
-                            }
-                        } catch(e) {}
-                    }
-                    // Run on load
-                    if (document.readyState === 'loading') {
-                        document.addEventListener('DOMContentLoaded', updateBottomBarCartBadge);
-                    } else {
-                        updateBottomBarCartBadge();
-                    }
-                    // Listen for storage changes (cross-tab)
-                    window.addEventListener('storage', function(e) {
-                        if (e.key === 'tanjoe_cart_items_v2') {
-                            updateBottomBarCartBadge();
+                    function updateBottomBarBadge() {
+                        if (window.TanjoeCart) {
+                            TanjoeCart.updateAllBadges();
                         }
-                    });
+                    }
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', updateBottomBarBadge);
+                    } else {
+                        updateBottomBarBadge();
+                    }
+                    window.addEventListener('tanjoe:cart-updated', updateBottomBarBadge);
                 })();
                 </script>
                 @endauth

@@ -14,6 +14,7 @@ class ShopController extends Controller
     {
         // 1. Fetch Filter Roasted Beans (type 2)
         $stok_filter = DB::table('product as p')
+            ->leftJoin('ref_satuan as rs', 'p.satuan', '=', 'rs.id')
             ->select(
                 'p.id as id',
                 'p.name_pl as name',
@@ -31,7 +32,8 @@ class ShopController extends Controller
                 'p.is_new as is_new',
                 'p.stock as stock',
                 'p.photo_thumbnail as photo',
-                'p.type as type'
+                'p.type as type',
+                DB::raw("CONCAT(COALESCE(rs.name, '200'), 'gr') as satuan")
             )
             ->where([
                 'p.type' => '2',
@@ -43,6 +45,7 @@ class ShopController extends Controller
 
         // 2. Fetch Espresso Roasted Beans (type 3)
         $stok_spro = DB::table('product as p')
+            ->leftJoin('ref_satuan as rs', 'p.satuan', '=', 'rs.id')
             ->select(
                 'p.id as id',
                 'p.name_pl as name',
@@ -61,7 +64,8 @@ class ShopController extends Controller
                 'p.is_new as is_new',
                 'p.stock as stock',
                 'p.photo_thumbnail as photo',
-                'p.type as type'
+                'p.type as type',
+                DB::raw("CONCAT(COALESCE(rs.name, '200'), 'gr') as satuan")
             )
             ->where([
                 'p.type' => '3',
@@ -73,6 +77,7 @@ class ShopController extends Controller
 
         // 3. Fetch Green Beans / Specialty Lots (type 1)
         $stok_gb = DB::table('product as p')
+            ->leftJoin('ref_satuan as rs', 'p.satuan', '=', 'rs.id')
             ->select(
                 'p.id as id',
                 'p.name_pl as name',
@@ -90,7 +95,8 @@ class ShopController extends Controller
                 'p.is_new as is_new',
                 'p.stock as stock',
                 'p.photo_thumbnail as photo',
-                'p.type as type'
+                'p.type as type',
+                DB::raw("CONCAT(COALESCE(rs.name, '200'), 'gr') as satuan")
             )
             ->where([
                 'p.type' => '1',
@@ -150,7 +156,144 @@ class ShopController extends Controller
             'authUser' => Auth::user(),
         ];
 
-        return view('core.shop', $data);
+        return view('web.user.shop.shop', $data);
+    }
+
+    public function detail($id)
+    {
+        $product = DB::table('product as p')
+            ->leftJoin('ref_satuan as rs', 'p.satuan', '=', 'rs.id')
+            ->select(
+                'p.id as id',
+                'p.name as full_name',
+                'p.name_pl as name',
+                'p.category as category',
+                'p.origin',
+                'p.elevation',
+                'p.varietal',
+                'p.process',
+                'p.processor',
+                'p.harvest',
+                'p.order_pricelist',
+                'p.summary',
+                'p.desc',
+                DB::raw("CONCAT(COALESCE(rs.name, '200'), 'gr') as satuan"),
+                'p.price as price',
+                'p.price_grosir15 as price_grosir15',
+                'p.price_grosir50 as price_grosir50',
+                'p.is_new as is_new',
+                'p.stock as stock',
+                'p.photo_thumbnail as photo',
+                'p.type as type',
+                'p.is_recomended as is_recomended'
+            )
+            ->where('p.id', $id)
+            ->where('p.status', 'Active')
+            ->first();
+
+        if (!$product) {
+            abort(404, 'Produk tidak ditemukan atau sudah tidak aktif.');
+        }
+
+        $product->name = !empty($product->name) ? $product->name : $product->full_name;
+        $product->is_new = ($product->is_new == 'true' || $product->is_new == 'New' || $product->is_new == 1);
+        $product->is_ready = ($product->stock > 0);
+        $product->is_recomended = (!empty($product->is_recomended) && ($product->is_recomended === 'true' || $product->is_recomended == 1));
+        // satuan is now resolved via JOIN (e.g. "200gr"), fallback already handled in SQL
+
+        $tabType = ($product->type == '2') ? 'filter' : (($product->type == '3') ? 'espresso' : 'greenbeans');
+        $categoryLabel = ($product->type == '2') ? 'Filter Roasted Beans' : (($product->type == '3') ? 'Espresso Roasted Beans' : 'Green Beans');
+        $product->tab_type = $tabType;
+        $product->category_label = $product->category ?? $categoryLabel;
+
+        // Load images
+        $images = ProductImage::where('product_id', $product->id)
+            ->orderBy('sort_order', 'ASC')
+            ->get()
+            ->map(function ($img) {
+                $img->image_url = url('storage/public/' . $img->image_path);
+                return $img;
+            });
+
+        if ($images->isEmpty()) {
+            $defaultImg = new \stdClass();
+            $defaultImg->image_url = asset('assets/images/products/no-image.png');
+            $defaultImg->is_primary = 'true';
+            $images = collect([$defaultImg]);
+        }
+        $product->images = $images;
+
+        // Load 4 related products (join ref_satuan for weight label)
+        $relatedProducts = DB::table('product as p')
+            ->leftJoin('ref_satuan as rs', 'p.satuan', '=', 'rs.id')
+            ->select(
+                'p.id as id',
+                'p.name_pl as name',
+                'p.name as full_name',
+                'p.origin',
+                'p.process',
+                'p.price as price',
+                'p.stock as stock',
+                'p.is_new as is_new',
+                'p.is_recomended as is_recomended',
+                DB::raw("CONCAT(COALESCE(rs.name, '200'), 'gr') as satuan"),
+                'p.type as type'
+            )
+            ->where('p.status', 'Active')
+            ->where('p.is_pricelist', 'true')
+            ->where('p.id', '!=', $product->id)
+            ->where('p.type', $product->type)
+            ->orderBy('p.order_pricelist', 'ASC')
+            ->limit(4)
+            ->get();
+
+        if ($relatedProducts->count() < 4) {
+            $more = DB::table('product as p')
+                ->leftJoin('ref_satuan as rs', 'p.satuan', '=', 'rs.id')
+                ->select(
+                    'p.id as id',
+                    'p.name_pl as name',
+                    'p.name as full_name',
+                    'p.origin',
+                    'p.process',
+                    'p.price as price',
+                    'p.stock as stock',
+                    'p.is_new as is_new',
+                    'p.is_recomended as is_recomended',
+                    DB::raw("CONCAT(COALESCE(rs.name, '200'), 'gr') as satuan"),
+                    'p.type as type'
+                )
+                ->where('p.status', 'Active')
+                ->where('p.is_pricelist', 'true')
+                ->where('p.id', '!=', $product->id)
+                ->whereNotIn('p.id', $relatedProducts->pluck('id'))
+                ->orderBy('p.order_pricelist', 'ASC')
+                ->limit(4 - $relatedProducts->count())
+                ->get();
+            $relatedProducts = $relatedProducts->merge($more);
+        }
+
+        $relIds = $relatedProducts->pluck('id')->toArray();
+        $relImages = ProductImage::whereIn('product_id', $relIds)
+            ->orderBy('sort_order', 'ASC')
+            ->get()
+            ->groupBy('product_id');
+
+        foreach ($relatedProducts as $rel) {
+            $rel->name = !empty($rel->name) ? $rel->name : $rel->full_name;
+            $relImgs = $relImages->get($rel->id, collect());
+            $first = $relImgs->first();
+            $rel->thumbnail = $first ? url('storage/public/' . $first->image_path) : asset('assets/images/products/no-image.png');
+            $rel->is_ready = ($rel->stock > 0);
+        }
+
+        $data = [
+            'product' => $product,
+            'relatedProducts' => $relatedProducts,
+            'authUser' => Auth::user(),
+        ];
+
+        return view('web.user.shop.shop_detail', $data);
     }
 }
 
