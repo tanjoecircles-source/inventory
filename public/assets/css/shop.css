@@ -1,4 +1,4 @@
-﻿    :root {
+    :root {
         --color-surface: #FAF8F5;
         --color-surface-card: #FFFFFF;
         --color-surface-dim: #EFECE6;
@@ -985,16 +985,6 @@
         z-index: 990;
         box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
     }
-    @php $isAuthShop = \Illuminate\Support\Facades\Auth::check(); @endphp
-    @if($isAuthShop)
-    /* Push sticky cart bar above bottom nav for logged-in users */
-    .sticky-checkout-bar {
-        bottom: 60px;
-    }
-    #bottom-bar {
-        z-index: 1000;
-    }
-    @endif
     .checkout-total-col .checkout-sub-label {
         font-size: 10.5px;
         color: var(--color-secondary-muted);

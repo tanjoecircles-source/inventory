@@ -41,7 +41,7 @@ $prefix = $exp[0];
     <i class="fe fe-search fs-20"></i>
     <p class="d-block fs-13 font-weight-semibold" style="line-height:20px">Eksplorasi</p>
 </a>
-<a href="{{ url('shop?tab=cart') }}" class="flex-fill {{ (Request::is('shop*') && request('tab') == 'cart') || Request::is('cart*') ? 'text-primary' : 'text-default' }} position-relative">
+<a href="{{ route('shop.cart') }}" class="flex-fill {{ Request::is('shop-cart*') || Request::is('shop/cart*') || Request::is('cart*') ? 'text-primary' : 'text-default' }} position-relative">
     <i class="fe fe-shopping-cart fs-20"></i>
     <span id="bottomBarCartBadge" class="badge badge-danger rounded-circle position-absolute" style="top: -5px; right: 20%; font-size: 10px; display: none;">0</span>
     <p class="d-block fs-13 font-weight-semibold" style="line-height:20px">Cart</p>

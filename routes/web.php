@@ -96,12 +96,9 @@ Route::middleware(['auth:web'])->group(function(){
     Route::post('product-explore-etalase', 'ProductExploreController@etalase');
     Route::post('product-explore-unetalase', 'ProductExploreController@unetalase');
 
-    // Cart
-    Route::get('cart', 'CartController@index')->name('cart-index');
-    Route::get('checkout', 'CartController@checkout')->name('checkout');
-    Route::post('cart-add', 'CartController@add')->name('cart-add');
-    Route::post('cart-update', 'CartController@update')->name('cart-update');
-    Route::post('cart-remove', 'CartController@remove')->name('cart-remove');
+    // Cart & Checkout
+    Route::get('cart', 'ShopCartController@index')->name('cart-index');
+    Route::get('checkout', 'CheckoutController@index')->name('checkout');
 
 
     Route::group(['prefix' => 'transaction'], function(){

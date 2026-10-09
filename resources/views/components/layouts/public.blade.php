@@ -138,6 +138,7 @@
                 <!-- END Main content -->
                 <!-- Bottom bar for logged-in users -->
                 @auth
+                @if(!Route::is('shop.detail') && !Route::is('shop.checkout') && !Route::is('checkout') && !Route::is('shop.cart') && !Route::is('cart-index') && !Request::is('shop/product*') && !Request::is('shop-cart*') && !Request::is('shop/cart*') && !Request::is('cart*') && !Request::is('shop-checkout*') && !Request::is('checkout*'))
                 <div id="bottom-bar">
                     <div class="container">
                         <div class="row">
@@ -149,6 +150,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
                 <script>
                 // Update bottom bar cart badge via TanjoeCart
                 (function() {
