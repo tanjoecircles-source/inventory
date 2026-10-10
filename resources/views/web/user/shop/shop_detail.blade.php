@@ -131,7 +131,7 @@
     }
 
     .detail-main-title {
-        font-size: 18px;
+        font-size: 14px;
         font-weight: 800;
         color: var(--color-secondary, #1F2429);
         line-height: 1.35;
@@ -146,7 +146,7 @@
     }
 
     .detail-price-main {
-        font-size: 18px;
+        font-size: 14px;
         font-weight: 800;
         color: var(--color-primary, #E62129);
     }
