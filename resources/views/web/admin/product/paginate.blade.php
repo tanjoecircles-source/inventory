@@ -15,12 +15,13 @@
             <a href="{{ url('product-detail/'.$content->id_produk) }}" class="stretched-link text-default text-decoration-none">
                 <label class="text-default p-0 mb-0 d-block mt-1 fs-14 h-40 cursor-pointer">{{$content->type.' - '.$content->judul}}</label>
             </a>
-            <div class="mt-0">
-                <a href="{{ url('product-stock-set/'.$content->id_produk) }}" class="position-relative text-muted fs-12 d-inline-block text-decoration-none" style="z-index: 2;" title="Atur Stock">
-                    <span class="">
-                        Stock : {{$content->stock}}
-                    </span>
+            <div class="mb-3">
+                @if(Auth::user()->id == 1 || Auth::user()->id == 3)
+                <a href="{{ url('product-stock-set/'.$content->id_produk) }}" class="btn btn-sm btn-dark px-2 py-1 mr-1" title="Atur Stock">
+                    <i class="fe fe-settings"></i>
                 </a>
+                @endif
+                <span class="fs-12 text-muted"> Stock : {{$content->stock}}</span>
             </div>
         </div>
     </div>
