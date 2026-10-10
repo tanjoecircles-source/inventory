@@ -1,6 +1,6 @@
 <x-layouts.public metatitle="Keranjang Belanja | Toko Kopi Tanjoe" metadesc="Keranjang Belanja Toko Kopi Tanjoe - Artisan Coffee Roastery">
 
-<link rel="stylesheet" href="{{ asset('assets/css/shop.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/shop.css?v=1.0') }}">
 
 <style>
     .cart-page-wrap {
