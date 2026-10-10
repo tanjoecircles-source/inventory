@@ -14,7 +14,12 @@
                 @endif
             </div>
             <label class="text-default p-0 mb-0 d-block mt-1 fs-14 h-40">{{$content->type.' - '.$content->judul}}</label>
-            <div class="text-muted m-0 fs-11" style="line-height:15px">Stock : {{$content->stock}}</div>
+            <div class="text-muted m-0 fs-11" style="line-height:15px">
+                Stock : {{$content->stock}}
+                @if(!empty($content->satuan_name))
+                    &bull; {{ $content->satuan_name }} gr
+                @endif
+            </div>
         </div>
     </div>
 </div>

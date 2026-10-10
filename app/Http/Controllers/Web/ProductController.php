@@ -405,8 +405,13 @@ class ProductController extends Controller
     {
         if ($request->has('clear')) {
             $request->session()->forget('search_result');
+            $request->session()->forget('filter_type');
+            $request->session()->forget('filter_satuan');
             $search = '';
+            $filter_type = '';
+            $filter_satuan = '';
         } else {
+            // Keyword search
             if ($request->has('keyword')) {
                 $search = trim($request->get('keyword', ''));
                 if ($search !== '') {
@@ -417,21 +422,55 @@ class ProductController extends Controller
             } else {
                 $search = trim(session('search_result', ''));
             }
+
+            // Kategori (type) filter
+            if ($request->has('type')) {
+                $filter_type = $request->get('type', '');
+                if ($filter_type !== '') {
+                    $request->session()->put('filter_type', $filter_type);
+                } else {
+                    $request->session()->forget('filter_type');
+                }
+            } else {
+                $filter_type = session('filter_type', '');
+            }
+
+            // Berat Satuan (satuan) filter
+            if ($request->has('satuan')) {
+                $filter_satuan = $request->get('satuan', '');
+                if ($filter_satuan !== '') {
+                    $request->session()->put('filter_satuan', $filter_satuan);
+                } else {
+                    $request->session()->forget('filter_satuan');
+                }
+            } else {
+                $filter_satuan = session('filter_satuan', '');
+            }
         }
 
         $limit = 10;
         $query = DB::table('product AS p')
             ->leftJoin('ref_product_type AS pt', 'pt.id', '=', 'p.type')
+            ->leftJoin('ref_satuan AS rs', 'rs.id', '=', 'p.satuan')
             ->select(
                 'p.id AS id_produk',
                 'pt.name AS type',
                 'p.name AS judul',
                 'p.price AS price',
                 'p.stock AS stock',
+                'rs.name AS satuan_name',
                 'p.is_recomended',
                 'p.is_sold_out',
                 'p.status'
             );
+
+        if ($filter_type !== '') {
+            $query->where('p.type', $filter_type);
+        }
+
+        if ($filter_satuan !== '') {
+            $query->where('p.satuan', $filter_satuan);
+        }
 
         if ($search !== '') {
             $query->where(function($q) use ($search) {
@@ -452,8 +491,15 @@ class ProductController extends Controller
             $value->recomended = ($value->is_recomended === 'true') ? '<i class="fa fa-star fs-18 text-warning"></i>' : '';
         }
 
+        $type_list = DB::table('ref_product_type')->orderBy('name', 'ASC')->get();
+        $satuan_list = DB::table('ref_satuan')->orderBy(DB::raw('CAST(name AS UNSIGNED)'), 'ASC')->get();
+
         $data = [
             'keyword' => $search,
+            'filter_type' => $filter_type,
+            'filter_satuan' => $filter_satuan,
+            'type_list' => $type_list,
+            'satuan_list' => $satuan_list,
             'limit' => $limit,
             'contents' => $contents,
             'contents_count' => $contents->total(),
