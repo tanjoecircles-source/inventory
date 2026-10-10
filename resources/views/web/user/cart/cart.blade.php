@@ -21,7 +21,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 14px 16px;
+        padding: 14px 8px;
         border-bottom: 1px solid rgba(236, 231, 222, 0.7);
     }
     .btn-back-circle {
@@ -62,7 +62,7 @@
         <span class="cart-items-count-pill" id="cartTotalItemsCountBadge">0 Barang</span>
     </div>
 
-    <div class="p-3">
+    <div class="p-2">
         <!-- 2. Select All & Delete All Bar -->
         <div class="cart-select-all-row" id="cartSelectAllRow">
             <label class="custom-cart-checkbox mb-0">
@@ -117,7 +117,7 @@
             <span class="checkout-sub-label">Total Belanja</span>
             <div class="checkout-total-val" id="stickyTotalBelanja">Rp 0</div>
         </div>
-        <button type="button" class="btn-checkout-action" id="btnGoToCheckout">
+        <button type="button" class="btn btn-primary" id="btnGoToCheckout">
             <i class="fe fe-shopping-cart"></i> <span id="checkoutBtnLabel">Checkout (0)</span>
         </button>
     </div>
@@ -206,9 +206,9 @@ $(document).ready(function() {
                             <div class="cart-item-price-stepper-row">
                                 <div>
                                     ${isDiscounted ? `
-                                        <div class="d-flex align-items-center" style="gap: 4px; line-height: 1.1; margin-bottom: 2px;">
+                                        <div class="d-flex align-items-center" style="gap: 4px; line-height: 1.1; margin-bottom: 0px;">
                                             <span style="font-size: 11px; color: #9CA3AF; text-decoration: line-through;">${formatRupiah(itemOriginalTotalPrice)}</span>
-                                            <span class="badge badge-success px-2 py-1 rounded-pill" style="font-size: 9px; background: #10B981; color: #fff;">${badgeLabel}</span>
+                                            <span class="badge badge-success px-2 py-1 rounded-pill" style="font-size: 9px; background: #10B981; color: #fff;margin:1px 0 1px;">${badgeLabel}</span>
                                         </div>
                                     ` : ''}
                                     <div class="cart-item-price ${isDiscounted ? 'text-success' : ''}">${formatRupiah(itemTotalPrice)}</div>

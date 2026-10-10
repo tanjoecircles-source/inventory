@@ -14,7 +14,7 @@
         --color-secondary-muted: #6B7280;
         --color-border: #ECE7DE;
         --shadow-card: 0 2px 8px -2px rgba(50, 45, 40, 0.06), 0 1px 3px 0 rgba(0, 0, 0, 0.02);
-        --radius-sm: 8px;
+        --radius-sm: 5px;
         --radius-md: 12px;
         --radius-lg: 16px;
         --radius-pill: 9999px;
@@ -41,7 +41,7 @@
         z-index: 100;
         background: #FFFFFF;
         border-bottom: 1px solid var(--color-border);
-        padding: 12px 16px;
+        padding: 12px 8px;
         display: flex;
         align-items: center;
         gap: 12px;
@@ -78,7 +78,7 @@
     .filter-pills-bar {
         display: flex;
         gap: 8px;
-        padding: 12px 16px 8px;
+        padding: 12px 8px 8px;
         overflow-x: auto;
         scrollbar-width: none;
     }
@@ -109,8 +109,8 @@
     .order-card {
         background: #FFFFFF;
         border: 1px solid var(--color-border);
-        border-radius: var(--radius-lg);
-        margin: 0 16px 14px;
+        border-radius: var(--radius-sm);
+        margin: 0 8px 8px;
         box-shadow: var(--shadow-card);
         overflow: hidden;
         transition: transform 0.15s ease;
@@ -119,7 +119,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 12px 14px;
+        padding: 12px 8px;
         border-bottom: 1px solid #F3EFE7;
         background: #FCFAF7;
     }
@@ -222,7 +222,7 @@
         font-size: 11.5px;
         font-weight: 700;
         padding: 6px 12px;
-        border-radius: var(--radius-pill);
+        border-radius: var(--radius-sm);
         border: 1px solid var(--color-border);
         background: #F9FAFB;
         color: var(--color-secondary);
@@ -238,7 +238,7 @@
         font-size: 11.5px;
         font-weight: 700;
         padding: 6px 12px;
-        border-radius: var(--radius-pill);
+        border-radius: var(--radius-sm);
         border: none;
         background: #10B981;
         color: #FFFFFF !important;

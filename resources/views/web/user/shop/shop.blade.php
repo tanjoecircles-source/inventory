@@ -8,7 +8,7 @@
     <div class="top-brand-header" id="topHeaderShop">
         <div class="search-input-box">
             <i class="fe fe-search text-muted mr-1"></i>
-            <input type="text" id="shopSearchInput" placeholder="Cari roasted beans, origin, process..." autocomplete="off">
+            <input type="text" id="shopSearchInput" placeholder="Cari Roasted Beans, Origin, Process..." autocomplete="off">
             <i class="fe fe-x text-muted cursor-pointer d-none" id="clearSearchBtn"></i>
         </div>
         <a href="{{ route('shop.cart') }}" class="header-icon-btn" id="openCartHeaderBtn" title="Keranjang Belanja">

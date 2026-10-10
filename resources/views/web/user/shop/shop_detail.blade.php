@@ -11,7 +11,7 @@
     .detail-container-wrap {
         max-width: 600px;
         margin: 0 auto;
-        padding-bottom: 110px;
+        padding-bottom: 64px;
         min-height: 100vh;
         background-color: var(--color-surface, #FAF8F5);
         position: relative;
@@ -105,15 +105,15 @@
 
     /* Content Cards */
     .detail-content-wrap {
-        padding: 16px;
+        padding: 0px 0px 16px;
     }
 
     .detail-card-panel {
         background: #FFFFFF;
-        border-radius: 16px;
+        border-radius: none;
         border: 1px solid var(--color-border, #ECE7DE);
-        padding: 18px;
-        margin-bottom: 14px;
+        padding: 12px;
+        margin-bottom: 12px;
         box-shadow: 0 1px 4px rgba(50, 45, 40, 0.04);
     }
 
@@ -121,7 +121,7 @@
         display: inline-block;
         background: #F4EFE6;
         color: #8C6D46;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -131,22 +131,22 @@
     }
 
     .detail-main-title {
-        font-size: 20px;
+        font-size: 18px;
         font-weight: 800;
         color: var(--color-secondary, #1F2429);
         line-height: 1.35;
-        margin-bottom: 10px;
+        margin-bottom: 0px;
     }
 
     .detail-price-row {
         display: flex;
         align-items: baseline;
         gap: 8px;
-        margin-bottom: 12px;
+        margin-bottom: 0px;
     }
 
     .detail-price-main {
-        font-size: 22px;
+        font-size: 18px;
         font-weight: 800;
         color: var(--color-primary, #E62129);
     }
@@ -220,7 +220,7 @@
 
     .grind-option-card {
         border: 1.5px solid var(--color-border, #ECE7DE);
-        border-radius: 12px;
+        border-radius: 5px;
         padding: 10px 14px;
         display: flex;
         align-items: center;
@@ -331,7 +331,7 @@
         right: 0;
         background: #FFFFFF;
         border-top: 1px solid var(--color-border, #ECE7DE);
-        padding: 12px 16px;
+        padding: 12px 14px;
         box-shadow: 0 -4px 18px rgba(0,0,0,0.06);
         z-index: 1000;
     }
@@ -357,12 +357,13 @@
     .detail-total-val {
         font-size: 17px;
         font-weight: 800;
+        line-height: 1;
         color: var(--color-primary, #E62129);
     }
 
     .detail-btn-cart {
         padding: 11px 16px;
-        border-radius: 9999px;
+        border-radius: 5px;
         background: #F4EFE6;
         color: var(--color-secondary, #1F2429);
         font-weight: 700;
@@ -520,8 +521,8 @@
 
         <!-- 4. Coffee Passport Specification Card -->
         <div class="detail-card-panel">
-            <h2 class="fs-14 font-weight-bold mb-2 text-dark d-flex align-items-center">
-                <i class="fe fe-compass text-danger mr-2"></i> Profil & Spesifikasi Kopi
+            <h2 class="fs-14 font-weight-bold mb-2 d-flex align-items-center">
+                <i class="fe fe-info mr-2 text-primary"></i> Profil & Spesifikasi Kopi
             </h2>
             <div class="spec-grid-container">
                 <div class="spec-item-tile">
@@ -555,7 +556,7 @@
         @if(!empty($product->desc) || !empty($product->summary))
         <div class="detail-card-panel">
             <h2 class="fs-14 font-weight-bold mb-2 d-flex align-items-center">
-                <i class="fe fe-file-text text-danger mr-2"></i> Deskripsi & Tasting Notes
+                <i class="fe fe-file-text text-primary mr-2"></i> Deskripsi & Tasting Notes
             </h2>
             <div class="fs-13 lh-lg" style="line-height: 1.6;">
                 {!! !empty($product->desc) ? $product->desc : nl2br(e($product->summary)) !!}
@@ -623,7 +624,7 @@
                 <label class="fs-12 font-weight-bold text-muted mb-1">
                     Catatan Khusus (opsional):
                 </label>
-                <input type="text" class="form-control form-control-sm" id="detailCustomerNote" style="border-radius: 8px; border-color: var(--color-border); font-size: 12.5px;">
+                <input type="text" class="form-control" id="detailCustomerNote">
             </div>
 
             <!-- Quantity Stepper -->
@@ -649,22 +650,21 @@
         <div class="detail-sticky-bar-inner">
             <div class="detail-total-preview">
                 <div class="detail-total-label">Subtotal</div>
-                <div class="d-flex align-items-baseline" style="gap: 6px;">
-                    <div class="detail-total-val" id="detailSubtotalDisplay">
-                        Rp {{ str_replace(',', '.', number_format($product->price)) }}
-                    </div>
-                    <div class="d-none" id="detailSubtotalStrikeDisplay" style="font-size: 11px; color: #9CA3AF; text-decoration: line-through;">
-                    </div>
+                <div class="detail-total-val" id="detailSubtotalDisplay">
+                    Rp {{ str_replace(',', '.', number_format($product->price)) }}
+                </div>
+                <div class="">&nbsp;
+                <span class="d-none" id="detailSubtotalStrikeDisplay" style="font-size: 11px; color: #9CA3AF; text-decoration: line-through;">
+                </span>
                 </div>
             </div>
 
             @if($product->is_ready)
-            <button type="button" class="detail-btn-cart" id="btnDetailAddToCart">
-                <i class="fe fe-shopping-cart"></i>
-                <span>+ Keranjang</span>
+            <button type="button" class="btn btn-dark" id="btnDetailAddToCart">
+                <span>+</span><i class="fe fe-shopping-cart"></i>
             </button>
-            <button type="button" class="detail-btn-buy" id="btnDetailBuyNow">
-                <i class="fe fe-zap"></i>
+            <button type="button" class="btn btn-primary" id="btnDetailBuyNow">
+                <i class="fe fe-shopping-bag"></i>
                 <span>Beli Sekarang</span>
             </button>
             @else
@@ -748,35 +748,8 @@
 
             <!-- Action Buttons -->
             <div style="display: flex; gap: 10px; margin-top: 16px;">
-                <a href="{{ route('shop.cart') }}" style="
-                    flex: 1;
-                    padding: 11px 16px;
-                    border-radius: 9999px;
-                    border: 2px solid #BE0017;
-                    background: transparent;
-                    color: #BE0017;
-                    font-size: 13px;
-                    font-weight: 700;
-                    text-align: center;
-                    text-decoration: none;
-                    display: flex; align-items: center; justify-content: center; gap: 6px;
-                ">
-                    <i class="fe fe-shopping-bag"></i> Lihat Keranjang
-                </a>
-                <a href="{{ route('shop.checkout') }}" style="
-                    flex: 1;
-                    padding: 11px 16px;
-                    border-radius: 9999px;
-                    background: #BE0017;
-                    color: #FFFFFF;
-                    font-size: 13px;
-                    font-weight: 700;
-                    text-align: center;
-                    text-decoration: none;
-                    display: flex; align-items: center; justify-content: center; gap: 6px;
-                    box-shadow: 0 3px 10px rgba(190,0,23,0.25);
-                ">
-                    <i class="fe fe-zap"></i> Checkout
+                <a href="{{ route('shop.cart') }}" class="btn btn-dark btn-block">
+                    <i class="fe fe-shopping-cart mr-1"></i> Lihat Keranjang
                 </a>
             </div>
         </div>
@@ -788,13 +761,13 @@
                 <i class="fe fe-coffee" style="color: #BE0017;"></i>
                 Rekomendasi Produk Lainnya
             </div>
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;">
                 @foreach($relatedProducts->take(4) as $rel)
                 <a href="{{ route('shop.detail', $rel->id) }}" 
                    onclick="document.getElementById('cartSuccessModal').style.display='none';"
                    style="
                     background: #FAF8F5;
-                    border-radius: 12px;
+                    border-radius: 5px;
                     overflow: hidden;
                     text-decoration: none;
                     border: 1px solid #EDE8DF;

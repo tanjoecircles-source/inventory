@@ -52,7 +52,7 @@
         z-index: 100;
         background: #FFFFFF;
         border-bottom: 1px solid var(--color-border);
-        padding: 12px 16px;
+        padding: 12px 8px;
         display: flex;
         align-items: center;
         gap: 12px;
@@ -90,8 +90,8 @@
     .order-mini-summary-card {
         background: #FFFFFF;
         border: 1px solid var(--color-border);
-        border-radius: var(--radius-lg);
-        margin: 0 16px 14px;
+        border-radius: var(--radius-sm);
+        margin: 0 8px 8px;
         box-shadow: var(--shadow-card);
         overflow: hidden;
     }
@@ -154,8 +154,8 @@
     .auth-main-card {
         background: #FFFFFF;
         border: 1px solid var(--color-border);
-        border-radius: var(--radius-lg);
-        margin: 0 16px 14px;
+        border-radius: var(--radius-sm);
+        margin: 0 8px 8px;
         padding: 18px 16px 20px;
         box-shadow: var(--shadow-card);
     }
@@ -213,7 +213,7 @@
         width: 100%;
         background: #FFFFFF;
         border: 1.5px solid #E5E7EB;
-        border-radius: var(--radius-pill);
+        border-radius: var(--radius-sm);
         padding: 9px 14px;
         font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 12.5px;
@@ -455,8 +455,8 @@
     .shipping-summary-card {
         background: #FFFFFF;
         border: 1px solid var(--color-border);
-        border-radius: var(--radius-lg);
-        margin: 0 16px 14px;
+        border-radius: var(--radius-sm);
+        margin: 0 8px 8px;
         box-shadow: var(--shadow-card);
         padding: 14px 16px;
         position: relative;
@@ -567,8 +567,8 @@
     .payment-action-card {
         background: #FFFFFF;
         border: 1px solid var(--color-border);
-        border-radius: var(--radius-lg);
-        margin: 0 16px 14px;
+        border-radius: var(--radius-sm);
+        margin: 0 8px 8px;
         box-shadow: var(--shadow-card);
         padding: 16px;
     }
@@ -713,8 +713,8 @@
     .express-wa-box {
         background: #F0FDF4;
         border: 1px solid #BBF7D0;
-        border-radius: var(--radius-lg);
-        margin: 0 16px 16px;
+        border-radius: var(--radius-sm);
+        margin: 0 8px 8px;
         padding: 12px 14px;
         display: flex;
         align-items: flex-start;
@@ -832,7 +832,7 @@
                 <div>
                     <div class="order-title-text">
                         <span>Pesanan Anda</span>
-                        <span class="order-beans-count-pill" id="checkoutBeansCountPill">0 Beans</span>
+                        <span class="order-beans-count-pill" id="checkoutBeansCountPill">0 Produk</span>
                     </div>
                     <div class="order-total-price-text" id="checkoutOrderTotalText">Rp 0</div>
                 </div>
@@ -984,7 +984,7 @@
             </div>
 
             <!-- TOMBOL LANJUT CHECKOUT (BY WHATSAPP) -->
-            <button type="button" class="btn-pay-now" id="btnExecutePay" onclick="handleExecutePayment()">
+            <button type="button" class="btn btn-primary btn-block btn-lg font-weight-bold" id="btnExecutePay" onclick="handleExecutePayment()">
                 <i class="fe fe-check-circle"></i>
                 <span>Konfirmasi Pesanan</span>
             </button>
@@ -995,7 +995,7 @@
         <div class="auth-main-card">
             <div class="auth-card-title">
                 <i class="fe fe-lock"></i>
-                <span>Satu Langkah Lagi Untuk Bawa Pulang Kopimu</span>
+                <span class="fs-13">Satu Langkah Lagi Untuk Bawa Pulang Kopimu</span>
             </div>
             <p class="auth-card-desc">
                 Masuk akun untuk menyimpan profil, alamat pengiriman, dan melacak transaksi anda.
@@ -1010,7 +1010,7 @@
             <!-- Google Fast Login -->
             <a href="{{ route('login_google', ['redirect' => 'shop-checkout']) }}" class="btn-google-sso">
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="16" height="16" alt="Google">
-                <span>Lanjut Cepat dengan Google</span>
+                <span>Lanjut dengan Google</span>
             </a>
 
             <div class="auth-or-divider">atau gunakan Akun Tanjoe</div>
@@ -1051,7 +1051,7 @@
                     </span>
                 </div>
 
-                <button type="submit" class="btn-submit-auth">
+                <button type="submit" class="btn btn-dark btn-block btn-lg">
                     <span>Masuk & Lanjut ke Pengiriman</span>
                     <i class="fe fe-arrow-right"></i>
                 </button>
@@ -1143,7 +1143,7 @@
             <span>Enkripsi 256-Bit SSL &bull; Transaksi Terlindungi</span>
         </div>
         <p class="trust-sub-note">
-            Toko Kopi Tanjoe menjamin keaslian lot beans, tanggal roasting fresh, dan privasi kontak Anda.
+            Toko Kopi Tanjoe menjamin keaslian produk<br>dan privasi informasi kontak Anda.
         </p>
     </div>
 

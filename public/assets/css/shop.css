@@ -15,7 +15,7 @@
         --color-border: #ECE7DE;
         --shadow-card: 0 2px 10px -2px rgba(50, 45, 40, 0.07), 0 1px 3px 0 rgba(0, 0, 0, 0.03);
         --shadow-hover: 0 8px 22px -4px rgba(50, 45, 40, 0.12), 0 2px 6px 0 rgba(0, 0, 0, 0.04);
-        --radius-sm: 6px;
+        --radius-sm: 5px;
         --radius-md: 10px;
         --radius-lg: 16px;
         --radius-pill: 9999px;
@@ -39,8 +39,8 @@
     .top-brand-header {
         display: flex;
         align-items: center;
-        gap: 10px;
-        padding: 12px 16px 10px;
+        gap: 6px;
+        padding: 12px 8px 10px;
         background: var(--color-surface);
         position: sticky;
         z-index: 100;
@@ -50,7 +50,7 @@
         margin-bottom: 0;
         background: #FFFFFF;
         border: 1px solid var(--color-border);
-        border-radius: var(--radius-pill);
+        border-radius: var(--radius-sm);
         display: flex;
         align-items: center;
         padding: 0 14px;
@@ -82,7 +82,7 @@
         height: 42px;
         background: #FFFFFF;
         border: 1px solid var(--color-border);
-        border-radius: 12px;
+        border-radius: var(--radius-sm);
         text-decoration: none !important;
         display: flex;
         align-items: center;
@@ -242,7 +242,7 @@
     .category-pills-bar {
         display: flex;
         gap: 8px;
-        padding: 0 16px;
+        padding: 0 8px;
         overflow-x: auto;
         scrollbar-width: none;
         margin-bottom: 12px;
@@ -274,7 +274,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0 16px;
+        padding: 0 8px;
         margin-bottom: 12px;
         gap: 6px;
         overflow-x: auto;
@@ -286,7 +286,7 @@
     .filter-select-btn {
         background: #FFFFFF;
         border: 1px solid var(--color-border);
-        border-radius: var(--radius-pill);
+        border-radius: var(--radius-sm);
         padding: 8px 11px;
         font-size: 12px;
         font-weight: 600;
@@ -311,12 +311,12 @@
     .products-grid {
         display: flex;
         flex-wrap: wrap;
-        margin: 0 10px;
+        margin: 0 6px;
     }
     .product-col {
         width: 50%;
-        padding: 0 6px;
-        margin-bottom: 14px;
+        padding: 0 3px;
+        margin-bottom: 8px;
     }
     @media (min-width: 768px) {
         .product-col {
@@ -327,7 +327,7 @@
     /* Product Card */
     .product-card-item {
         background: #FFFFFF;
-        border-radius: var(--radius-lg);
+        border-radius: var(--radius-sm);
         border: 1px solid var(--color-border);
         box-shadow: var(--shadow-card);
         overflow: hidden;
@@ -653,10 +653,10 @@
         align-items: center;
         justify-content: space-between;
         background: #FFFFFF;
-        padding: 10px 14px;
-        border-radius: 12px;
+        padding: 10px 12px;
+        border-radius: 5px;
         border: 1px solid var(--color-border);
-        margin-bottom: 12px;
+        margin-bottom: 8px;
         font-size: 12.5px;
         font-weight: 600;
     }
@@ -719,10 +719,10 @@
     .cart-item-card {
         background: #FFFFFF;
         border: 1px solid var(--color-border);
-        border-radius: var(--radius-lg);
+        border-radius: var(--radius-sm);
         box-shadow: var(--shadow-card);
         padding: 12px;
-        margin-bottom: 12px;
+        margin-bottom: 8px;
         display: flex;
         flex-direction: column;
         gap: 8px;
@@ -736,7 +736,7 @@
         position: relative;
         width: 72px;
         height: 72px;
-        border-radius: 10px;
+        border-radius: 5px;
         background: #F3EFE7;
         overflow: hidden;
         flex-shrink: 0;
@@ -923,8 +923,8 @@
     .order-summary-card {
         background: #FFFFFF;
         border: 1px solid var(--color-border);
-        border-radius: var(--radius-lg);
-        padding: 14px;
+        border-radius: var(--radius-sm);
+        padding: 12px;
         margin-bottom: 24px;
         box-shadow: var(--shadow-card);
     }
@@ -978,7 +978,7 @@
         max-width: 600px;
         background: #FFFFFF;
         border-top: 1px solid var(--color-border);
-        padding: 12px 16px;
+        padding: 12px 14px;
         display: flex;
         align-items: center;
         justify-content: space-between;
