@@ -59,7 +59,7 @@
                 <span>Keranjang Belanja</span>
             </div>
         </div>
-        <span class="cart-items-count-pill" id="cartTotalItemsCountBadge">0 Barang</span>
+        <span class="cart-items-count-pill" id="cartTotalItemsCountBadge">0 Produk</span>
     </div>
 
     <div class="p-2">
@@ -96,7 +96,7 @@
         <div class="order-summary-card" id="orderSummaryCard">
             <h4 class="order-summary-title">Ringkasan Pesanan</h4>
             <div class="summary-row">
-                <span class="text-muted" id="summaryTotalItemsLabel">Total Harga (0 barang)</span>
+                <span class="text-muted" id="summaryTotalItemsLabel">Total Harga (0 Produk)</span>
                 <span class="font-weight-bold" id="summaryRawSubtotal">Rp 0</span>
             </div>
             <div class="summary-row ongkir-row">
@@ -149,7 +149,7 @@ $(document).ready(function() {
             $('#cartSelectAllRow').addClass('d-none');
             $('#orderSummaryCard').addClass('d-none');
             $('#cartStickyCheckoutBar').addClass('d-none');
-            $('#cartTotalItemsCountBadge').text('0 Barang');
+            $('#cartTotalItemsCountBadge').text('0 Produk');
             return;
         }
 
@@ -230,11 +230,11 @@ $(document).ready(function() {
             $stream.append(itemCardHtml);
         });
 
-        $('#cartTotalItemsCountBadge').text(totalItemsCount + ' Barang');
+        $('#cartTotalItemsCountBadge').text(totalItemsCount + ' Produk');
         $('#selectAllLabel').text(`Pilih Semua (${cart.length})`);
         $('#selectAllCartCheckbox').prop('checked', allSelected && cart.length > 0);
 
-        $('#summaryTotalItemsLabel').text(`Total Harga (${selectedItemsCount} barang)`);
+        $('#summaryTotalItemsLabel').text(`Total Harga (${selectedItemsCount} Produk)`);
         $('#summaryRawSubtotal').text(formatRupiah(rawSubtotal));
         $('#summaryGrandTotal').text(formatRupiah(rawSubtotal));
         $('#stickyTotalBelanja').text(formatRupiah(rawSubtotal));

@@ -139,9 +139,7 @@
         margin-top: 1px;
     }
     .order-breakdown-drawer {
-        background: #FAF8F5;
-        border-top: 1px dashed var(--color-border);
-        padding: 12px 14px;
+        padding: 0px 12px 14px;
         font-size: 12px;
     }
     .order-breakdown-item {
@@ -368,8 +366,8 @@
     .logged-user-banner {
         background: #FFFFFF;
         border: 1px solid var(--color-border);
-        border-radius: var(--radius-lg);
-        margin: 0 16px 12px;
+        border-radius: var(--radius-sm);
+        margin: 0 8px 8px;
         padding: 10px 14px;
         display: flex;
         align-items: center;
@@ -524,7 +522,7 @@
     .shipping-label-item {
         background: #FDFBF7;
         border: 1px solid rgba(230, 33, 41, 0.08);
-        border-radius: 10px;
+        border-radius: 5px;
         padding: 9px 12px;
     }
     .shipping-label-key {
@@ -585,7 +583,7 @@
     .payment-info-box {
         background: #F8FAFC;
         border: 1px solid #E2E8F0;
-        border-radius: 12px;
+        border-radius: 5px;
         padding: 12px 14px;
         display: flex;
         align-items: flex-start;
@@ -615,7 +613,7 @@
     .payment-summary-box {
         background: #FDFBF7;
         border: 1px solid rgba(230, 33, 41, 0.08);
-        border-radius: 12px;
+        border-radius: 5px;
         padding: 12px 14px;
         margin-bottom: 14px;
     }
@@ -1402,10 +1400,10 @@ $(document).ready(function() {
             }
 
             var itemRow = `
-                <div class="order-breakdown-item">
-                    <div>
-                        <b>${item.name}</b> (${qty}x)
-                        ${isDiscounted ? `<span class="badge badge-success px-2 py-1 rounded-pill ml-1" style="font-size: 9px; background: #10B981; color: #fff;">${badgeLabel}</span>` : ''}
+                <div class="d-flex mb-2 pt-2 border-top">
+                    <div class="flex-grow-1">
+                        <b>${item.name}</b><br>(${qty}x)
+                        ${isDiscounted ? `<span class="badge badge-success px-2 py-1 rounded-pill ml-1 my-1" style="font-size: 9px; background: #10B981; color: #fff;">${badgeLabel}</span>` : ''}
                         <div class="text-muted fs-11">${item.variant}</div>
                         ${item.note ? '<div class="text-secondary fs-10">Note: ' + item.note + '</div>' : ''}
                     </div>
@@ -1428,7 +1426,7 @@ $(document).ready(function() {
         `);
 
         $('#checkoutHeaderCartBadge').text(totalQty);
-        $('#checkoutBeansCountPill').text(totalQty + ' Beans');
+        $('#checkoutBeansCountPill').text(totalQty + ' Produk');
         $('#checkoutOrderTotalText').text(formatRupiah(grandTotal));
         $('#expressWaTotalDisplay').text(formatRupiah(grandTotal));
 
