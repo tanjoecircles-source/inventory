@@ -1,6 +1,6 @@
 <x-layouts.public metatitle="Pricelist & Marketplace" metadesc="Toko Kopi Tanjoe - Artisan Roastery | Curating Gayo’s Finest, Distributing with Purpose">
 
-<link rel="stylesheet" href="{{ asset('assets/css/shop.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/shop.css?v=1.0') }}">
 
 <div class="shop-container-wrap">
     

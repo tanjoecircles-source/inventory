@@ -169,15 +169,15 @@
     /* Coffee Spec Passport */
     .spec-grid-container {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
+        grid-template-columns: repeat(1, 1fr);
+        gap: 6px;
         margin-top: 10px;
     }
 
     .spec-item-tile {
         background: #FAF8F5;
         border: 1px solid #ECE7DE;
-        border-radius: 12px;
+        border-radius: 5px;
         padding: 10px 12px;
     }
 
