@@ -76,18 +76,19 @@
     </div>
 </div>
 <script>
-    $(document).ready(function () {
-        account = "{{$account_status}}";
-        count = "{{$contents_count}}";
-        limit = "{{$limit}}";
-        
-        if(count <= 10){
-            $('.ajax-load').hide();
-        }
-    });
+    var account = "{{$account_status}}";
+    var count = parseInt("{{$contents_count}}") || 0;
+    var limit = parseInt("{{$limit}}") || 10;
     var page = 1;
     var isLoading = false;
     var isEndOfData = false;
+
+    $(document).ready(function () {
+        if(count <= limit){
+            isEndOfData = true;
+            $('.ajax-load').hide();
+        }
+    });
 
     $(window).on('scroll', function() {
         if (isLoading || isEndOfData) return;
@@ -101,18 +102,19 @@
         if (isLoading || isEndOfData) return;
         
         page++;
-        var key = '{{$keyword}}';
+        var key = @json($keyword);
         
         $.ajax({
-            url:'?page=' + page + '&keyword=' + key,
-            type:'get',
+            url: '{{ route("product-list") }}',
+            data: { page: page, keyword: key },
+            type: 'get',
             beforeSend: function(){
                 isLoading = true;
                 $('.ajax-load').fadeIn();
             }
         })
         .done(function(data){
-            if(data.html.trim() == ""){
+            if(!data.html || data.html.trim() == ""){
                 isEndOfData = true;
                 $('.ajax-load').html('<p class="text-muted fs-12 mt-2">— Akhir dari data —</p>');
                 return;     

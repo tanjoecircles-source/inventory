@@ -403,65 +403,68 @@ class ProductController extends Controller
 
     public function list(Request $request)
     {
-        if(isset($_GET['clear'])) $request->session()->forget('search_result');
-        $seller = $this->seller_info();
-        $limit = 10;
-        $search = session('search_result') ?? "";
-        $contents = DB::table('product AS p')
-                ->leftJoin('ref_product_type AS pt', 'pt.id', '=', 'p.type')
-                ->leftJoin('users AS ua', 'p.author', '=', 'ua.id')
-                ->leftJoin('users AS ue', 'p.editor', '=', 'ue.id')
-                ->select('p.id AS id_produk',
-                        'pt.name AS type',
-                        'p.name AS judul',
-                        'p.price AS price',
-                        'p.stock AS stock',
-                        'p.photo_thumbnail AS thumbnail',
-                        'ua.name AS author', 
-                        'p.is_recomended',
-                        'p.is_sold_out',
-                        'p.status',
-                        'p.created_at AS created_date')
-                ->whereRaw('1 = 1')
-                ->where(function($query) use ($search){
-                    $query->where('p.name', 'like', '%'.$search.'%')
-                        ->orWhere('pt.name', 'like', '%'.$search.'%');
-                })
-                ->orderBy('p.is_recomended', 'ASC')
-                ->orderBy('p.id', 'DESC')
-                ->paginate($limit);
-
-        $counts = DB::table('product AS p')
-                    ->leftJoin('users AS ua', 'p.author', '=', 'ua.id')
-                    ->leftJoin('users AS ue', 'p.editor', '=', 'ue.id')
-                    ->whereRaw('1 = 1')
-                    ->where(function($query) use ($search){
-                        $query->where('p.name', 'like', '%'.$search.'%')
-                            ->orWhere('p.code', 'like', '%'.$search.'%');
-                    })
-                    ->count();
-
-        if(!empty($contents)){
-            foreach ($contents as $key => $value) {
-                $value->created_date = date('d M Y', strtotime($value->created_date));
-                $value->price = $this->format_angka($value->price);
-                $value->published = $value->status == 'Active' ? 'Aktif' : 'Tidak Aktif';
-                $value->published_style = $value->status == 'Active' ? 'badge-success' : 'badge-secondary';
-                $value->recomended = $value->is_recomended == 'true' ? '<i class="fa fa-star fs-18 text-warning"></i>' : '';
+        if ($request->has('clear')) {
+            $request->session()->forget('search_result');
+            $search = '';
+        } else {
+            if ($request->has('keyword')) {
+                $search = trim($request->get('keyword', ''));
+                if ($search !== '') {
+                    $request->session()->put('search_result', $search);
+                } else {
+                    $request->session()->forget('search_result');
+                }
+            } else {
+                $search = trim(session('search_result', ''));
             }
+        }
+
+        $limit = 10;
+        $query = DB::table('product AS p')
+            ->leftJoin('ref_product_type AS pt', 'pt.id', '=', 'p.type')
+            ->select(
+                'p.id AS id_produk',
+                'pt.name AS type',
+                'p.name AS judul',
+                'p.price AS price',
+                'p.stock AS stock',
+                'p.is_recomended',
+                'p.is_sold_out',
+                'p.status'
+            );
+
+        if ($search !== '') {
+            $query->where(function($q) use ($search) {
+                $q->where('p.name', 'like', '%' . $search . '%')
+                  ->orWhere('pt.name', 'like', '%' . $search . '%')
+                  ->orWhere('p.code', 'like', '%' . $search . '%');
+            });
+        }
+
+        $contents = $query->orderBy('p.is_recomended', 'ASC')
+            ->orderBy('p.id', 'DESC')
+            ->paginate($limit);
+
+        foreach ($contents as $value) {
+            $value->price = $this->format_angka($value->price);
+            $value->published = ($value->status === 'Active') ? 'Aktif' : 'Tidak Aktif';
+            $value->published_style = ($value->status === 'Active') ? 'badge-success' : 'badge-secondary';
+            $value->recomended = ($value->is_recomended === 'true') ? '<i class="fa fa-star fs-18 text-warning"></i>' : '';
         }
 
         $data = [
             'keyword' => $search,
             'limit' => $limit,
             'contents' => $contents,
-            'contents_count' => $counts,
+            'contents_count' => $contents->total(),
             'account_status' => 1
         ];
-        if($request->ajax()){
+
+        if ($request->ajax()) {
             $view = view('web.admin.product.paginate', $data)->render();
             return response()->json(['html' => $view]);
         }
+
         return view('web.admin.product.list', $data);
     }
 
