@@ -1,7 +1,6 @@
 
 @foreach ($contents as $content)
-<a href="{{ url('product-detail/'.$content->id_produk) }}">
-<div class="card mb-3">
+<div class="card mb-3 position-relative">
     <div class="card-body p-2 row">
         <div class="col-12 px-4">
             <div class="d-flex" style="vertical-align:middle">
@@ -13,15 +12,17 @@
                     <span class="badge badge-default m-0 ml-auto px-2 py-1 fs-12" style="border-radius:4px">Terjual</span>
                 @endif
             </div>
-            <label class="text-default p-0 mb-0 d-block mt-1 fs-14 h-40">{{$content->type.' - '.$content->judul}}</label>
-            <div class="text-muted m-0 fs-11" style="line-height:15px">
-                Stock : {{$content->stock}}
-                @if(!empty($content->satuan_name))
-                    &bull; {{ $content->satuan_name }} gr
-                @endif
+            <a href="{{ url('product-detail/'.$content->id_produk) }}" class="stretched-link text-default text-decoration-none">
+                <label class="text-default p-0 mb-0 d-block mt-1 fs-14 h-40 cursor-pointer">{{$content->type.' - '.$content->judul}}</label>
+            </a>
+            <div class="mt-0">
+                <a href="{{ url('product-stock-set/'.$content->id_produk) }}" class="position-relative text-muted fs-12 d-inline-block text-decoration-none" style="z-index: 2;" title="Atur Stock">
+                    <span class="">
+                        Stock : {{$content->stock}}
+                    </span>
+                </a>
             </div>
         </div>
     </div>
 </div>
-</a>
 @endforeach

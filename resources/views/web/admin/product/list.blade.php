@@ -42,61 +42,6 @@
             </div>
             @endif
 
-            <!-- Form Filter Kategori & Berat Satuan -->
-            <div class="card mt-2 mb-2 shadow-none border">
-                <div class="card-body p-2">
-                    <form id="product-filter-form" action="{{ url('product-list') }}" method="GET">
-                        @if(!empty($keyword))
-                            <input type="hidden" name="keyword" value="{{ $keyword }}">
-                        @endif
-                        <div class="row">
-                            <div class="col-6 pr-1">
-                                <label class="form-label text-muted fs-11 mb-1 font-weight-bold">
-                                    <i class="fe fe-filter mr-1"></i>Filter Data
-                                </label>
-                                <select name="type" id="filter-type" class="form-control">
-                                    <option value="">Semua Kategori</option>
-                                    @foreach($type_list as $t)
-                                        <option value="{{ $t->id }}" {{ $filter_type == $t->id ? 'selected' : '' }}>
-                                            {{ $t->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-6 pl-1">
-                                <label class="form-label text-muted fs-11 mb-1 font-weight-bold">
-                                    &nbsp;
-                                </label>
-                                <select name="satuan" id="filter-satuan" class="form-control">
-                                    <option value="">Semua Berat</option>
-                                    @foreach($satuan_list as $s)
-                                        <option value="{{ $s->id }}" {{ $filter_satuan == $s->id ? 'selected' : '' }}>
-                                            {{ $s->name }} gr
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        @if(!empty($filter_type) || !empty($filter_satuan))
-                            <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
-                                <span class="text-muted fs-11">
-                                    <i class="fe fe-filter text-primary mr-1"></i>Filter Aktif: 
-                                    @if(!empty($filter_type))
-                                        <span class="badge badge-light border text-dark">{{ $type_list->firstWhere('id', $filter_type)->name ?? 'Kategori' }}</span>
-                                    @endif
-                                    @if(!empty($filter_satuan))
-                                        <span class="badge badge-light border text-dark">{{ ($satuan_list->firstWhere('id', $filter_satuan)->name ?? '') }} gr</span>
-                                    @endif
-                                </span>
-                                <a href="{{ url('product-list?clear=true') }}" class="btn btn-link text-danger p-0 fs-11 font-weight-semibold">
-                                    <i class="fe fe-x-circle mr-1"></i>Reset
-                                </a>
-                            </div>
-                        @endif
-                    </form>
-                </div>
-            </div>
-
             @if(session()->has('success'))
                 <script>
                     $(function () {
@@ -167,14 +112,15 @@
         
         page++;
         
+        var params = { page: page };
+        // Hanya kirim filter yang terisi agar session tidak ter-reset saat scroll
+        if (key) params.keyword = key;
+        if (filterType) params.type = filterType;
+        if (filterSatuan) params.satuan = filterSatuan;
+
         $.ajax({
             url: '{{ route("product-list") }}',
-            data: { 
-                page: page, 
-                keyword: key,
-                type: filterType,
-                satuan: filterSatuan
-            },
+            data: params,
             type: 'get',
             beforeSend: function(){
                 isLoading = true;

@@ -401,51 +401,49 @@ class ProductController extends Controller
         return redirect('product-list');
     }
 
+    /**
+     * Ambil nilai filter product-list: query string menang jika key dikirim,
+     * selain itu fallback ke session. Request AJAX (infinite-scroll) tidak
+     * mengubah session agar filter aktif tidak ter-reset saat scroll.
+     */
+    private function resolveProductFilter(Request $request, string $param, string $sessionKey, bool $isAjax, bool $numeric): string
+    {
+        if ($request->query->has($param)) {
+            $value = trim((string) $request->query($param, ""));
+            if ($numeric && $value !== "" && !ctype_digit($value)) {
+                $value = "";
+            }
+            if (!$numeric && mb_strlen($value) > 100) {
+                $value = trim(mb_substr($value, 0, 100));
+            }
+            if (!$isAjax) {
+                if ($value !== "") {
+                    $request->session()->put($sessionKey, $value);
+                } else {
+                    $request->session()->forget($sessionKey);
+                }
+            }
+            return $value;
+        }
+
+        return trim((string) session($sessionKey, ""));
+    }
+
     public function list(Request $request)
     {
+        $isAjaxFilter = $request->ajax();
+
         if ($request->has('clear')) {
-            $request->session()->forget('search_result');
-            $request->session()->forget('filter_type');
-            $request->session()->forget('filter_satuan');
+            $request->session()->forget(['search_result', 'filter_type', 'filter_satuan']);
             $search = '';
             $filter_type = '';
             $filter_satuan = '';
         } else {
-            // Keyword search
-            if ($request->has('keyword')) {
-                $search = trim($request->get('keyword', ''));
-                if ($search !== '') {
-                    $request->session()->put('search_result', $search);
-                } else {
-                    $request->session()->forget('search_result');
-                }
-            } else {
-                $search = trim(session('search_result', ''));
-            }
-
-            // Kategori (type) filter
-            if ($request->has('type')) {
-                $filter_type = $request->get('type', '');
-                if ($filter_type !== '') {
-                    $request->session()->put('filter_type', $filter_type);
-                } else {
-                    $request->session()->forget('filter_type');
-                }
-            } else {
-                $filter_type = session('filter_type', '');
-            }
-
-            // Berat Satuan (satuan) filter
-            if ($request->has('satuan')) {
-                $filter_satuan = $request->get('satuan', '');
-                if ($filter_satuan !== '') {
-                    $request->session()->put('filter_satuan', $filter_satuan);
-                } else {
-                    $request->session()->forget('filter_satuan');
-                }
-            } else {
-                $filter_satuan = session('filter_satuan', '');
-            }
+            // Masing-masing filter mandiri: keyword, kategori, berat satuan.
+            // Query string menang jika key dikirim; jika tidak ada, pakai session.
+            $search = $this->resolveProductFilter($request, 'keyword', 'search_result', $isAjaxFilter, false);
+            $filter_type = $this->resolveProductFilter($request, 'type', 'filter_type', $isAjaxFilter, true);
+            $filter_satuan = $this->resolveProductFilter($request, 'satuan', 'filter_satuan', $isAjaxFilter, true);
         }
 
         $limit = 10;
