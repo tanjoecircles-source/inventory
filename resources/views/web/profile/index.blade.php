@@ -44,7 +44,7 @@
                         </div>
                         <div class="py-2 mt-3">
                             <p class="mb-0 text-dark font-weight-semibold">{{$info->name ?? $user->name}}</p>
-                            <p class="text-muted mb-0">{{$info->address ?? ""}}</p>
+                            <p class="text-muted mb-0">{{$info->address ?? $user->address ?? ""}}</p>
                             <p class="text-muted">{{$info->seller_phone ?? $user->phone}}</p>
                         </div>
                     </div>
@@ -63,7 +63,8 @@
                             <p class="m-0 p-0">Mengikuti</p>
                         </div>
                     </div>
-                    
+                    @endif
+
                     <div class="row mt-3">
                         <div class="col-10 pr-1">
                             <a href="{{url('profile-category')}}" class="btn btn-block btn-outline-primary">Ubah Profil</a>
@@ -72,7 +73,6 @@
                             <a href="#" class="btn btn-block btn-primary"><i class="fe fe-user-plus"></i></a>
                         </div>
                     </div>
-                    @endif
                 </div>
             </div>
         </div>
@@ -90,7 +90,7 @@
                         </div>
                         <div class="ml-auto pt-3">
                             @if (Gate::denies('isAdmin'))
-                                <a href="#" class="px-2 text-primary font-weight-semibold">Ubah</a>
+                                <a href="{{ url('profile-category') }}" class="px-2 text-primary font-weight-semibold">Ubah</a>
                             @endif
                         </div>
                     </div>

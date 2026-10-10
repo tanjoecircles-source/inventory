@@ -85,6 +85,7 @@ Route::middleware(['auth:web'])->group(function(){
     Route::post('profile-update-seller/{app_id}', 'ProfileController@update_seller')->name('profile-update-seller');
     Route::post('profile-update-dealer/{app_id}', 'ProfileController@update_dealer')->name('profile-update-dealer');
     Route::post('profile-update-agent/{app_id}', 'ProfileController@update_agent')->name('profile-update-agent');
+    Route::post('profile-update-user/{app_id}', 'ProfileController@update_user')->name('profile-update-user');
     Route::get('profile-edit-password', 'ProfileController@edit_password')->name('profile-edit-password');
     Route::post('profile-update-password/{app_id}', 'ProfileController@update_password')->name('profile-update-password');
     Route::post('prodile/update-photo-profile', 'ProfileController@update_photo_profile')->name('profile-update-photo');

@@ -30,13 +30,13 @@
                             <div class="row">
                                 <div class="col">
                                     <label class="custom-control custom-radio">
-                                        <input type="radio" class="custom-control-input" name="gender" value="Laki-laki" checked="">
+                                        <input type="radio" class="custom-control-input" name="gender" value="Laki-laki" @if($info->gender == 'Laki-laki') checked @endif>
                                         <span class="custom-control-label">Laki-laki</span>
                                     </label>
                                 </div>
                                 <div class="col">
                                     <label class="custom-control custom-radio">
-                                        <input type="radio" class="custom-control-input" name="gender" value="Perempuan">
+                                        <input type="radio" class="custom-control-input" name="gender" value="Perempuan" @if($info->gender == 'Perempuan') checked @endif>
                                         <span class="custom-control-label">Perempuan</span>
                                     </label>
                                 </div>

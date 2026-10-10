@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
 use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
@@ -71,19 +72,21 @@ class CustomerController extends Controller
 
     public function create(Request $request)
     {
-        $valid = validator($request->only('name', 'phone'), [
+        $valid = validator($request->only('name', 'phone', 'address'), [
             'name' => 'required',
             'phone' => 'required',
+            'address' => 'nullable',
         ]);
 
         if ($valid->fails()) {
             return redirect()->back()->withErrors($valid)->withInput();
         }
-        $data = $request->only('name', 'phone', 'param_url');
+        $data = $request->only('name', 'phone', 'address', 'param_url');
         DB::beginTransaction();
         $insert = Customer::create([
             'name' => $data['name'],
-            'phone' => $data['phone']
+            'phone' => $data['phone'],
+            'address' => $data['address']
         ]);
         if ($insert){
             DB::commit();
@@ -112,21 +115,59 @@ class CustomerController extends Controller
 
     public function update(Request $request, $id)
     {
-        $valid = validator($request->only('name', 'phone'), [
+        $valid = validator($request->only('name', 'phone', 'address'), [
             'name' => 'required',
             'phone' => 'required',
+            'address' => 'nullable',
         ]);
 
         if ($valid->fails()) {
             return redirect()->back()->withErrors($valid)->withInput();
         }
-        $data = $request->only('name', 'phone');
+        $data = $request->only('name', 'phone', 'address');
+        // Phone lama sebelum di-update (dipakai untuk link awal via kecocokan phone)
+        $oldPhone = Customer::where('id', $id)->value('phone');
+
         DB::beginTransaction();
         $update = Customer::where('id', $id)->update([
             'name' => $data['name'],
             'phone' => $data['phone'],
+            'address' => $data['address'],
         ]);
-        if ($update){
+
+        // Sinkronisasi ke akun user (type='user'), scope: name, phone, address
+        if ($update !== false) {
+            // Cari user type='user' yang sudah terlink ke customer ini via customer_id
+            $user = User::where('type', 'user')->where('customer_id', $id)->first();
+
+            if (empty($user)) {
+                // Link awal: cari user type='user' via kecocokan phone (lama atau baru) yang belum dilink customer lain
+                $phones = array_values(array_unique(array_filter([$oldPhone, $data['phone']])));
+                $user = User::where('type', 'user')
+                    ->whereIn('phone', $phones)
+                    ->where(function ($q) use ($id) {
+                        $q->whereNull('customer_id')->orWhere('customer_id', $id);
+                    })
+                    ->orderBy('id')
+                    ->first();
+                if (!empty($user)) {
+                    // Isi link
+                    User::where('id', $user->id)->update(['customer_id' => $id]);
+                }
+            }
+
+            if (!empty($user)) {
+                // Update data akun user dari data customer
+                User::where('id', $user->id)->update([
+                    'name' => $data['name'],
+                    'phone' => $data['phone'],
+                    'address' => $data['address'],
+                ]);
+            }
+            // Tidak ada user type='user' cocok -> dilewati
+        }
+
+        if ($update !== false){
             DB::commit();
             return redirect('customer-list')->with('success','Data has been updated');
         }else{

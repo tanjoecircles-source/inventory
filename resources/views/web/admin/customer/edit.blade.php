@@ -29,6 +29,11 @@
                         </div>
                         @error('phone')<div class="text-danger">{{ $message }}</div>@enderror
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Alamat</label>
+                        <textarea class="form-control @error('address') is-invalid @enderror" name="address" rows="3" placeholder="Tulis Nama Jalan, Nomor, RT/RW/Komplek, Kelurahan">{{ old('address', $address ?? '') }}</textarea>
+                        @error('address')<div class="text-danger">{{ $message }}</div>@enderror
+                    </div>
                 </div>
             </div>
             <div class="card text-center no-border shadow-none custom-square mb-7">

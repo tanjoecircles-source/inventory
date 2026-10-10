@@ -20,6 +20,10 @@
                         <p class="px-2 mb-2">Nomor HP (Whatsapp)</p>
                         <h6 class="px-2 m-0 font-weight-bold">{{$phone}}</h6>
                     </div>
+                    <div class="form-group">
+                        <p class="px-2 mb-2">Alamat</p>
+                        <h6 class="px-2 m-0 font-weight-bold">{{($address ?? '') != '' ? $address : '-'}}</h6>
+                    </div>
                 </div>
             </div>
             <div class="card text-center no-border shadow-none custom-square mb-7">

@@ -13,6 +13,7 @@ use App\Models\District;
 use App\Models\User;
 use App\Models\SellerInfo;
 use App\Models\AgentInfo;
+use App\Models\Customer;
 
 class ProfileController extends Controller
 {
@@ -73,6 +74,10 @@ class ProfileController extends Controller
             $info = !empty($agent->name) && !empty($agent->gender) && !empty($agent->place_of_birth) && !empty($agent->date_of_birth) && !empty($agent->address) && !empty($agent->district) && !empty($agent->region) ? true : false;
             $dealer = false;
         }
+        if(!Gate::allows('isSeller') && !Gate::allows('isSellerDealer') && !Gate::allows('isAgent')) {
+            $user = Auth::user();
+            $info = !empty($user->name) && !empty($user->phone) && !empty($user->address) ? true : false;
+        }
         $data = [
             'info' => $info,
             'dealer' => $dealer
@@ -83,7 +88,7 @@ class ProfileController extends Controller
     public function edit()
     {
         $user = Auth::user();
-        $info = [];
+        $info = null;
         $view = 'web.profile.edit';
         if(Gate::allows('isSeller') || Gate::allows('isSellerDealer')) {
             $info = $this->seller_info();
@@ -95,7 +100,9 @@ class ProfileController extends Controller
             $view = 'web.profile.edit_agent';
         }
         
-        $info->date_of_birth = !empty($info->date_of_birth) ? date('d-m-Y', strtotime($info->date_of_birth)) : date('d-m-Y');
+        if(!empty($info)) {
+            $info->date_of_birth = !empty($info->date_of_birth) ? date('d-m-Y', strtotime($info->date_of_birth)) : date('d-m-Y');
+        }
         
 
         $data = [
@@ -135,7 +142,11 @@ class ProfileController extends Controller
             'district' => $data['district'],
             'post_code' => $data['post_code']
         ]);
-        if ($update){
+        $update2 = User::where('id', Auth::user()->id)->update([
+            'name' => $data['name'],
+            'phone' => $data['phone']
+        ]);
+        if ($update && $update2){
             DB::commit();
             return redirect('profile-category')->with('success','Berhasil mengubah data');
         }else{
@@ -208,13 +219,86 @@ class ProfileController extends Controller
             'district' => $data['district'],
             'post_code' => $data['post_code']
         ]);
-        $update2 = User::where('id', Auth::user()->id)->update(['phone' => $data['phone']]);
+        $update2 = User::where('id', Auth::user()->id)->update([
+            'name' => $data['name'],
+            'phone' => $data['phone']
+        ]);
         if ($update && $update2){
             DB::commit();
             return redirect('profile-category')->with('success','Berhasil mengubah data');
         }else{
             DB::rollback();
             return redirect()->back()->with('danger', 'Gagal mengubah data');
+        }
+    }
+
+    public function update_user(Request $request, $id)
+    {
+        $valid = validator($request->only('name', 'phone', 'email', 'address'), [
+            'name' => 'required',
+            'phone' => 'required',
+            'email' => 'nullable|email|unique:users,email,'.$id,
+            'address' => 'nullable',
+        ]);
+
+        if ($valid->fails()) {
+            return redirect()->back()->withErrors($valid)->withInput();
+        }
+        $data = $request->only('name', 'phone', 'email', 'address');
+        // Phone lama sebelum di-update (dipakai untuk link awal via kecocokan phone)
+        $oldPhone = User::where('id', $id)->value('phone');
+
+        // Kolom email NOT NULL di DB: hanya diupdate jika diisi, jika kosong pertahankan email lama
+        $updateData = [
+            'name' => $data['name'],
+            'phone' => $data['phone'],
+            'address' => $data['address'],
+        ];
+        if (!empty($data['email'])) {
+            $updateData['email'] = $data['email'];
+        }
+
+        DB::beginTransaction();
+        $update = User::where('id', $id)->update($updateData);
+
+        // Sinkronisasi ke tabel customer (hanya untuk tipe user), scope: name, phone, address
+        if ($update !== false && Gate::allows('isUser')) {
+            $user = User::where('id', $id)->first();
+            $customerId = $user->customer_id;
+
+            if (!empty($customerId)) {
+                // Link sudah ada: update customer terkait
+                Customer::where('id', $customerId)->update([
+                    'name' => $data['name'],
+                    'phone' => $data['phone'],
+                    'address' => $data['address'],
+                ]);
+            } else {
+                // Link awal: cari customer via kecocokan phone (lama atau baru)
+                $phones = array_values(array_unique(array_filter([$oldPhone, $data['phone']])));
+                $customer = Customer::whereIn('phone', $phones)
+                    ->whereNotIn('id', User::whereNotNull('customer_id')->where('id', '!=', $id)->pluck('customer_id'))
+                    ->orderBy('id')
+                    ->first();
+                if (!empty($customer)) {
+                    // Isi link + update customer
+                    User::where('id', $id)->update(['customer_id' => $customer->id]);
+                    Customer::where('id', $customer->id)->update([
+                        'name' => $data['name'],
+                        'phone' => $data['phone'],
+                        'address' => $data['address'],
+                    ]);
+                }
+                // Tidak ada customer cocok -> dilewati (tidak membuat customer baru)
+            }
+        }
+
+        if ($update !== false){
+            DB::commit();
+            return redirect('profile')->with('success','Data profil berhasil diperbarui');
+        }else{
+            DB::rollback();
+            return redirect()->back()->with('danger', 'Gagal memperbarui data profil');
         }
     }
 
