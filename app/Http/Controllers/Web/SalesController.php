@@ -322,14 +322,14 @@ class SalesController extends Controller
 
         $packingLines = [
             'Request Packing',
-            '1. No. Invoice : ' . $detail->inv_code,
-            '2. Nama Pelanggan : ' . ($detail->cust_name ?? '-'),
-            '3. List Pesanan :',
+            'Invoice : ' . $detail->inv_code,
+            'Pelanggan : ' . ($detail->cust_name ?? '-'),
+            'List Pesanan :',
         ];
         foreach ($packingItems as $packingItem) {
-            $packingLines[] = '   - ' . ($packingItem->product_name ?? '-') . ' x ' . $packingItem->itm_qty;
+            $packingLines[] = '- ' . ($packingItem->product_name ?? '-') . ' (' . $packingItem->itm_qty . 'x)';
         }
-        $packingLines[] = '4. Informasi Pengiriman : ' . $packingShipping;
+        $packingLines[] = 'Informasi Pengiriman : ' . $packingShipping;
 
         $waPackingUrl = 'https://wa.me/?text=' . urlencode(implode("\n", $packingLines));
 
