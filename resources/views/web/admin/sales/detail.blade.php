@@ -13,33 +13,36 @@
         <div class="col-sm-12 col-md-12 col-lg-8 mx-auto">
             <div class="card no-border shadow-none custom-square mt-4 mb-3">
                 <div class="card-body px-2 py-4">
-                    <div class="row">
-                        
-                        <div class="col-12">
-                            <div class="form-group">
-                                <p class="px-0 mb-2">Kode Invoice</p>
-                                <h6 class="px-0 m-0 font-weight-bold">{{$invoice->inv_code}}</h6>
-                            </div>
+                    <div class="d-flex title-bar py-2">
+                        <div class="mr-auto text-left">
+                            <p class="mb-0">Kode Invoice</p>
                         </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                <p class="px-0 mb-2">Kategori</p>
-                                <h6 class="px-0 m-0 font-weight-bold">{{$invoice->inv_category}}</h6>
-                            </div>
+                        <div class="ml-auto text-right">
+                            <p class="mb-0 font-weight-bold">{{$invoice->inv_code}}</p>
                         </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                <p class="px-0 mb-2">Tanggal</p>
-                                <h6 class="px-0 m-0 font-weight-bold">{{date('d M Y', strtotime($invoice->inv_date))}}</h6>
-                            </div>
+                    </div>
+                    <div class="d-flex title-bar py-2">
+                        <div class="mr-auto text-left">
+                            <p class="mb-0">Kategori</p>
+                        </div>
+                        <div class="ml-auto text-right">
+                            <p class="mb-0 font-weight-bold">{{$invoice->inv_category}}</p>
+                        </div>
+                    </div>
+                    <div class="d-flex title-bar py-2">
+                        <div class="mr-auto text-left">
+                            <p class="mb-0">Tanggal Invoice</p>
+                        </div>
+                        <div class="ml-auto text-right">
+                            <p class="mb-0 font-weight-bold">{{date('d M Y', strtotime($invoice->inv_date))}}</p>
                         </div>
                     </div>
                     <div class="form-group">
                     <a href="https://wa.me/?text=Invoice%20Penjualan%0ATanggal%20:%20{{$invoice->dtlabel}}%0ACustomer%20:%20{{$invoice->cust_name}}%0AStatus%20:%20{{$invoice->inv_status}}%0AAuthor%20:%20{{$invoice->inv_author}}%0A{{ urlencode(url('sales-detail/'.$invoice->id.'&cust='.$invoice->csurl.'&date='.$invoice->dturl.'&author='.$invoice->authurl)) }}" target="_blank" class="btn btn-dark btn-sm mr-1 px-2 py-1"><i class="fe fe-share"></i></a>
                     <a id="copyurl" class="btn btn-white btn-sm mr-1 px-2 py-1"><i class="fe fe-copy"></i></a>
                     @if($invoice->inv_status == 'Draft')
-                    <a href="{{(url('sales-edit/'.$invoice->id))}}" class="btn btn-outline-dark btn-sm mr-1 px-2 py-1"><i class="fe fe-edit"></i> Ubah</a>
-                    <a href="{{(url('sales-delete/'.$invoice->id))}}" data-title="{{$invoice->inv_code}}" class="btn btn-outline-danger btn-sm btn-confirm px-2 py-1"><i class="fe fe-trash"></i> Hapus</a>
+                    <a href="{{(url('sales-delete/'.$invoice->id))}}" data-title="{{$invoice->inv_code}}" class="btn btn-outline-danger btn-sm btn-confirm px-2 py-1 pull-right"><i class="fe fe-trash"></i> Hapus</a>
+                    <a href="{{(url('sales-edit/'.$invoice->id))}}" class="btn btn-outline-dark btn-sm mr-2 px-2 py-1 pull-right"><i class="fe fe-edit"></i> Ubah</a>
                     @endif
                     </div>
                 </div>
@@ -52,15 +55,15 @@
                 <div class="card-body px-2 py-3">
                     <div class="d-flex title-bar py-1">
                         <div class="mr-auto text-left">
-                            <p class="mb-1 text-muted" style="font-size:12px">Nama</p>
+                            <p class="mb-1 text-muted">Nama</p>
                             <p class="mb-0 font-weight-semibold">{{ $invoice->cust_name ?? '-' }}</p>
                         </div>
                     </div>
                     @if(!empty($invoice->cust_phone))
                     <div class="d-flex title-bar py-1">
                         <div class="mr-auto text-left">
-                            <p class="mb-1 text-muted" style="font-size:12px">No. HP / WA</p>
-                            <p class="mb-0">
+                            <p class="mb-1 text-muted">No. HP / WA</p>
+                            <p class="mb-0 font-weight-semibold">
                                 <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $invoice->cust_phone) }}" target="_blank" class="text-dark">
                                     {{ $invoice->cust_phone }}
                                 </a>
@@ -71,8 +74,8 @@
                     @if(!empty($invoice->cust_address))
                     <div class="d-flex title-bar py-1">
                         <div class="mr-auto text-left">
-                            <p class="mb-1 text-muted" style="font-size:12px">Alamat</p>
-                            <p class="mb-0">{{ $invoice->cust_address }}</p>
+                            <p class="mb-1 text-muted">Alamat</p>
+                            <p class="mb-0 font-weight-semibold">{{ $invoice->cust_address }}</p>
                         </div>
                     </div>
                     @endif
@@ -217,10 +220,10 @@
                         <div class="ml-auto text-right">
                             @php
                                 $shippingLabel = match($invoice->inv_shipping_type ?? '') {
-                                    'Pickup di Toko'         => '<span class="badge badge-secondary"><i class="fe fe-home"></i> Pickup di Toko</span>',
-                                    'Pengiriman Dalam Kota'  => '<span class="badge badge-info"><i class="fe fe-map-pin"></i> Dalam Kota</span>',
-                                    'Pengiriman Luar Kota'   => '<span class="badge badge-primary"><i class="fe fe-send"></i> Luar Kota</span>',
-                                    default                  => '<span class="badge badge-light">'.($invoice->inv_shipping_type ?? '-').'</span>',
+                                    'Pickup di Toko'         => '<span class="badge badge-dark my-0"><i class="fe fe-home"></i> Pickup di Toko</span>',
+                                    'Pengiriman Dalam Kota'  => '<span class="badge badge-info my-0"><i class="fe fe-map-pin"></i> Dalam Kota</span>',
+                                    'Pengiriman Luar Kota'   => '<span class="badge badge-primary my-0"><i class="fe fe-send"></i> Luar Kota</span>',
+                                    default                  => '<span class="badge badge-light my-0">'.($invoice->inv_shipping_type ?? '-').'</span>',
                                 };
                             @endphp
                             <p class="mb-0">{!! $shippingLabel !!}</p>
@@ -229,7 +232,7 @@
                     {{-- Ekspedisi & Resi (jika bukan pickup) --}}
                     @if(!empty($invoice->inv_shipping_type) && $invoice->inv_shipping_type !== 'Pickup di Toko')
                         @if(!empty($invoice->ekspedisi_name))
-                        <div class="d-flex title-bar py-2 border-top">
+                        <div class="d-flex title-bar py-2p">
                             <div class="mr-auto text-left">
                                 <p class="mb-0">Ekspedisi</p>
                             </div>
@@ -239,7 +242,7 @@
                         </div>
                         @endif
                         @if(!empty($invoice->inv_resi))
-                        <div class="d-flex title-bar py-2 border-top">
+                        <div class="d-flex title-bar py-2">
                             <div class="mr-auto text-left">
                                 <p class="mb-0">No. Resi</p>
                             </div>
@@ -250,7 +253,7 @@
                         @endif
                     @endif
                     {{-- Status Pengiriman --}}
-                    <div class="d-flex title-bar py-2 border-top">
+                    <div class="d-flex title-bar py-2">
                         <div class="mr-auto text-left">
                             <p class="mb-0">Status</p>
                         </div>
@@ -258,8 +261,8 @@
                             @php
                                 $deliveryStatus = $invoice->inv_status_delivery ?? null;
                                 $deliveryBadge = match($deliveryStatus) {
-                                    'delivered' => '<span class="badge badge-success"><i class="fe fe-check-circle"></i> Dikirim & Diterima</span>',
-                                    default     => '<span class="badge badge-light">Belum Dikirim</span>',
+                                    'delivered' => '<span class="badge badge-success my-0"><i class="fe fe-check-circle"></i> Dikirim & Diterima</span>',
+                                    default     => '<span class="badge badge-light my-0">Belum Dikirim</span>',
                                 };
                             @endphp
                             <p class="mb-0">{!! $deliveryBadge !!}</p>
@@ -267,7 +270,7 @@
                     </div>
                     {{-- Tombol Konfirmasi -- tampil selama belum delivered --}}
                     @if(($invoice->inv_status_delivery ?? null) !== 'delivered')
-                    <div class="border-top pt-2 mt-1">
+                    <div class="pt-2 mt-1">
                         <form action="{{ url('sales-deliver/' . $invoice->id) }}" method="POST" onsubmit="return confirm('Konfirmasi bahwa pesanan sudah DIKIRIM dan DITERIMA oleh pelanggan?')">
                             @csrf
                             <input type="hidden" name="status_delivery" value="delivered">

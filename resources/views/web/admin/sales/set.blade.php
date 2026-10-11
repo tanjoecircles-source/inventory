@@ -79,10 +79,10 @@
                     </div>
                 </div>
             </div>
-            <div class="d-flex py-2 px-2 border-bottom">
+            {{--<div class="d-flex py-2 px-2 border-bottom">
                 <h5 class="mb-1 font-weight-semibold flex-grow-1"><i class="fe fe-minus-circle mr-1"></i> Pengurangan Biaya</h5>
             </div>
-            {{-- <div class="card no-border shadow-none custom-square mt-0 mb-2">
+            <div class="card no-border shadow-none custom-square mt-0 mb-2">
                 <div class="card-body px-2 py-4">
                     <div class="form-group">
                         <label class="form-label">Atur Diskon</label>
