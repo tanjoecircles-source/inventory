@@ -289,9 +289,13 @@ class SalesController extends Controller
         $detail = DB::table('sales AS s')
             ->leftJoin('customer AS c', 'c.id', '=', 's.inv_cust')
             ->leftJoin('users AS u', 'u.id', '=', 's.author')
+            ->leftJoin('ekspedisi AS e', 'e.id', '=', 's.inv_ekspedisi_id')
             ->select('s.*',
                     'c.name AS cust_name',
-                    'u.name AS inv_author')
+                    'c.phone AS cust_phone',
+                    'c.address AS cust_address',
+                    'u.name AS inv_author',
+                    'e.name AS ekspedisi_name')
             ->where(['s.id' => $id])
             ->first();
         $detail->must_pay = (INT)$detail->inv_total - (INT)$detail->inv_payment;
@@ -491,8 +495,10 @@ class SalesController extends Controller
     {
         $detail = DB::table('sales AS s')
             ->leftJoin('customer AS c', 'c.id', '=', 's.inv_cust')
+            ->leftJoin('ekspedisi AS e', 'e.id', '=', 's.inv_ekspedisi_id')
             ->select('s.*',
-                    'c.name AS cust_name')
+                    'c.name AS cust_name',
+                    'e.name AS ekspedisi_name')
             ->where(['s.id' => $id])
             ->first();
         $detail->inv_expedition = (!empty($detail->inv_expedition)) ? $detail->inv_expedition : 0;
@@ -627,12 +633,18 @@ class SalesController extends Controller
     {
         $detail = DB::table('sales AS s')
                 ->leftJoin('customer AS c', 'c.id', '=', 's.inv_cust')
+                ->leftJoin('ekspedisi AS e', 'e.id', '=', 's.inv_ekspedisi_id')
                 ->select('s.*',
-                        'c.name AS cust_name')
+                        'c.name AS cust_name',
+                        'e.name AS ekspedisi_name')
                 ->where(['s.id' => $id])
                 ->first();
+
+        $ekspedisi_list = DB::table('ekspedisi')->orderBy('name', 'ASC')->get();
+
         $data = [
             'detail' => $detail,
+            'ekspedisi_list' => $ekspedisi_list,
             'inv_date' => date('d-m-Y', strtotime($detail->inv_date))
         ];
         return view('web.admin.sales.set', $data);
@@ -640,23 +652,63 @@ class SalesController extends Controller
 
     public function setup(Request $request, $id)
     {
-        $data = $request->only('inv_expedition', 'inv_discount', 'inv_desc');
+        $shippingType = $request->input('inv_shipping_type');
+        $ekspedisiId = ($shippingType !== 'Pickup di Toko') ? $request->input('inv_ekspedisi_id') : null;
+        $resi = ($shippingType !== 'Pickup di Toko') ? trim($request->input('inv_resi')) : null;
+
+        if ($shippingType === 'Pickup di Toko') {
+            $expeditionCost = 0;
+            $ekspedisiId = null;
+            $resi = null;
+        } else {
+            $rawExpedition = $request->input('inv_expedition');
+            $expeditionCost = !empty($rawExpedition) ? (int)preg_replace('/[^0-9]/', '', $rawExpedition) : 0;
+        }
+
+        DB::beginTransaction();
+        $sale = Sales::find($id);
+        if (!$sale) {
+            DB::rollback();
+            return redirect()->back()->with('danger', 'Data penjualan tidak ditemukan');
+        }
+
+        $sale->inv_shipping_type = $shippingType;
+        $sale->inv_ekspedisi_id = !empty($ekspedisiId) ? $ekspedisiId : null;
+        $sale->inv_resi = !empty($resi) ? $resi : null;
+        $sale->inv_expedition = $expeditionCost;
+        $sale->inv_discount = 0;
+        $sale->inv_desc = $request->input('inv_desc');
+
+        if ($sale->save()) {
+            DB::commit();
+            return redirect('sales-detail/'.$id)->with('success','Pengaturan pengiriman berhasil disimpan');
+        } else {
+            DB::rollback();
+            return redirect()->back()->with('danger', 'Data gagal diperbarui, silakan coba lagi');
+        }
+    }
+
+    public function deliver(Request $request, $id)
+    {
+        $status = $request->input('status_delivery');
+        if ($status !== 'delivered') {
+            return redirect()->back()->with('danger', 'Status pengiriman tidak valid.');
+        }
         DB::beginTransaction();
         $update = Sales::where('id', $id)->update([
-            'inv_expedition' => preg_replace('/[^0-9]/', '', $data['inv_expedition']),
-            'inv_discount' => 0,//preg_replace('/[^0-9]/', '', $data['inv_discount'])
-            'inv_desc' => $data['inv_desc']
+            'inv_status_delivery' => 'delivered'
         ]);
-        if ($update){
+        if ($update !== false) {
             DB::commit();
-            return redirect('sales-detail/'.$id)->with('success','Data has been updated');
-        }else{
+            return redirect('sales-detail/' . $id)->with('success', 'Pesanan dikonfirmasi sudah dikirim & diterima.');
+        } else {
             DB::rollback();
-            return redirect()->back()->with('danger', 'Data failed to update, try again later');
+            return redirect()->back()->with('danger', 'Gagal update status pengiriman, coba lagi.');
         }
     }
 
     public function delete($id)
+
     {
         $data = Sales::find($id);
         $cek_item = SalesItem::where('itm_inv_id', $id)->count();

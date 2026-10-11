@@ -31,6 +31,9 @@ class Sales extends Model
         'inv_sub_total',
         'inv_discount',
         'inv_expedition',
+        'inv_shipping_type',
+        'inv_ekspedisi_id',
+        'inv_resi',
         'inv_total',
         'inv_payment',
         'inv_status_payment',
@@ -40,4 +43,9 @@ class Sales extends Model
         'inv_desc',
         'author'
     ];
+
+    public function ekspedisi()
+    {
+        return $this->belongsTo(Ekspedisi::class, 'inv_ekspedisi_id');
+    }
 }

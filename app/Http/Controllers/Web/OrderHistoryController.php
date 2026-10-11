@@ -102,7 +102,7 @@ class OrderHistoryController extends Controller
     {
         $sale = DB::table('sales as s')
             ->leftJoin('customer as c', 'c.id', '=', 's.inv_cust')
-            ->select('s.*', 'c.name as customer_name', 'c.phone as customer_phone')
+            ->select('s.*', 'c.name as customer_name', 'c.phone as customer_phone', 'c.address as customer_address')
             ->where('s.id', $id)
             ->first();
 
@@ -131,5 +131,34 @@ class OrderHistoryController extends Controller
         ];
 
         return view('core.order_history_detail', $data);
+    }
+
+    /**
+     * Display payment instruction page for a specific invoice.
+     */
+    public function payment($id)
+    {
+        $sale = DB::table('sales as s')
+            ->leftJoin('customer as c', 'c.id', '=', 's.inv_cust')
+            ->select('s.id', 's.inv_code', 's.inv_total', 's.inv_status', 's.inv_status_payment',
+                     's.inv_status_delivery', 's.inv_desc', 'c.name as customer_name', 'c.phone as customer_phone')
+            ->where('s.id', $id)
+            ->first();
+
+        if (!$sale) {
+            abort(404, 'Invoice tidak ditemukan.');
+        }
+
+        // Only allow Publish & unpaid
+        if ($sale->inv_status !== 'Publish' || $sale->inv_status_payment === 'paid') {
+            return redirect()->route('transaction.history.detail', $id);
+        }
+
+        $data = [
+            'sale'     => $sale,
+            'authUser' => Auth::user(),
+        ];
+
+        return view('core.order_history_payment', $data);
     }
 }

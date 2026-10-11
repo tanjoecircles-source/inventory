@@ -45,6 +45,41 @@
                     </div>
                 </div>
             </div>
+            @if(!empty($invoice->cust_phone) || !empty($invoice->cust_address))
+            <div class="d-flex py-2 px-2 border-bottom">
+                <h5 class="mb-1 font-weight-semibold flex-grow-1"><i class="fe fe-user mr-1"></i> Data Customer</h5>
+            </div>
+            <div class="card no-border shadow-none custom-square mt-0 mb-2">
+                <div class="card-body px-2 py-3">
+                    <div class="d-flex title-bar py-1">
+                        <div class="mr-auto text-left">
+                            <p class="mb-1 text-muted" style="font-size:12px">Nama</p>
+                            <p class="mb-0 font-weight-semibold">{{ $invoice->cust_name ?? '-' }}</p>
+                        </div>
+                    </div>
+                    @if(!empty($invoice->cust_phone))
+                    <div class="d-flex title-bar py-1">
+                        <div class="mr-auto text-left">
+                            <p class="mb-1 text-muted" style="font-size:12px">No. HP / WA</p>
+                            <p class="mb-0">
+                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $invoice->cust_phone) }}" target="_blank" class="text-dark">
+                                    <i class="fe fe-phone mr-1"></i>{{ $invoice->cust_phone }}
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                    @endif
+                    @if(!empty($invoice->cust_address))
+                    <div class="d-flex title-bar py-1">
+                        <div class="mr-auto text-left">
+                            <p class="mb-1 text-muted" style="font-size:12px">Alamat</p>
+                            <p class="mb-0">{{ $invoice->cust_address }}</p>
+                        </div>
+                    </div>
+                    @endif
+                </div>
+            </div>
+            @endif
             <div class="d-flex py-2 px-2 border-bottom">
                 <h5 class="mb-1 font-weight-semibold flex-grow-1"><i class="fe fe-box mr-1"></i> Items Produk</h5>
             </div>
@@ -108,14 +143,25 @@
                         </div>
                     </div>
                     @endif
-                    @if(!empty($invoice->inv_expedition))
+                    @if(!empty($invoice->inv_expedition) || !empty($invoice->inv_shipping_type))
                     <div class="d-flex title-bar py-2">
                         <div class="mr-auto text-left">
-                            <p class="mb-1">Pengiriman</p> 
+                            <p class="mb-0">Pengiriman</p> 
+                            @if(!empty($invoice->inv_shipping_type))
+                            <small class="text-muted d-block">
+                                {{ $invoice->inv_shipping_type }}
+                                @if(!empty($invoice->ekspedisi_name))
+                                 &bull; {{ $invoice->ekspedisi_name }}
+                                @endif
+                                @if(!empty($invoice->inv_resi))
+                                 &bull; No. Resi: {{ $invoice->inv_resi }}
+                                @endif
+                            </small>
+                            @endif
                         </div>
                         <div class="ml-auto text-right text-danger">
-                            <input type="hidden" id="inv_expedition" class="form-control form-control-sm" name="inv_expedition" value="{{$invoice->inv_expedition}}">
-                            <p id="lab_expedition" class="mb-0">+ Rp {{str_replace(",", ".", number_format($invoice->inv_expedition))}}</p>
+                            <input type="hidden" id="inv_expedition" class="form-control form-control-sm" name="inv_expedition" value="{{$invoice->inv_expedition ?? 0}}">
+                            <p id="lab_expedition" class="mb-0">+ Rp {{str_replace(",", ".", number_format($invoice->inv_expedition ?? 0))}}</p>
                         </div>
                     </div>
                     @endif
@@ -167,6 +213,87 @@
                 </div>
             </div>
             @if($invoice->inv_status == 'Publish')
+            {{-- CARD: STATUS PENGIRIMAN --}}
+            <div class="d-flex py-2 px-2 border-bottom">
+                <div class="mr-auto text-left">
+                    <h5 class="mb-1 font-weight-semibold flex-grow-1"><i class="fe fe-truck mr-1"></i> Status Pengiriman</h5>
+                </div>
+            </div>
+            <div class="card text-center no-border shadow-none custom-square mb-2">
+                <div class="card-body p-2">
+                    {{-- Opsi Pengiriman --}}
+                    <div class="d-flex title-bar py-2">
+                        <div class="mr-auto text-left">
+                            <p class="mb-0">Opsi Pengiriman</p>
+                        </div>
+                        <div class="ml-auto text-right">
+                            @php
+                                $shippingLabel = match($invoice->inv_shipping_type ?? '') {
+                                    'Pickup di Toko'         => '<span class="badge badge-secondary"><i class="fe fe-home"></i> Pickup di Toko</span>',
+                                    'Pengiriman Dalam Kota'  => '<span class="badge badge-info"><i class="fe fe-map-pin"></i> Dalam Kota</span>',
+                                    'Pengiriman Luar Kota'   => '<span class="badge badge-primary"><i class="fe fe-send"></i> Luar Kota</span>',
+                                    default                  => '<span class="badge badge-light">'.($invoice->inv_shipping_type ?? '-').'</span>',
+                                };
+                            @endphp
+                            <p class="mb-0">{!! $shippingLabel !!}</p>
+                        </div>
+                    </div>
+                    {{-- Ekspedisi & Resi (jika bukan pickup) --}}
+                    @if(!empty($invoice->inv_shipping_type) && $invoice->inv_shipping_type !== 'Pickup di Toko')
+                        @if(!empty($invoice->ekspedisi_name))
+                        <div class="d-flex title-bar py-2 border-top">
+                            <div class="mr-auto text-left">
+                                <p class="mb-0">Ekspedisi</p>
+                            </div>
+                            <div class="ml-auto text-right">
+                                <p class="mb-0 font-weight-semibold">{{ $invoice->ekspedisi_name }}</p>
+                            </div>
+                        </div>
+                        @endif
+                        @if(!empty($invoice->inv_resi))
+                        <div class="d-flex title-bar py-2 border-top">
+                            <div class="mr-auto text-left">
+                                <p class="mb-0">No. Resi</p>
+                            </div>
+                            <div class="ml-auto text-right">
+                                <p class="mb-0 font-weight-semibold font-monospace">{{ $invoice->inv_resi }}</p>
+                            </div>
+                        </div>
+                        @endif
+                    @endif
+                    {{-- Status Pengiriman --}}
+                    <div class="d-flex title-bar py-2 border-top">
+                        <div class="mr-auto text-left">
+                            <p class="mb-0">Status</p>
+                        </div>
+                        <div class="ml-auto text-right">
+                            @php
+                                $deliveryStatus = $invoice->inv_status_delivery ?? null;
+                                $deliveryBadge = match($deliveryStatus) {
+                                    'delivered' => '<span class="badge badge-success"><i class="fe fe-check-circle"></i> Dikirim & Diterima</span>',
+                                    default     => '<span class="badge badge-light">Belum Dikirim</span>',
+                                };
+                            @endphp
+                            <p class="mb-0">{!! $deliveryBadge !!}</p>
+                        </div>
+                    </div>
+                    {{-- Tombol Konfirmasi -- tampil selama belum delivered --}}
+                    @if(($invoice->inv_status_delivery ?? null) !== 'delivered')
+                    <div class="border-top pt-2 mt-1">
+                        <form action="{{ url('sales-deliver/' . $invoice->id) }}" method="POST" onsubmit="return confirm('Konfirmasi bahwa pesanan sudah DIKIRIM dan DITERIMA oleh pelanggan?')">
+                            @csrf
+                            <input type="hidden" name="status_delivery" value="delivered">
+                            <button type="submit" class="btn btn-success btn-block" id="btn-confirm-delivered">
+                                <i class="fe fe-check-circle mr-1"></i> Konfirmasi Pesanan Dikirim & Diterima
+                            </button>
+                        </form>
+                    </div>
+                    @endif
+
+                </div>
+            </div>
+            {{-- CARD: INFO PEMBAYARAN --}}
+
             <div class="d-flex py-2 px-2 border-bottom">
                 <div class="mr-auto text-left">
                     <h5 class="mb-1 font-weight-semibold flex-grow-1"><i class="fe fe-credit-card mr-1"></i> Info Pembayaran</h5>

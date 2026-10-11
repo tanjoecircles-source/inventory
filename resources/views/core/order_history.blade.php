@@ -147,8 +147,17 @@
         background: #FEF3C7;
         color: #92400E;
     }
+    .badge-status-waiting {
+        background: #EDE9FE;
+        color: #5B21B6;
+    }
     .badge-status-paid {
         background: #D1FAE5;
+        color: #065F46;
+    }
+    .badge-status-done {
+        background: #ECFDF5;
+        border: 1px solid #6EE7B7;
         color: #065F46;
     }
 
@@ -250,6 +259,43 @@
     }
     .btn-order-wa:hover {
         background: #059669;
+    }
+    .btn-order-payment {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 11.5px;
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: var(--radius-sm);
+        border: none;
+        background: var(--color-primary);
+        color: #FFFFFF !important;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        text-decoration: none !important;
+        transition: all 0.2s ease;
+    }
+    .btn-order-payment:hover {
+        background: #9B0013;
+    }
+    .btn-order-invoice {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 11.5px;
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--color-border);
+        background: #F9FAFB;
+        color: var(--color-secondary) !important;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        text-decoration: none !important;
+        transition: all 0.2s ease;
+    }
+    .btn-order-invoice:hover {
+        background: #F3F4F6;
+        color: var(--color-primary) !important;
     }
 
     /* Empty State */
@@ -379,15 +425,36 @@
             <div class="orders-list-stream mt-2">
                 @foreach($orders as $sale)
                     @php
-                        $isPaid = ($sale->inv_status_payment === 'paid');
-                        $itemCount = $sale->items->count();
-                        $firstItem = $sale->items->first();
-                        $formattedDate = date('d M Y', strtotime($sale->inv_date ?? $sale->created_at));
+                        $isPaid     = ($sale->inv_status_payment === 'paid');
+                        $isPublish  = ($sale->inv_status === 'Publish');
+                        $isDraft    = ($sale->inv_status === 'Draft');
+                        $itemCount  = $sale->items->count();
+                        $firstItem  = $sale->items->first();
+                        $formattedDate  = date('d M Y', strtotime($sale->inv_date ?? $sale->created_at));
                         $formattedTotal = 'Rp ' . number_format((float)$sale->inv_total, 0, ',', '.');
-                        
-                        // Format WA Chat Message for this invoice
-                        $waText = "Halo Admin Toko Kopi Tanjoe,\nSaya ingin konfirmasi status pesanan saya dengan No. Invoice *{$sale->inv_code}* ({$formattedTotal}). Mohon info perhitungannya. Terima kasih!";
-                        $waUrl = 'https://wa.me/6285974607547?text=' . urlencode($waText);
+
+                        // Status badge
+                        $isDelivered = ($sale->inv_status_delivery === 'delivered');
+                        if ($isDelivered) {
+                            $badgeClass = 'badge-status-done';
+                            $badgeLabel = '✓ Selesai';
+                        } elseif ($isPaid) {
+                            $badgeClass = 'badge-status-paid';
+                            $badgeLabel = 'Lunas';
+                        } elseif ($isPublish) {
+                            $badgeClass = 'badge-status-waiting';
+                            $badgeLabel = 'Menunggu Pembayaran';
+                        } else {
+                            $badgeClass = 'badge-status-unpaid';
+                            $badgeLabel = 'Menunggu Konfirmasi';
+                        }
+
+                        // WA Instruksi Pembayaran
+                        $waPayMsg  = "*INVOICE TOKO KOPI TANJOE*\n";
+                        $waPayMsg .= "No. Invoice: *{$sale->inv_code}*\n";
+                        $waPayMsg .= "Total: *{$formattedTotal}*\n\n";
+                        $waPayMsg .= "Mohon info instruksi pembayaran untuk pesanan saya. Terima kasih!";
+                        $waPayUrl  = 'https://wa.me/6285974607547?text=' . urlencode($waPayMsg);
                     @endphp
 
                     <div class="order-card">
@@ -401,8 +468,8 @@
                                 <div class="order-date-text">{{ $formattedDate }}</div>
                             </div>
                             <div>
-                                <span class="status-badge-pill {{ $isPaid ? 'badge-status-paid' : 'badge-status-unpaid' }}">
-                                    {{ $isPaid ? 'Lunas' : 'Menunggu Konfirmasi' }}
+                                <span class="status-badge-pill {{ $badgeClass }}">
+                                    {{ $badgeLabel }}
                                 </span>
                             </div>
                         </div>
@@ -445,12 +512,24 @@
                             </div>
                             <div class="order-actions-group">
                                 <a href="{{ route('transaction.history.detail', $sale->id) }}" class="btn-order-detail">
-                                    Detail
+                                    <i class="fe fe-info"></i>
+                                    <span>Detail</span>
                                 </a>
-                                <a href="{{ $waUrl }}" target="_blank" class="btn-order-wa" title="Chat Admin">
-                                    <i class="fe fe-message-circle"></i>
-                                    <span>Chat Admin</span>
-                                </a>
+                                @if($isPublish && !$isPaid)
+                                    {{-- Publish: Instruksi Pembayaran (halaman khusus) --}}
+                                    <a href="{{ route('transaction.history.payment', $sale->id) }}" class="btn-order-payment" title="Instruksi Pembayaran">
+                                        <i class="fe fe-credit-card"></i>
+                                        <span>Instruksi Pembayaran</span>
+                                    </a>
+                                @elseif($isDraft)
+                                    {{-- Draft: Chat Admin (menunggu konfirmasi ongkir) --}}
+                                    <a href="{{ $waPayUrl }}" target="_blank" class="btn-order-wa" title="Chat Admin">
+                                        <i class="fe fe-message-circle"></i>
+                                        <span>Chat Admin</span>
+                                    </a>
+                                @else
+                                    {{-- Paid: tidak ada tombol tambahan --}}
+                                @endif
                             </div>
                         </div>
                     </div>

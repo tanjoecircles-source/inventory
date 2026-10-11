@@ -144,11 +144,17 @@ class CheckoutController extends Controller
             $customer = Customer::where('phone', $phone)->first();
             if (!$customer) {
                 $customer = Customer::create([
-                    'name' => $name ?: 'Pelanggan Online',
-                    'phone' => $phone,
+                    'name'    => $name ?: 'Pelanggan Online',
+                    'phone'   => $phone,
+                    'address' => $address,
                 ]);
-            } else if ($name && (empty($customer->name) || $customer->name === 'Pelanggan Online')) {
-                $customer->update(['name' => $name]);
+            } else {
+                // Update name jika masih default atau kosong
+                $updateData = ['address' => $address];
+                if ($name && (empty($customer->name) || $customer->name === 'Pelanggan Online')) {
+                    $updateData['name'] = $name;
+                }
+                $customer->update($updateData);
             }
 
             // 2. Generate unique Invoice Code
@@ -214,44 +220,25 @@ class CheckoutController extends Controller
                 ];
             }
 
-            // 4. Construct inv_desc with all unmapped metadata
-            $descLines = [];
-            $descLines[] = "=== INFORMASI PENGIRIMAN ===";
-            $descLines[] = "Nama Penerima: " . ($name ?: ($customer->name ?? '-'));
-            $descLines[] = "No. WhatsApp: " . $phone;
-            $descLines[] = "Alamat Pengiriman:\n" . $address;
-            if (!empty($customerNotes)) {
-                $descLines[] = "Catatan Pembeli: " . $customerNotes;
-            }
-            $descLines[] = "\n=== RINCIAN VARIAN & GILINGAN ===";
-            foreach ($itemsData as $idx => $d) {
-                $line = ($idx + 1) . ". " . $d['product_name'] . " (" . $d['qty'] . " pack)";
-                if (!empty($d['variant'])) {
-                    $line .= " | Varian: " . $d['variant'];
-                }
-                if (!empty($d['note'])) {
-                    $line .= " | Catatan: " . $d['note'];
-                }
-                $descLines[] = $line;
-            }
-            $inv_desc = implode("\n", $descLines);
+            // 4. inv_desc hanya berisi catatan pembeli (jika ada)
+            $inv_desc = !empty($customerNotes) ? $customerNotes : null;
 
             // 5. Create Sales record
             $authorId = Auth::id() ?: null;
             $sale = Sales::create([
-                'inv_category' => 'Online',
-                'inv_code' => $inv_code,
-                'inv_date' => date('Y-m-d'),
-                'inv_cust' => $customer->id,
-                'inv_hpp' => $totalHpp,
-                'inv_sub_total' => $rawSubtotal,
-                'inv_discount' => 0,
-                'inv_expedition' => 0,
-                'inv_total' => $rawSubtotal,
-                'inv_status_payment' => 'unpaid',
-                'inv_status' => 'Draft',
-                'inv_desc' => $inv_desc,
-                'author' => $authorId,
+                'inv_category'        => 'Online',
+                'inv_code'            => $inv_code,
+                'inv_date'            => date('Y-m-d'),
+                'inv_cust'            => $customer->id,
+                'inv_hpp'             => $totalHpp,
+                'inv_sub_total'       => $rawSubtotal,
+                'inv_discount'        => 0,
+                'inv_expedition'      => 0,
+                'inv_total'           => $rawSubtotal,
+                'inv_status_payment'  => 'unpaid',
+                'inv_status'          => 'Draft',
+                'inv_desc'            => $inv_desc,
+                'author'              => $authorId,
             ]);
 
             // 6. Create SalesItem records

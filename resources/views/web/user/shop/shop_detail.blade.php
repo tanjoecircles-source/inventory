@@ -425,6 +425,153 @@
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
     }
+
+    /* Cart Options Bottom Sheet Modal */
+    #cartOptionsModal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 99990;
+        background: rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        align-items: flex-end;
+        justify-content: center;
+    }
+
+    #cartOptionsModalSheet {
+        background: #FFFFFF;
+        border-radius: 20px 20px 0 0;
+        width: 100%;
+        max-width: 600px;
+        max-height: 85vh;
+        display: flex;
+        flex-direction: column;
+        transform: translateY(100%);
+        transition: transform 0.32s cubic-bezier(0.33, 1, 0.68, 1);
+        position: relative;
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .sheet-handle-bar {
+        width: 40px;
+        height: 4px;
+        background: #E0D9D0;
+        border-radius: 99px;
+        margin: 10px auto 0;
+        flex-shrink: 0;
+    }
+
+    .sheet-header-box {
+        padding: 14px 18px 12px;
+        border-bottom: 1px solid var(--color-border, #ECE7DE);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
+    }
+
+    .sheet-thumb-img {
+        width: 58px;
+        height: 58px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid var(--color-border, #ECE7DE);
+        flex-shrink: 0;
+        background: #FAF8F5;
+    }
+
+    .sheet-header-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .sheet-product-title {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: var(--color-secondary, #1F2429);
+        line-height: 1.3;
+        margin-bottom: 3px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .sheet-product-price {
+        font-size: 14px;
+        font-weight: 800;
+        color: var(--color-primary, #E62129);
+    }
+
+    .sheet-product-unit {
+        font-size: 11px;
+        font-weight: 500;
+        color: #6B7280;
+    }
+
+    .sheet-close-btn {
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: #F4EFE6;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #6B7280;
+        flex-shrink: 0;
+        transition: background 0.15s;
+    }
+    .sheet-close-btn:hover {
+        background: #E8E0D2;
+        color: #1F2429;
+    }
+
+    .sheet-body-scroll {
+        padding: 16px 18px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        flex: 1;
+    }
+
+    .sheet-subtotal-panel {
+        background: #FAF8F5;
+        border: 1px solid var(--color-border, #ECE7DE);
+        border-radius: 10px;
+        padding: 12px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 14px;
+    }
+
+    .sheet-subtotal-col {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sheet-subtotal-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: #6B7280;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .sheet-subtotal-val {
+        font-size: 17px;
+        font-weight: 800;
+        color: var(--color-primary, #E62129);
+        line-height: 1.2;
+    }
+
+    .sheet-footer-box {
+        padding: 12px 18px 18px;
+        border-top: 1px solid var(--color-border, #ECE7DE);
+        background: #FFFFFF;
+        flex-shrink: 0;
+    }
 </style>
 
 <div class="detail-container-wrap">
@@ -564,16 +711,67 @@
         </div>
         @endif
 
-        <!-- 6. Customization: Grind Profile & Quantity -->
-        @if($product->is_ready)
-        <div class="detail-card-panel">
-            <span class="option-form-label">
+    </div>
+
+    <!-- 6. Sticky Bottom Action Bar -->
+    <div class="detail-sticky-bar">
+        <div class="detail-sticky-bar-inner">
+            @if($product->is_ready)
+            <button type="button" class="btn btn-dark flex-fill d-flex align-items-center justify-content-center py-2" id="btnDetailAddToCart" style="gap: 8px; font-weight: 700; border-radius: 6px; font-size: 13.5px; height: 42px;">
+                <i class="fe fe-shopping-cart"></i>
+                <span>+ Keranjang</span>
+            </button>
+            <button type="button" class="btn btn-primary flex-fill d-flex align-items-center justify-content-center py-2" id="btnDetailBuyNow" style="gap: 8px; font-weight: 700; border-radius: 6px; font-size: 13.5px; height: 42px;">
+                <i class="fe fe-shopping-bag"></i>
+                <span>Beli Sekarang</span>
+            </button>
+            @else
+            <a href="https://api.whatsapp.com/send?phone=628116886616&text={{ urlencode('Halo Toko Kopi Tanjoe, saya ingin menanyakan ketersediaan kembali untuk beans ' . $product->name) }}" 
+               target="_blank" class="detail-btn-cart bg-success text-white border-0 w-100 justify-content-center" style="padding: 12px 20px; border-radius: 6px; height: 42px;">
+                <i class="fe fe-message-circle mr-1"></i> Tanya Batch Baru
+            </a>
+            @endif
+        </div>
+    </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- Modal / Bottom Sheet: Pilihan Bentuk Biji Kopi, Jumlah, Subtotal -->
+<!-- ============================================================ -->
+<div id="cartOptionsModal">
+    <div id="cartOptionsModalSheet">
+        <!-- Handle bar -->
+        <div class="sheet-handle-bar"></div>
+
+        <!-- Header: Product Info & Close Button -->
+        <div class="sheet-header-box">
+            <img src="{{ $product->images->first()->image_url ?? asset('assets/images/products/no-image.png') }}" 
+                 alt="{{ $product->name }}" class="sheet-thumb-img">
+            <div class="sheet-header-info">
+                <div class="sheet-product-title">{{ $product->name }}</div>
+                <div class="d-flex align-items-baseline" style="gap: 6px;">
+                    <span class="sheet-product-price" id="sheetPricePerUnitDisplay">
+                        Rp {{ str_replace(',', '.', number_format($product->price)) }}
+                    </span>
+                    <span class="sheet-product-unit">/ {{ $product->satuan ?? '200gr' }}</span>
+                </div>
+            </div>
+            <button type="button" class="sheet-close-btn" id="btnCloseOptionsModal" title="Tutup">
+                <i class="fe fe-x" style="font-size: 15px;"></i>
+            </button>
+        </div>
+
+        <!-- Scrollable Body -->
+        <div class="sheet-body-scroll">
+            <!-- Pilihan Bentuk Biji Kopi -->
+            <span class="option-form-label mb-2 d-block">
                 <i class="fe fe-sliders mr-1 text-danger"></i> Pilihan Bentuk Biji Kopi:
             </span>
 
             @if($product->type == '1' || $product->tab_type === 'greenbeans')
                 <!-- Green beans option -->
-                <div class="grind-option-radio-wrap">
+                <div class="grind-option-radio-wrap mb-3">
                     <div class="grind-option-card active" data-grind="Whole Beans (Biji Mentah)">
                         <div>
                             <div class="grind-card-title">Green Beans (Biji Mentah)</div>
@@ -584,7 +782,7 @@
                 </div>
             @else
                 <!-- Roasted Beans grind options -->
-                <div class="grind-option-radio-wrap" id="grindOptionsList">
+                <div class="grind-option-radio-wrap mb-3" id="grindOptionsList">
                     <div class="grind-option-card active" data-grind="Whole Beans (Biji Utuh)">
                         <div>
                             <div class="grind-card-title">Whole Beans (Biji Utuh)</div>
@@ -624,58 +822,52 @@
                 <label class="fs-12 font-weight-bold text-muted mb-1">
                     Catatan Khusus (opsional):
                 </label>
-                <input type="text" class="form-control" id="detailCustomerNote">
+                <input type="text" class="form-control" id="detailCustomerNote" placeholder="Contoh: giling untuk Aeropress inverted...">
             </div>
 
-            <!-- Quantity Stepper -->
-            <div class="detail-qty-row">
-                <span class="fs-13 font-weight-bold text-dark">Jumlah Pesanan:</span>
-                <div class="stepper-box-large">
-                    <button type="button" class="btn-stepper" id="btnDetailQtyMinus">
-                        <i class="fe fe-minus"></i>
-                    </button>
-                    <input type="text" id="detailQtyInput" value="1" readonly>
-                    <button type="button" class="btn-stepper" id="btnDetailQtyPlus">
-                        <i class="fe fe-plus"></i>
-                    </button>
+            <!-- Quantity & Subtotal Panel -->
+            <div class="sheet-subtotal-panel">
+                <div class="sheet-subtotal-col">
+                    <span class="sheet-subtotal-label">Subtotal</span>
+                    <div class="sheet-subtotal-val" id="sheetSubtotalDisplay">
+                        Rp {{ str_replace(',', '.', number_format($product->price)) }}
+                    </div>
+                    <div class="d-flex align-items-center" style="gap: 6px; margin-top: 2px;">
+                        <span class="d-none" id="sheetSubtotalStrikeDisplay" style="font-size: 11px; color: #9CA3AF; text-decoration: line-through;"></span>
+                        <span class="badge badge-success fs-10 px-2 py-0 rounded-pill d-none" id="sheetPriceGrosirBadge" style="font-size: 10px; font-weight: 700; background: #10B981; color: #fff;"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center" style="gap: 8px;">
+                    <div class="stepper-box-large">
+                        <button type="button" class="btn-stepper" id="btnDetailQtyMinus">
+                            <i class="fe fe-minus"></i>
+                        </button>
+                        <input type="text" id="detailQtyInput" value="1" readonly>
+                        <button type="button" class="btn-stepper" id="btnDetailQtyPlus">
+                            <i class="fe fe-plus"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-        @endif    
 
-    </div>
-
-    <!-- 7. Sticky Bottom Action Bar -->
-    <div class="detail-sticky-bar">
-        <div class="detail-sticky-bar-inner">
-            <div class="detail-total-preview">
-                <div class="detail-total-label">Subtotal</div>
-                <div class="detail-total-val" id="detailSubtotalDisplay">
-                    Rp {{ str_replace(',', '.', number_format($product->price)) }}
-                </div>
-                <div class="">&nbsp;
-                <span class="d-none" id="detailSubtotalStrikeDisplay" style="font-size: 11px; color: #9CA3AF; text-decoration: line-through;">
-                </span>
-                </div>
+        <!-- Sheet Footer Action Buttons -->
+        <div class="sheet-footer-box">
+            <div id="sheetActionCart">
+                <button type="button" class="btn btn-dark btn-block py-2 font-weight-bold fs-14 d-flex align-items-center justify-content-center" id="btnSheetConfirmCart" style="border-radius: 6px; gap: 8px; height: 42px;">
+                    <i class="fe fe-shopping-cart"></i>
+                    <span>+ Masukkan Keranjang</span>
+                </button>
             </div>
-
-            @if($product->is_ready)
-            <button type="button" class="btn btn-dark" id="btnDetailAddToCart">
-                <span>+</span><i class="fe fe-shopping-cart"></i>
-            </button>
-            <button type="button" class="btn btn-primary" id="btnDetailBuyNow">
-                <i class="fe fe-shopping-bag"></i>
-                <span>Beli Sekarang</span>
-            </button>
-            @else
-            <a href="https://api.whatsapp.com/send?phone=628116886616&text={{ urlencode('Halo Toko Kopi Tanjoe, saya ingin menanyakan ketersediaan kembali untuk beans ' . $product->name) }}" 
-               target="_blank" class="detail-btn-cart bg-success text-white border-0" style="padding: 11px 20px;">
-                <i class="fe fe-message-circle"></i> Tanya Batch Baru
-            </a>
-            @endif
+            <div id="sheetActionBuyNow" class="d-none">
+                <button type="button" class="btn btn-primary btn-block py-2 font-weight-bold fs-14 d-flex align-items-center justify-content-center" id="btnSheetConfirmBuyNow" style="border-radius: 6px; gap: 8px; height: 42px;">
+                    <i class="fe fe-shopping-bag"></i>
+                    <span>Beli Sekarang</span>
+                </button>
+            </div>
         </div>
     </div>
-
 </div>
 
 <!-- Cart Toast Notification -->
@@ -900,19 +1092,23 @@ $(document).ready(function() {
         var originalTotal = productPrice * currentQty;
         var isDiscounted = (unitPrice < productPrice);
 
-        $('#detailSubtotalDisplay').text(formatRupiah(total));
+        $('#sheetSubtotalDisplay').text(formatRupiah(total));
 
         if (isDiscounted) {
-            $('#detailSubtotalStrikeDisplay').text(formatRupiah(originalTotal)).removeClass('d-none');
+            $('#sheetSubtotalStrikeDisplay').text(formatRupiah(originalTotal)).removeClass('d-none');
+            $('#sheetPricePerUnitDisplay').text(formatRupiah(unitPrice));
             $('#detailPriceMainDisplay').text(formatRupiah(unitPrice));
             $('#detailPriceStrikeDisplay').text(formatRupiah(productPrice)).removeClass('d-none');
             var tierLabel = getTierLabel(currentQty);
             $('#detailPriceGrosirBadge').text(tierLabel).removeClass('d-none');
+            $('#sheetPriceGrosirBadge').text(tierLabel).removeClass('d-none');
         } else {
-            $('#detailSubtotalStrikeDisplay').addClass('d-none');
+            $('#sheetSubtotalStrikeDisplay').addClass('d-none');
+            $('#sheetPricePerUnitDisplay').text(formatRupiah(productPrice));
             $('#detailPriceMainDisplay').text(formatRupiah(productPrice));
             $('#detailPriceStrikeDisplay').addClass('d-none');
             $('#detailPriceGrosirBadge').addClass('d-none');
+            $('#sheetPriceGrosirBadge').addClass('d-none');
         }
     }
 
@@ -980,6 +1176,83 @@ $(document).ready(function() {
     }
 
     // -------------------------------------------------------
+    // Cart Options Bottom Sheet Modal helpers
+    // -------------------------------------------------------
+    var currentSheetAction = 'cart';
+
+    function openCartOptionsModal(action) {
+        if (!isReady) {
+            alert('Maaf, produk ini sedang habis.');
+            return;
+        }
+
+        currentSheetAction = action || 'cart';
+        if (currentSheetAction === 'buynow') {
+            $('#sheetActionCart').addClass('d-none');
+            $('#sheetActionBuyNow').removeClass('d-none');
+        } else {
+            $('#sheetActionCart').removeClass('d-none');
+            $('#sheetActionBuyNow').addClass('d-none');
+        }
+
+        var $modal = $('#cartOptionsModal');
+        $modal.css('display', 'flex');
+        requestAnimationFrame(function() {
+            $('#cartOptionsModalSheet').css('transform', 'translateY(0)');
+        });
+        $('body').css('overflow', 'hidden');
+    }
+
+    function closeCartOptionsModal(callback) {
+        $('#cartOptionsModalSheet').css('transform', 'translateY(100%)');
+        setTimeout(function() {
+            $('#cartOptionsModal').css('display', 'none');
+            $('body').css('overflow', '');
+            if (typeof callback === 'function') callback();
+        }, 320);
+    }
+
+    $('#btnCloseOptionsModal').on('click', function() {
+        closeCartOptionsModal();
+    });
+
+    $('#cartOptionsModal').on('click', function(e) {
+        if ($(e.target).is('#cartOptionsModal')) {
+            closeCartOptionsModal();
+        }
+    });
+
+    // Main page sticky bar buttons trigger bottom sheet
+    $('#btnDetailAddToCart').on('click', function() {
+        openCartOptionsModal('cart');
+    });
+
+    $('#btnDetailBuyNow').on('click', function() {
+        openCartOptionsModal('buynow');
+    });
+
+    // Sheet confirm buttons
+    $('#btnSheetConfirmCart').on('click', function() {
+        var $btn = $(this);
+        var origHtml = $btn.html();
+        if (performAddToCart()) {
+            $btn.html('<i class="fe fe-check mr-1"></i> <span>Tersimpan!</span>');
+            closeCartOptionsModal(function() {
+                $btn.html(origHtml);
+                openCartSuccessModal();
+            });
+        }
+    });
+
+    $('#btnSheetConfirmBuyNow').on('click', function() {
+        if (performAddToCart()) {
+            closeCartOptionsModal(function() {
+                window.location.href = "{{ route('shop.checkout') }}";
+            });
+        }
+    });
+
+    // -------------------------------------------------------
     // Cart Success Modal helpers
     // -------------------------------------------------------
     function openCartSuccessModal() {
@@ -1015,27 +1288,12 @@ $(document).ready(function() {
 
     // Close on ESC
     $(document).on('keydown', function(e) {
-        if (e.key === 'Escape') closeCartSuccessModal();
-    });
-
-    // Button Click: + Keranjang → open modal after add
-    $('#btnDetailAddToCart').on('click', function() {
-        var $btn = $(this);
-        var origHtml = $btn.html();
-        if (performAddToCart()) {
-            $btn.html('<i class="fe fe-check"></i> <span>Tersimpan!</span>');
-            setTimeout(function() { $btn.html(origHtml); }, 1500);
-            // Show success modal with recommendations
-            openCartSuccessModal();
-        }
-    });
-
-    // Button Click: Beli Sekarang → skip modal, go directly to checkout
-    $('#btnDetailBuyNow').on('click', function() {
-        if (performAddToCart()) {
-            setTimeout(function() {
-                window.location.href = "{{ route('shop.checkout') }}";
-            }, 300);
+        if (e.key === 'Escape') {
+            if ($('#cartOptionsModal').is(':visible')) {
+                closeCartOptionsModal();
+            } else if ($('#cartSuccessModal').is(':visible')) {
+                closeCartSuccessModal();
+            }
         }
     });
 

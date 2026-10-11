@@ -43,7 +43,7 @@ $prefix = $exp[0];
 </a>
 <a href="{{ route('shop.cart') }}" class="flex-fill {{ Request::is('shop-cart*') || Request::is('shop/cart*') || Request::is('cart*') ? 'text-primary' : 'text-default' }} position-relative">
     <i class="fe fe-shopping-cart fs-20"></i>
-    <span id="bottomBarCartBadge" class="badge badge-danger rounded-circle position-absolute" style="top: -5px; right: 20%; font-size: 10px; display: none;">0</span>
+    <span id="bottomBarCartBadge" class="badge badge-danger rounded-circle position-absolute" style="top: -25px; right: 12%; font-size: 10px; display: none; padding:4px 8px;">0</span>
     <p class="d-block fs-13 font-weight-semibold" style="line-height:20px">Cart</p>
 </a>
 <a href="{{ url('transaction-history') }}" class="flex-fill {{ Request::is('transaction-history*') ? 'text-primary' : 'text-default' }}">

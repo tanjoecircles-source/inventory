@@ -56,6 +56,7 @@ Route::post('shop/save-shipping-address', 'CheckoutController@saveShippingAddres
 Route::post('shop/process-checkout', 'CheckoutController@processCheckout')->name('shop.process_checkout');
 Route::get('transaction-history', 'OrderHistoryController@index')->name('transaction.history');
 Route::get('transaction-history/{id}', 'OrderHistoryController@detail')->name('transaction.history.detail');
+Route::get('transaction-history/{id}/payment', 'OrderHistoryController@payment')->name('transaction.history.payment');
 Route::get('pricelist', 'PricelistController@index')->middleware('guest')->name('pricelist.index');
 
 Route::post('auth-process', 'AuthController@auth_process');
@@ -369,6 +370,8 @@ Route::middleware(['auth:web'])->group(function(){
     Route::get('sales-set/{app_id}', 'SalesController@set');
     Route::post('sales-setup/{app_id}', 'SalesController@setup');
     Route::get('sales-delete/{app_id}', 'SalesController@delete');
+    Route::post('sales-deliver/{app_id}', 'SalesController@deliver');
+
 
     Route::get('purchasing-list', 'PurchasingController@list')->name('sales-list');
     Route::post('purchasing-combo', 'PurchasingController@combo');

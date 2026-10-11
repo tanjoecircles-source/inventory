@@ -114,10 +114,15 @@
                 <td class="text-right">Net Subtotal</td>
                 <td class="text-right">Rp {{str_replace(",", ".", number_format($detail->inv_sub_total))}}</td>
             </tr>
-            @if(!empty($detail->inv_expedition))
+            @if(!empty($detail->inv_expedition) || !empty($detail->inv_shipping_type))
             <tr>
-                <td class="text-right" style="color:#b70909">Shipping</td>
-                <td class="text-right" style="color:#b70909">+ Rp {{str_replace(",", ".", number_format($detail->inv_expedition))}}</td>
+                <td class="text-right" style="color:#b70909">
+                    Shipping
+                    @if(!empty($detail->inv_shipping_type))
+                    <br><small style="color:#555;font-weight:normal;">({{ $detail->inv_shipping_type }}{{ !empty($detail->ekspedisi_name) ? ' - ' . $detail->ekspedisi_name : '' }}{{ !empty($detail->inv_resi) ? ' | Resi: ' . $detail->inv_resi : '' }})</small>
+                    @endif
+                </td>
+                <td class="text-right" style="color:#b70909">+ Rp {{str_replace(",", ".", number_format($detail->inv_expedition ?? 0))}}</td>
             </tr>
             @endif
             <tr>
