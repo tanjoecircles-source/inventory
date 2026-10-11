@@ -14,24 +14,22 @@
             <div class="card no-border shadow-none custom-square mt-4 mb-3">
                 <div class="card-body px-2 py-4">
                     <div class="row">
-                        <div class="col-7">
+                        <div class="col-4">
                             <div class="form-group">
                                 <p class="px-2 mb-2">Kategori</p>
                                 <h6 class="px-2 m-0 font-weight-bold">{{$invoice->inv_category}}</h6>
                             </div>
+                        </div>
+                        <div class="col-4">
                             <div class="form-group">
                                 <p class="px-2 mb-2">Kode Invoice</p>
                                 <h6 class="px-2 m-0 font-weight-bold">{{$invoice->inv_code}}</h6>
                             </div>
                         </div>
-                        <div class="col-5">
+                        <div class="col-4">
                             <div class="form-group">
                                 <p class="px-2 mb-2">Tanggal Invoice</p>
                                 <h6 class="px-2 m-0 font-weight-bold">{{date('d M Y', strtotime($invoice->inv_date))}}</h6>
-                            </div>
-                            <div class="form-group">
-                                <p class="px-2 mb-2">Pelanggan</p>
-                                <h6 class="px-2 m-0 font-weight-bold">{{$invoice->cust_name}}</h6>
                             </div>
                         </div>
                     </div>
@@ -63,7 +61,7 @@
                             <p class="mb-1 text-muted" style="font-size:12px">No. HP / WA</p>
                             <p class="mb-0">
                                 <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $invoice->cust_phone) }}" target="_blank" class="text-dark">
-                                    <i class="fe fe-phone mr-1"></i>{{ $invoice->cust_phone }}
+                                    {{ $invoice->cust_phone }}
                                 </a>
                             </p>
                         </div>
@@ -146,18 +144,7 @@
                     @if(!empty($invoice->inv_expedition) || !empty($invoice->inv_shipping_type))
                     <div class="d-flex title-bar py-2">
                         <div class="mr-auto text-left">
-                            <p class="mb-0">Pengiriman</p> 
-                            @if(!empty($invoice->inv_shipping_type))
-                            <small class="text-muted d-block">
-                                {{ $invoice->inv_shipping_type }}
-                                @if(!empty($invoice->ekspedisi_name))
-                                 &bull; {{ $invoice->ekspedisi_name }}
-                                @endif
-                                @if(!empty($invoice->inv_resi))
-                                 &bull; No. Resi: {{ $invoice->inv_resi }}
-                                @endif
-                            </small>
-                            @endif
+                            <p class="mb-0">Biaya Pengiriman</p> 
                         </div>
                         <div class="ml-auto text-right text-danger">
                             <input type="hidden" id="inv_expedition" class="form-control form-control-sm" name="inv_expedition" value="{{$invoice->inv_expedition ?? 0}}">
