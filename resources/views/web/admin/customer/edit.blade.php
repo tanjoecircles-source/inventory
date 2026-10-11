@@ -1,7 +1,7 @@
 <x-layouts.app>
 <x-header-white-3column>
     @slot('back')
-    <x-back backstyle="text-dark" urlback="{{url('customer-list')}}"></x-back>
+    <x-back backstyle="text-dark" urlback="{{ $back_url ?? url('customer-list') }}"></x-back>
     @endslot
     @slot('notif')
     <x-notification notifstyle="text-dark"></x-notification>
@@ -10,13 +10,17 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-8 mx-auto">
-            <form id="customer-form" name="customer-form" action="{{url('customer-update/'.$id)}}" method="POST" enctype="multipart/form-data" >
+            <form id="customer-form" name="customer-form" action="{{url('customer-update/'.($customer->id ?? ''))}}" method="POST" enctype="multipart/form-data" >
             @csrf
+            @if(!empty($return_to))
+            <input type="hidden" name="return" value="{{ $return_to }}">
+            <input type="hidden" name="sales_id" value="{{ $sales_id }}">
+            @endif
             <div class="card no-border shadow-none custom-square mt-4 mb-3">
                 <div class="card-body px-2 py-4">
                     <div class="form-group">
                         <label class="form-label">Nama Pelanggan</label>
-                        <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{$name}}" placeholder="Masukan nama lengkap">
+                        <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', $customer->name ?? '') }}" placeholder="Masukan nama lengkap">
                         @error('name')<div class="text-danger">{{ $message }}</div>@enderror
                     </div>
                     <div class="form-group">
@@ -25,13 +29,13 @@
                             <div class="input-group-prepend">
                                 <div class="input-group-text">+62</div>
                             </div>
-                            <input type="text" class="form-control @error('phone') is-invalid @enderror" name="phone" value="{{$phone}}" placeholder="Masukan alamat email">
+                            <input type="text" class="form-control @error('phone') is-invalid @enderror" name="phone" value="{{ old('phone', $customer->phone ?? '') }}" placeholder="Masukan alamat email">
                         </div>
                         @error('phone')<div class="text-danger">{{ $message }}</div>@enderror
                     </div>
                     <div class="form-group">
                         <label class="form-label">Alamat</label>
-                        <textarea class="form-control @error('address') is-invalid @enderror" name="address" rows="3" placeholder="Tulis Nama Jalan, Nomor, RT/RW/Komplek, Kelurahan">{{ old('address', $address ?? '') }}</textarea>
+                        <textarea class="form-control @error('address') is-invalid @enderror" name="address" rows="3" placeholder="Tulis Nama Jalan, Nomor, RT/RW/Komplek, Kelurahan">{{ old('address', $customer->address ?? '') }}</textarea>
                         @error('address')<div class="text-danger">{{ $message }}</div>@enderror
                     </div>
                 </div>

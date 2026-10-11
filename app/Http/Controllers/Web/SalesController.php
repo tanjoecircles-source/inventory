@@ -305,7 +305,34 @@ class SalesController extends Controller
         $detail->authurl = Str::slug($detail->inv_author);
         
         $detail->dtlabel = date('d M Y', strtotime($detail->inv_date));
-        
+
+        // Pesan WhatsApp Request Packing (daftar item lengkap, bukan hanya halaman aktif)
+        $packingItems = DB::table('sales_items AS s')
+            ->leftJoin('product AS p', 'p.id', '=', 's.itm_product')
+            ->select('p.name AS product_name', 's.itm_qty')
+            ->where(['s.itm_inv_id' => $id])
+            ->orderBy('s.id', 'ASC')
+            ->get();
+
+        $packingShipping = match (true) {
+            ($detail->inv_shipping_type ?? '') === ''       => 'Belum Ditentukan',
+            $detail->inv_shipping_type === 'Pickup di Toko' => 'Pickup di Toko',
+            default                                         => trim($detail->inv_shipping_type . ($detail->ekspedisi_name ? ' - ' . $detail->ekspedisi_name : '')),
+        };
+
+        $packingLines = [
+            'Request Packing',
+            '1. No. Invoice : ' . $detail->inv_code,
+            '2. Nama Pelanggan : ' . ($detail->cust_name ?? '-'),
+            '3. List Pesanan :',
+        ];
+        foreach ($packingItems as $packingItem) {
+            $packingLines[] = '   - ' . ($packingItem->product_name ?? '-') . ' x ' . $packingItem->itm_qty;
+        }
+        $packingLines[] = '4. Informasi Pengiriman : ' . $packingShipping;
+
+        $waPackingUrl = 'https://wa.me/?text=' . urlencode(implode("\n", $packingLines));
+
         $data = [
             'invoice' => $detail,
             'inv_hpp' => ($detail->inv_hpp > 0) ? $detail->inv_hpp : $itm_hpp,
@@ -314,7 +341,8 @@ class SalesController extends Controller
             'keyword' => $search,
             'limit' => $limit,
             'contents' => $contents,
-            'contents_count' => $counts
+            'contents_count' => $counts,
+            'waPackingUrl' => $waPackingUrl
         ];
         if($request->ajax()){
             $view = view('web.admin.sales_items.paginate', $data)->render();

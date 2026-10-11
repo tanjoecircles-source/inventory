@@ -49,7 +49,12 @@
             </div>
             @if(!empty($invoice->cust_phone) || !empty($invoice->cust_address))
             <div class="d-flex py-2 px-2 border-bottom">
-                <h5 class="mb-1 font-weight-semibold flex-grow-1"><i class="fe fe-user mr-1"></i> Data Customer</h5>
+                <h5 class="mb-1 font-weight-semibold flex-grow-1"><i class="fe fe-user mr-1"></i> Data Pelanggan</h5>
+                @if(!empty($invoice->inv_cust))
+                <div class="ml-auto text-right">
+                    <a href="{{ url('customer-edit/'.$invoice->inv_cust).'?return=sales-detail&sales_id='.$invoice->id }}" title="Ubah Data Pelanggan"><i class="fe fe-edit-3 fs-18"></i></a>
+                </div>
+                @endif
             </div>
             <div class="card no-border shadow-none custom-square mt-0 mb-2">
                 <div class="card-body px-2 py-3">
@@ -59,26 +64,22 @@
                             <p class="mb-0 font-weight-semibold">{{ $invoice->cust_name ?? '-' }}</p>
                         </div>
                     </div>
-                    @if(!empty($invoice->cust_phone))
                     <div class="d-flex title-bar py-1">
                         <div class="mr-auto text-left">
                             <p class="mb-1 text-muted">No. HP / WA</p>
                             <p class="mb-0 font-weight-semibold">
                                 <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $invoice->cust_phone) }}" target="_blank" class="text-dark">
-                                    {{ $invoice->cust_phone }}
+                                    +62{{ $invoice->cust_phone ?? 'No. HP tidak tersedia' }}
                                 </a>
                             </p>
                         </div>
                     </div>
-                    @endif
-                    @if(!empty($invoice->cust_address))
                     <div class="d-flex title-bar py-1">
                         <div class="mr-auto text-left">
                             <p class="mb-1 text-muted">Alamat</p>
-                            <p class="mb-0 font-weight-semibold">{{ $invoice->cust_address }}</p>
+                            <p class="mb-0 font-weight-semibold">{{ $invoice->cust_address ?? 'Alamat tidak tersedia' }}</p>
                         </div>
                     </div>
-                    @endif
                 </div>
             </div>
             @endif
@@ -195,9 +196,17 @@
                         @endif
                     @endif
                     @if($invoice->inv_status == 'Publish')
-                        <a href="{{url('sales-print/'.$invoice->id)}}" data-title="{{$invoice->inv_code}}" target="_blank" class="btn btn-primary btn-block btn-print" id="btn-print" name="btn-print"><i class="fe fe-file-text"></i> Cetak Invoice</a>
+                        <div class="row">
+                            <div class="col-6 pr-1">
+                                <a href="{{ $waPackingUrl }}" target="_blank" class="btn btn-success btn-block" id="btn-packing" name="btn-packing"><i class="fa fa-whatsapp"></i> Request Packing</a>
+                            </div>
+                            <div class="col-6 pl-1">
+                                <a href="{{url('sales-print/'.$invoice->id)}}" data-title="{{$invoice->inv_code}}" target="_blank" class="btn btn-primary btn-block btn-print" id="btn-print" name="btn-print"><i class="fe fe-file-text"></i> Cetak Invoice</a>
+                            </div>
+                        </div>
+                        
                         @if($invoice->inv_status_payment == 'unpaid' )
-                        <a href="{{url('sales-drafting/'.$invoice->id)}}" data-title="{{$invoice->inv_code}}" class="btn btn-outline-dark btn-block btn-draft" id="btn-draft" name="btn-draft">Drafting</a>
+                        <a href="{{url('sales-drafting/'.$invoice->id)}}" data-title="{{$invoice->inv_code}}" class="btn btn-outline-dark btn-block btn-draft  mt-2" id="btn-draft" name="btn-draft">Drafting</a>
                         @endif    
                     @endif
                     </form>
@@ -232,7 +241,7 @@
                     {{-- Ekspedisi & Resi (jika bukan pickup) --}}
                     @if(!empty($invoice->inv_shipping_type) && $invoice->inv_shipping_type !== 'Pickup di Toko')
                         @if(!empty($invoice->ekspedisi_name))
-                        <div class="d-flex title-bar py-2p">
+                        <div class="d-flex title-bar py-2">
                             <div class="mr-auto text-left">
                                 <p class="mb-0">Ekspedisi</p>
                             </div>
@@ -271,10 +280,10 @@
                     {{-- Tombol Konfirmasi -- tampil selama belum delivered --}}
                     @if(($invoice->inv_status_delivery ?? null) !== 'delivered')
                     <div class="pt-2 mt-1">
-                        <form action="{{ url('sales-deliver/' . $invoice->id) }}" method="POST" onsubmit="return confirm('Konfirmasi bahwa pesanan sudah DIKIRIM dan DITERIMA oleh pelanggan?')">
+                        <form id="sales-deliver-form" action="{{ url('sales-deliver/' . $invoice->id) }}" method="POST">
                             @csrf
                             <input type="hidden" name="status_delivery" value="delivered">
-                            <button type="submit" class="btn btn-success btn-block" id="btn-confirm-delivered">
+                            <button type="submit" class="btn btn-dark btn-block btn-deliver" id="btn-confirm-delivered">
                                 <i class="fe fe-check-circle mr-1"></i> Konfirmasi Pesanan Dikirim & Diterima
                             </button>
                         </form>
@@ -345,7 +354,7 @@ $(document).off('click', '.btn-confirm').on('click', '.btn-confirm', function(e)
     e.preventDefault();
     $('#modal-confirm .modal-body').html('You will delete data <b>'+$(this).data('title')+'</b>?');
     $('#modal-confirm .btn-action').attr('href', $(this).attr('href'));
-    $('#modal-confirm .btn-action').removeClass('btn-confirm-publish');
+    $('#modal-confirm .btn-action').removeClass('btn-confirm-publish btn-confirm-deliver');
     var myModal = new bootstrap.Modal(document.getElementById('modal-confirm'), {
         keyboard: false
     });
@@ -356,7 +365,7 @@ $(document).off('click', '.btn-publish').on('click', '.btn-publish', function(e)
     e.preventDefault();
     $('#modal-confirm .modal-body').html('You will publish data <b>'+$(this).data('title')+'</b>?');
     $('#modal-confirm .btn-action').attr('href', 'javascript:void(0)');
-    $('#modal-confirm .btn-action').addClass('btn-confirm-publish');
+    $('#modal-confirm .btn-action').addClass('btn-confirm-publish').removeClass('btn-confirm-deliver');
     $('#modal-confirm .btn-action').attr('data-url', $(this).attr('href'));
     var myModal = new bootstrap.Modal(document.getElementById('modal-confirm'), {
         keyboard: false
@@ -375,7 +384,7 @@ $(document).off('click', '.btn-draft').on('click', '.btn-draft', function(e){
     e.preventDefault();
     $('#modal-confirm .modal-body').html('You will drafting data <b>'+$(this).data('title')+'</b>?');
     $('#modal-confirm .btn-action').attr('href', $(this).attr('href'));
-    $('#modal-confirm .btn-action').removeClass('btn-confirm-publish');
+    $('#modal-confirm .btn-action').removeClass('btn-confirm-publish btn-confirm-deliver');
     var myModal = new bootstrap.Modal(document.getElementById('modal-confirm'), {
         keyboard: false
     });
@@ -386,11 +395,27 @@ $(document).off('click', '.btn-unpay').on('click', '.btn-unpay', function(e){
     e.preventDefault();
     $('#modal-confirm .modal-body').html('Apakah anda yakin ingin membatalkan pembayaran untuk invoice <b>'+$(this).data('title')+'</b>?');
     $('#modal-confirm .btn-action').attr('href', $(this).attr('href'));
-    $('#modal-confirm .btn-action').removeClass('btn-confirm-publish');
+    $('#modal-confirm .btn-action').removeClass('btn-confirm-publish btn-confirm-deliver');
     var myModal = new bootstrap.Modal(document.getElementById('modal-confirm'), {
         keyboard: false
     });
     myModal.show();
+});
+
+$(document).off('click', '.btn-deliver').on('click', '.btn-deliver', function(e){
+    e.preventDefault();
+    $('#modal-confirm .modal-body').html('Apakah anda yakin pesanan sudah <b>DIKIRIM</b> dan <b>DITERIMA</b> oleh pelanggan?');
+    $('#modal-confirm .btn-action').attr('href', 'javascript:void(0)');
+    $('#modal-confirm .btn-action').removeClass('btn-confirm-publish').addClass('btn-confirm-deliver');
+    var myModal = new bootstrap.Modal(document.getElementById('modal-confirm'), {
+        keyboard: false
+    });
+    myModal.show();
+});
+
+$(document).off('click', '.btn-confirm-deliver').on('click', '.btn-confirm-deliver', function(e){
+    e.preventDefault();
+    $('#sales-deliver-form').submit();
 });
 
 $(document).ready(function () {

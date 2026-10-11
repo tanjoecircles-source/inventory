@@ -107,9 +107,27 @@ class CustomerController extends Controller
         return view('web.admin.customer.detail', $data);
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
-        $data = Customer::where(['id' => $id])->first();
+        $customer = Customer::where(['id' => $id])->first();
+
+        // Tentukan URL kembali. Jika datang dari sales-detail, kembalilah ke sana
+        // setelah menyimpan (sales_id dipaksa integer agar aman dari open-redirect).
+        $backUrl  = url('customer-list');
+        $returnTo = $request->input('return');
+        $salesId  = $request->input('sales_id');
+
+        if ($returnTo === 'sales-detail' && is_numeric($salesId)) {
+            $backUrl = url('sales-detail/' . (int) $salesId);
+        }
+
+        $data = [
+            'customer'  => $customer,
+            'back_url'  => $backUrl,
+            'return_to' => ($returnTo === 'sales-detail' && is_numeric($salesId)) ? 'sales-detail' : null,
+            'sales_id'  => is_numeric($salesId) ? (int) $salesId : null,
+        ];
+
         return view('web.admin.customer.edit', $data);
     }
 
@@ -169,6 +187,10 @@ class CustomerController extends Controller
 
         if ($update !== false){
             DB::commit();
+            // Kembali ke halaman detail sales jika proses edit dimulai dari sana
+            if ($request->input('return') === 'sales-detail' && is_numeric($request->input('sales_id'))) {
+                return redirect('sales-detail/' . (int) $request->input('sales_id'))->with('success', 'Data has been updated');
+            }
             return redirect('customer-list')->with('success','Data has been updated');
         }else{
             DB::rollback();

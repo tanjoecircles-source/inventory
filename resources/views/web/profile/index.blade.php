@@ -44,7 +44,6 @@
                         </div>
                         <div class="py-2 mt-3">
                             <p class="mb-0 text-dark font-weight-semibold">{{$info->name ?? $user->name}}</p>
-                            <p class="text-muted mb-0">{{$info->address ?? $user->address ?? ""}}</p>
                             <p class="text-muted">{{$info->seller_phone ?? $user->phone}}</p>
                         </div>
                     </div>
