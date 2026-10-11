@@ -335,7 +335,8 @@ class SalesController extends Controller
         $packingLines[] = '';
         $packingLines[] = '*Informasi Pengiriman*';
         $packingLines[] = $packingShipping;
-        $packingLines[] = 'Link Invoice : ' . url('sales-print/'.$detail->id);
+        $packingLines[] = '';
+        $packingLines[] = url('sales-print/'.$detail->id);
 
         $waPackingUrl = 'https://wa.me/?text=' . urlencode(implode("\n", $packingLines));
 
