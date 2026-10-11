@@ -60,8 +60,8 @@
     .timeline-content { padding-bottom:16px; }
     .timeline-label { font-weight:700; font-size:12.5px; color:var(--color-secondary); margin-bottom:1px; }
     .timeline-sublabel { font-size:11px; color:var(--color-secondary-muted); }
-    .action-buttons-area { margin:16px 16px 0; display:flex; flex-direction:column; gap:10px; }
-    .btn-wa-contact { width:100%; background:#25D366; color:#fff !important; font-weight:800; font-size:14px; padding:13px 18px; border-radius:var(--radius-pill); border:none; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 14px rgba(37,211,102,0.3); cursor:pointer; transition:all 0.2s ease; text-decoration:none !important; }
+    .action-buttons-area { margin:8px 8px 0; display:flex; flex-direction:column; gap:10px; }
+    .btn-wa-contact { width:100%; background:#25D366; color:#fff !important; font-weight:800; font-size:14px; padding:13px 18px; border-radius:var(--radius-sm); border:none; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 14px rgba(37,211,102,0.3); cursor:pointer; transition:all 0.2s ease; text-decoration:none !important; }
     .btn-wa-contact:hover { background:#128C7E; transform:translateY(-1px); }
     .btn-back-list { width:100%; background:#F9FAFB; color:var(--color-secondary) !important; font-weight:700; font-size:13px; padding:11px 18px; border-radius:var(--radius-pill); border:1px solid var(--color-border); display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer; transition:all 0.2s ease; text-decoration:none !important; }
     .btn-back-list:hover { background:#F3F4F6; border-color:#D1D5DB; }
@@ -79,7 +79,7 @@
     .payment-total-banner { background:linear-gradient(135deg,#1F2429 0%,#374151 100%); margin:12px 16px; border-radius:var(--radius-md); padding:14px 16px; display:flex; align-items:center; justify-content:space-between; }
     .payment-total-label { font-size:12px; color:rgba(255,255,255,0.7); margin-bottom:2px; }
     .payment-total-amount { font-weight:800; font-size:20px; color:#FFFFFF; }
-    .btn-confirm-payment { width:100%; background:linear-gradient(135deg,#BE0017 0%,#E62129 100%); color:#fff !important; font-weight:800; font-size:14px; padding:14px 18px; border-radius:var(--radius-pill); border:none; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 16px rgba(190,0,23,0.35); cursor:pointer; transition:all 0.2s ease; text-decoration:none !important; }
+    .btn-confirm-payment { width:100%; background:linear-gradient(135deg,#BE0017 0%,#E62129 100%); color:#fff !important; font-weight:800; font-size:14px; padding:14px 18px; border-radius:var(--radius-sm); border:none; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 16px rgba(190,0,23,0.35); cursor:pointer; transition:all 0.2s ease; text-decoration:none !important; }
     .btn-confirm-payment:hover { opacity:0.92; transform:translateY(-1px); }
     .confirm-note { text-align:center; font-size:11px; color:var(--color-secondary-muted); margin-top:6px; }
     /* Waiting confirm banner */
@@ -88,7 +88,7 @@
     .waiting-confirm-title { font-weight:700; font-size:13px; color:#4C1D95; margin-bottom:3px; }
     .waiting-confirm-desc { font-size:12px; color:#5B21B6; line-height:1.45; }
     /* Print Invoice Button */
-    .btn-print-invoice { width:100%; background:linear-gradient(135deg,#1F2429 0%,#374151 100%); color:#fff !important; font-weight:800; font-size:13.5px; padding:12px 18px; border-radius:var(--radius-pill); border:none; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 14px rgba(31,36,41,0.25); cursor:pointer; transition:all 0.2s ease; text-decoration:none !important; }
+    .btn-print-invoice { width:100%; background:linear-gradient(135deg,#1F2429 0%,#374151 100%); color:#fff !important; font-weight:800; font-size:13.5px; padding:12px 18px; border-radius:var(--radius-sm); border:none; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 14px rgba(31,36,41,0.25); cursor:pointer; transition:all 0.2s ease; text-decoration:none !important; }
     .btn-print-invoice:hover { opacity:0.9; transform:translateY(-1px); color:#fff !important; }
 </style>
 
@@ -390,10 +390,6 @@
         <a href="{{ $waUrl }}" target="_blank" rel="noopener" class="btn-wa-contact" id="btnContactAdminWa">
             <i class="fe fe-message-circle"></i>
             <span>Hubungi Admin via WhatsApp</span>
-        </a>
-        <a href="{{ route('transaction.history') }}" class="btn-back-list" id="btnBackToHistory">
-            <i class="fe fe-list"></i>
-            <span>Lihat Semua Pesanan</span>
         </a>
     </div>
 

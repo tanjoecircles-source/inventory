@@ -15,22 +15,22 @@
                 <div class="card-body px-2 py-4">
                     <div class="row">
                         
-                        <div class="col-5">
+                        <div class="col-12">
                             <div class="form-group">
-                                <p class="px-2 mb-2">Kode Invoice</p>
-                                <h6 class="px-2 m-0 font-weight-bold">{{$invoice->inv_code}}</h6>
+                                <p class="px-0 mb-2">Kode Invoice</p>
+                                <h6 class="px-0 m-0 font-weight-bold">{{$invoice->inv_code}}</h6>
                             </div>
                         </div>
-                        <div class="col-3">
+                        <div class="col-6">
                             <div class="form-group">
-                                <p class="px-2 mb-2">Kategori</p>
-                                <h6 class="px-2 m-0 font-weight-bold">{{$invoice->inv_category}}</h6>
+                                <p class="px-0 mb-2">Kategori</p>
+                                <h6 class="px-0 m-0 font-weight-bold">{{$invoice->inv_category}}</h6>
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-6">
                             <div class="form-group">
-                                <p class="px-2 mb-2">Tanggal</p>
-                                <h6 class="px-2 m-0 font-weight-bold">{{date('d M Y', strtotime($invoice->inv_date))}}</h6>
+                                <p class="px-0 mb-2">Tanggal</p>
+                                <h6 class="px-0 m-0 font-weight-bold">{{date('d M Y', strtotime($invoice->inv_date))}}</h6>
                             </div>
                         </div>
                     </div>

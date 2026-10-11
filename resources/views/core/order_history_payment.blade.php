@@ -26,7 +26,7 @@
     /* Invoice chip */
     .pay-inv-chip { margin:8px 8px 0; background:#fff; border:1px solid var(--color-border); border-radius:var(--radius-sm); padding:12px 16px; display:flex; align-items:center; justify-content:space-between; box-shadow:var(--shadow-card); }
     .pay-inv-code { font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:13px; color:var(--color-secondary); display:flex; align-items:center; gap:6px; }
-    .pay-inv-badge { background:#EDE9FE; color:#5B21B6; border-radius:var(--radius-pill); padding:3px 10px; font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:11px; }
+    .pay-inv-badge { background:#EDE9FE; color:#5B21B6; border-radius:var(--radius-pill); padding:3px 10px; font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:12px; }
 
     /* Total banner */
     .pay-total-banner { margin:8px 8px 0; background:linear-gradient(135deg,#1F2429 0%,#374151 100%); border-radius:var(--radius-sm); padding:16px 18px; display:flex; align-items:center; justify-content:space-between; }
@@ -42,22 +42,22 @@
     .bank-item:last-child { border-bottom:none; }
     .bank-logo { width:72px; flex-shrink:0; }
     .bank-logo img { max-width:100%; height:26px; object-fit:contain; }
-    .bank-info-label { font-size:11px; color:var(--color-secondary-muted); margin-bottom:2px; }
+    .bank-info-label { font-size:12px; color:var(--color-secondary-muted); margin-bottom:2px; }
     .bank-info-an { font-size:12px; color:var(--color-secondary); margin-bottom:5px; }
     .bank-acc-row { display:flex; align-items:center; gap:8px; }
     .bank-acc-no { font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:17px; color:var(--color-secondary); letter-spacing:0.03em; }
-    .btn-copy { background:#F3F4F6; border:1px solid #E5E7EB; border-radius:6px; padding:3px 10px; font-size:11px; font-weight:600; color:#4B5563; cursor:pointer; transition:all 0.15s; }
+    .btn-copy { background:#F3F4F6; border:1px solid #E5E7EB; border-radius:6px; padding:3px 10px; font-size:12px; font-weight:600; color:#4B5563; cursor:pointer; transition:all 0.15s; }
     .btn-copy:hover { background:#E5E7EB; }
 
     /* Note */
     .pay-note { margin:10px 16px 0; font-size:11.5px; color:var(--color-secondary-muted); line-height:1.55; }
 
     /* CTA */
-    .pay-cta-area { margin:16px 16px 0; }
-    .btn-confirm-payment { width:100%; background:linear-gradient(135deg,#BE0017 0%,#E62129 100%); color:#fff !important; font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:14px; padding:14px 18px; border-radius:var(--radius-pill); border:none; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 16px rgba(190,0,23,0.3); cursor:pointer; transition:all 0.2s; text-decoration:none !important; }
+    .pay-cta-area { margin:8px 8px 0; }
+    .btn-confirm-payment { width:100%; background:linear-gradient(135deg,#BE0017 0%,#E62129 100%); color:#fff !important; font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:14px; padding:14px 18px; border-radius:var(--radius-sm); border:none; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 16px rgba(190,0,23,0.3); cursor:pointer; transition:all 0.2s; text-decoration:none !important; }
     .btn-confirm-payment:hover { opacity:0.92; transform:translateY(-1px); }
-    .confirm-sub { text-align:center; font-size:11px; color:var(--color-secondary-muted); margin-top:7px; }
-    .btn-back-detail { width:100%; margin-top:10px; background:#F9FAFB; color:var(--color-secondary) !important; font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:13px; padding:11px 18px; border-radius:var(--radius-pill); border:1px solid var(--color-border); display:flex; align-items:center; justify-content:center; gap:7px; transition:all 0.2s; text-decoration:none !important; }
+    .confirm-sub { text-align:center; font-size:12px; color:var(--color-secondary-muted); margin-top:7px; }
+    .btn-back-detail { width:100%; margin-top:10px; background:#F9FAFB; color:var(--color-secondary) !important; font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:13px; padding:11px 18px; border-radius:var(--radius-sm); border:1px solid var(--color-border); display:flex; align-items:center; justify-content:center; gap:7px; transition:all 0.2s; text-decoration:none !important; }
     .btn-back-detail:hover { background:#F3F4F6; }
 </style>
 
@@ -140,7 +140,7 @@
     </div>
 
     <p class="pay-note">
-        <i class="fe fe-info" style="font-size:11px;"></i>
+        <i class="fe fe-info" style="font-size:12px;"></i>
         Setelah transfer, kirim bukti pembayaran via WhatsApp dengan menekan tombol di bawah. Admin akan mengkonfirmasi dalam 1×24 jam.
     </p>
 
@@ -151,13 +151,9 @@
             <span>Konfirmasi Pembayaran</span>
         </a>
         <p class="confirm-sub">
-            <i class="fe fe-message-circle" style="font-size:11px;"></i>
+            <i class="fe fe-message-circle" style="font-size:12px;"></i>
             Kirim bukti transfer via WhatsApp
         </p>
-        <a href="{{ route('transaction.history.detail', $sale->id) }}" class="btn-back-detail">
-            <i class="fe fe-arrow-left"></i>
-            <span>Kembali ke Detail Pesanan</span>
-        </a>
     </div>
 
 </div>
