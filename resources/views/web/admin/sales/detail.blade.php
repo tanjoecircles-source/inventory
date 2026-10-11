@@ -223,7 +223,7 @@
                                     'Pickup di Toko'         => '<span class="badge badge-dark my-0"><i class="fe fe-home"></i> Pickup di Toko</span>',
                                     'Pengiriman Dalam Kota'  => '<span class="badge badge-info my-0"><i class="fe fe-map-pin"></i> Dalam Kota</span>',
                                     'Pengiriman Luar Kota'   => '<span class="badge badge-primary my-0"><i class="fe fe-send"></i> Luar Kota</span>',
-                                    default                  => '<span class="badge badge-light my-0">'.($invoice->inv_shipping_type ?? '-').'</span>',
+                                    default                  => '<span class="badge badge-light my-0">'.($invoice->inv_shipping_type ?? 'Belum Ditentukan').'</span>',
                                 };
                             @endphp
                             <p class="mb-0">{!! $shippingLabel !!}</p>
