@@ -478,7 +478,7 @@
                         <div class="order-card-body">
                             @if($firstItem)
                                 @php
-                                    $imgUrl = !empty($firstItem->product_photo) ? asset('assets/images/products/' . $firstItem->product_photo) : asset('assets/images/products/no-image.png');
+                                    $imgUrl = !empty($firstItem->product_image_url) ? $firstItem->product_image_url : asset('assets/images/products/no-image.png');
                                 @endphp
                                 <div class="order-item-row">
                                     <img src="{{ $imgUrl }}" class="order-item-thumb" alt="{{ $firstItem->product_name }}">

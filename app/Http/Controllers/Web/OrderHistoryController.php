@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\Sales;
 use App\Models\SalesItem;
 use App\Models\Product;
+use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -71,10 +72,11 @@ class OrderHistoryController extends Controller
                         'p.process as product_process'
                     )
                     ->whereIn('si.itm_inv_id', $saleIds)
-                    ->get()
-                    ->groupBy('itm_inv_id');
+                    ->get();
 
-                $itemsGrouped = $items;
+                $this->attachProductImageUrls($items);
+
+                $itemsGrouped = $items->groupBy('itm_inv_id');
             }
 
             foreach ($salesList as $sale) {
@@ -123,6 +125,8 @@ class OrderHistoryController extends Controller
             ->where('si.itm_inv_id', $sale->id)
             ->get();
 
+        $this->attachProductImageUrls($items);
+
         $sale->items = $items;
 
         $data = [
@@ -131,6 +135,32 @@ class OrderHistoryController extends Controller
         ];
 
         return view('core.order_history_detail', $data);
+    }
+
+    /**
+     * Attach shop-style product image URLs to sales items.
+     * Source: primary image from product_images table (same as shop/cart),
+     * with the shared no-image fallback.
+     */
+    private function attachProductImageUrls($items): void
+    {
+        if ($items->isEmpty()) {
+            return;
+        }
+
+        $productIds = $items->pluck('itm_product')->filter()->unique()->values()->all();
+
+        $imagesByProduct = ProductImage::whereIn('product_id', $productIds)
+            ->orderBy('sort_order', 'ASC')
+            ->get()
+            ->groupBy('product_id');
+
+        foreach ($items as $item) {
+            $img = $imagesByProduct->get($item->itm_product, collect())->first();
+            $item->product_image_url = $img
+                ? url('storage/' . $img->image_path)
+                : asset('assets/images/products/no-image.png');
+        }
     }
 
     /**

@@ -208,7 +208,7 @@
         <div class="product-items-list">
             @forelse($sale->items ?? [] as $item)
             @php
-                $imgUrl = !empty($item->product_photo) ? asset('storage/'.$item->product_photo) : null;
+                $imgUrl = !empty($item->product_image_url) ? $item->product_image_url : asset('assets/images/products/no-image.png');
                 $pName  = $item->product_name ?? ('Produk #'.($item->itm_product ?? '?'));
                 $pQty   = (float)($item->itm_qty   ?? 1);
                 $pPrice = (float)($item->itm_price  ?? 0);
