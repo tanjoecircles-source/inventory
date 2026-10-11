@@ -158,7 +158,7 @@ class OrderHistoryController extends Controller
         foreach ($items as $item) {
             $img = $imagesByProduct->get($item->itm_product, collect())->first();
             $item->product_image_url = $img
-                ? url('storage/' . $img->image_path)
+                ? url('storage/public/' . $img->image_path)
                 : asset('assets/images/products/no-image.png');
         }
     }
