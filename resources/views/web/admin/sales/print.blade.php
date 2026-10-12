@@ -118,9 +118,9 @@
             <tr>
                 <td class="text-right" style="color:#b70909">
                     Shipping
-                    @if(!empty($detail->inv_shipping_type))
+                    {{-- @if(!empty($detail->inv_shipping_type))
                     <br><small style="color:#555;font-weight:normal;">({{ $detail->inv_shipping_type }}{{ !empty($detail->ekspedisi_name) ? ' - ' . $detail->ekspedisi_name : '' }}{{ !empty($detail->inv_resi) ? ' | Resi: ' . $detail->inv_resi : '' }})</small>
-                    @endif
+                    @endif --}}
                 </td>
                 <td class="text-right" style="color:#b70909">+ Rp {{str_replace(",", ".", number_format($detail->inv_expedition ?? 0))}}</td>
             </tr>
