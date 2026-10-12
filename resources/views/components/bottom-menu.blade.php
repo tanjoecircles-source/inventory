@@ -59,9 +59,9 @@ $prefix = $exp[0];
     <i class="fe fe-home fs-20"></i>
     <p class="d-block fs-13 font-weight-semibold" style="line-height:20px">Beranda</p>
 </a>
-<a href="{{url('purchasing-list')}}" class="flex-fill {{ Request::is('purchasing-list') ? 'text-primary' : 'text-default' }}">
-    <i class="fe fe-shopping-cart fs-20"></i>
-    <p class="d-block fs-13 font-weight-semibold" style="line-height:20px">Belanja</p>
+<a href="{{url('settings')}}" class="flex-fill {{ Request::is('settings') ? 'text-primary' : 'text-default' }}">
+    <i class="fe fe-settings fs-20"></i>
+    <p class="d-block fs-13 font-weight-semibold" style="line-height:20px">Pengaturan</p>
 </a>
 <a href="{{url('sales-list')}}" class="flex-fill {{ Request::is('sales-list') ? 'text-primary' : 'text-default' }}">
     <i class="fe fe-activity fs-20"></i>

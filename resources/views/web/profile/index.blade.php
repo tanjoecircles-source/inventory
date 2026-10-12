@@ -88,9 +88,9 @@
                             <h6 class="px-2 m-0 font-weight-bold">{{$user->type}}</h6>
                         </div>
                         <div class="ml-auto pt-3">
-                            @if (Gate::denies('isAdmin'))
+                            {{-- @if (Gate::denies('isAdmin'))
                                 <a href="{{ url('profile-category') }}" class="px-2 text-primary font-weight-semibold">Ubah</a>
-                            @endif
+                            @endif --}}
                         </div>
                     </div>
                 </div>
@@ -103,10 +103,12 @@
         <div class="col-sm-12 col-md-12 col-lg-8 mx-auto">
             <div class="card text-center no-border shadow-none custom-square mb-0">
                 <div class="card-body p-0">
+                    @if (Gate::allows('isAdmin') || Gate::allows('isAgent'))
                     <a href="{{url('employee-list')}}" class="d-flex p-4 border-bottom">
                         <i class="fe fe-users fs-16 mr-2"></i>
                         <h6 class="mb-1 font-weight-semibold">Teams</h6>
                     </a>
+                    @endif
                     <a href="{{url('profile-edit-password')}}" class="d-flex p-4 border-bottom">
                         <i class="fe fe-settings fs-16 mr-2"></i>
                         <h6 class="mb-1 font-weight-semibold">Pengaturan Akun</h6>

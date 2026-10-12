@@ -13,6 +13,7 @@ class EmployeeController extends Controller
 {
     public function list(Request $request)
     {
+        if (Gate::denies('isAdmin') && Gate::denies('isAgent')) return view('error_authorize');
         $limit = 10;
         $search = (isset($_GET['keyword'])) ? $_GET['keyword'] : "";
         $contents = DB::table('employee')
@@ -50,6 +51,7 @@ class EmployeeController extends Controller
     }
 
     public function combo(Request $request){
+        if (Gate::denies('isAdmin') && Gate::denies('isAgent')) return view('error_authorize');
         $data = $request->all();
         $keyword = empty($data['search']) ? "" : $data['search'];
         $contents = DB::table('employee')
@@ -64,6 +66,7 @@ class EmployeeController extends Controller
     }
 
     public function comboOwner(Request $request){
+        if (Gate::denies('isAdmin') && Gate::denies('isAgent')) return view('error_authorize');
         $data = $request->all();
         $keyword = empty($data['search']) ? "" : $data['search'];
         $contents = DB::table('employee')
@@ -78,6 +81,7 @@ class EmployeeController extends Controller
     }
 
     public function comboStaff(Request $request){
+        if (Gate::denies('isAdmin') && Gate::denies('isAgent')) return view('error_authorize');
         $data = $request->all();
         $keyword = empty($data['search']) ? "" : $data['search'];
         $contents = DB::table('employee')
@@ -93,12 +97,14 @@ class EmployeeController extends Controller
 
     public function add()
     {
+        if (Gate::denies('isAdmin') && Gate::denies('isAgent')) return view('error_authorize');
         $data = ['param_url' => (isset($_GET['purchasing'])) ? $_GET['purchasing']:''];
         return view('web.admin.employee.add', $data);
     }
 
     public function create(Request $request)
     {
+        if (Gate::denies('isAdmin') && Gate::denies('isAgent')) return view('error_authorize');
         $valid = validator($request->only('name', 'phone','position'), [
             'name' => 'required',
             'phone' => 'required',
@@ -126,18 +132,21 @@ class EmployeeController extends Controller
 
     public function detail($id)
     {
+        if (Gate::denies('isAdmin') && Gate::denies('isAgent')) return view('error_authorize');
         $data = Employee::where(['id' => $id])->first();
         return view('web.admin.employee.detail', $data);
     }
 
     public function edit($id)
     {
+        if (Gate::denies('isAdmin') && Gate::denies('isAgent')) return view('error_authorize');
         $data = Employee::where(['id' => $id])->first();
         return view('web.admin.employee.edit', $data);
     }
 
     public function update(Request $request, $id)
     {
+        if (Gate::denies('isAdmin') && Gate::denies('isAgent')) return view('error_authorize');
         $valid = validator($request->only('name', 'phone', 'position'), [
             'name' => 'required',
             'phone' => 'required',
@@ -165,6 +174,7 @@ class EmployeeController extends Controller
     
     public function delete($id)
     {
+        if (Gate::denies('isAdmin') && Gate::denies('isAgent')) return view('error_authorize');
         $data = Employee::find($id);
         if (is_null($data)){
             return redirect('employee-detail/'.$id)->with('danger','Something Wrong, data not found.');

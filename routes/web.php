@@ -71,6 +71,7 @@ Route::middleware(['auth:web'])->group(function(){
     Route::get('news-detail/{app_id}', 'HomeController@news_detail')->name('home-news');
     Route::get('menu', 'HomeController@menu');
     Route::get('tools', 'HomeController@tools');
+    Route::get('settings', 'SettingsController@index');
     Route::get('admin/qrcode', 'AdminQrCodeController@index');
     Route::post('admin/qrcode/generate', 'AdminQrCodeController@generate');
     Route::get('map-storage', 'HomeController@mapstorage');
@@ -172,6 +173,16 @@ Route::middleware(['auth:web'])->group(function(){
     Route::get('periode-add', 'PeriodeController@add');
     Route::post('periode-create', 'PeriodeController@create');
     Route::get('periode-delete/{app_id}', 'PeriodeController@delete');
+    Route::get('periode-edit/{app_id}', 'PeriodeController@edit');
+    Route::post('periode-update/{app_id}', 'PeriodeController@update');
+
+    //Ref Ekspedisi
+    Route::get('ekspedisi-list', 'EkspedisiController@list');
+    Route::get('ekspedisi-add', 'EkspedisiController@add');
+    Route::post('ekspedisi-create', 'EkspedisiController@create');
+    Route::get('ekspedisi-edit/{app_id}', 'EkspedisiController@edit');
+    Route::post('ekspedisi-update/{app_id}', 'EkspedisiController@update');
+    Route::get('ekspedisi-delete/{app_id}', 'EkspedisiController@delete');
 
     // Share Profit
     Route::get('share-profit-list', 'ShareProfitController@list');
