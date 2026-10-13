@@ -47,7 +47,7 @@
                     </div>
                 </div>
             </div>
-            @if(!empty($invoice->cust_phone) || !empty($invoice->cust_address))
+            @if(!empty($invoice->cust_name))
             <div class="d-flex py-2 px-2 border-bottom">
                 <h5 class="mb-1 font-weight-semibold flex-grow-1"><i class="fe fe-user mr-1"></i> Data Pelanggan</h5>
                 @if(!empty($invoice->inv_cust))
