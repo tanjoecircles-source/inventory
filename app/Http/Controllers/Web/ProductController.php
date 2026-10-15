@@ -1367,4 +1367,80 @@ class ProductController extends Controller
             return response()->json(['success' => false, 'message' => 'Gagal: ' . $e->getMessage()], 500);
         }
     }
+
+    public function duplicate($id)
+    {
+        $source = Product::find($id);
+        if (is_null($source)){
+            return redirect('product-list')->with('danger','Something Wrong, data not found.');
+        }
+
+        DB::beginTransaction();
+        try {
+            // Salin data utama (code baru karena unique, nama + " (Copy)", stok 0, status Inactive)
+            $copy = $source->replicate(['code']);
+            $copy->code = strtolower($this->generate_code(8));
+            $copy->name = trim($source->name.' (Copy)');
+            $copy->name_pl = trim(($source->name_pl ?: $source->name).' (Copy)');
+            $copy->stock = 0;
+            $copy->status = 'Inactive';
+            $copy->order_pricelist = 0;
+            $copy->author = Auth::user()->id;
+            $copy->editor = Auth::user()->id;
+            $copy->created_at = Carbon::now()->toDateTimeString();
+            $copy->updated_at = Carbon::now()->toDateTimeString();
+            $copy->save();
+
+            // Salin gambar (copy file fisik agar tidak berbagi path dengan aslinya)
+            $images = ProductImage::where('product_id', $source->id)
+                ->orderBy('sort_order', 'ASC')
+                ->get();
+            foreach ($images as $img) {
+                $newPath = $img->image_path;
+                $srcFile = storage_path('app/public/' . $img->image_path);
+                if (File::exists($srcFile)) {
+                    $ext = pathinfo($img->image_path, PATHINFO_EXTENSION);
+                    $newName = 'product_' . $copy->id . '_copy_' . time() . '_' . Str::random(6) . ($ext ? '.' . $ext : '');
+                    $destRelative = 'product_images/' . $newName;
+                    if (File::copy($srcFile, storage_path('app/public/' . $destRelative))) {
+                        $newPath = $destRelative;
+                    }
+                }
+                ProductImage::create([
+                    'product_id' => $copy->id,
+                    'image_path' => $newPath,
+                    'is_primary' => $img->is_primary,
+                    'sort_order' => $img->sort_order,
+                    'author' => Auth::user()->id,
+                ]);
+            }
+            // Samakan thumbnail dengan salinan gambar primary (jika ada)
+            $primaryCopy = ProductImage::where('product_id', $copy->id)
+                ->where('is_primary', 'true')
+                ->orderBy('sort_order', 'ASC')
+                ->first();
+            if ($primaryCopy) {
+                $copy->update(['photo_thumbnail' => $primaryCopy->image_path]);
+            }
+
+            // Salin data HPP peracikan (jika ada)
+            $hppCols = DB::getSchemaBuilder()->getColumnListing('product_hpp');
+            $hppSource = DB::table('product_hpp')->where('prod_id', $source->id)->first();
+            if ($hppSource) {
+                $hppData = ['prod_id' => $copy->id];
+                foreach ($hppCols as $col) {
+                    if (in_array($col, ['id', 'prod_id', 'created_at', 'updated_at'])) continue;
+                    $hppData[$col] = $hppSource->$col;
+                }
+                DB::table('product_hpp')->insert($hppData);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect('product-detail/'.$id)->with('danger', 'Gagal menduplikat produk: '.$e->getMessage());
+        }
+
+        return redirect('product-detail/'.$copy->id)->with('success','Produk berhasil diduplikat.');
+    }
 }

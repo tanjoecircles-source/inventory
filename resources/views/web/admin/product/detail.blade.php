@@ -193,6 +193,10 @@
                             <i class="fe fe-edit fs-16 mr-2"></i>
                             <p class="mb-1 font-weight-semibold">Ubah Data</p>
                         </a>
+                        <a href="{{(url('product-duplicate/'.$id_produk))}}" data-title="{{$info['nama']}}" data-content="Menduplikat Data" class="d-flex p-4 border-bottom btn-confirm">
+                            <i class="fe fe-copy fs-16 mr-2"></i>
+                            <p class="mb-1 font-weight-semibold">Duplikat Data</p>
+                        </a>
                         <a href="{{(url('product-delete/'.$id_produk))}}" data-title="{{$info['nama']}}" data-content="Menghapus Data" class="d-flex p-4 border-bottom btn-confirm">
                             <i class="fe fe-trash fs-16 mr-2"></i>
                             <p class="mb-1 font-weight-semibold">Hapus Data</p>
