@@ -20,7 +20,7 @@
                 <div class="row px-2">
                     {{-- Periode --}}
                     <div class="col-6 p-2">
-                        <a href="{{url('periode-list')}}">
+                        <a href="{{url('periode-list')}}" wire:navigate>
                             <div class="card mb-0 shadow-sm border-0">
                                 <div class="card-body text-center p-4">
                                     <span class="fs-40 text-primary"><i class="fe fe-calendar"></i></span>

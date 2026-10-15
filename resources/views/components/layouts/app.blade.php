@@ -118,6 +118,9 @@ a:hover {
   color: #424e79;
 }
 </style>
+
+@livewireStyles
+@stack('styles')
 </head>
 <body class="{{$background ?? 'bg-default'}}" id="fullscreen">
     <div class="page">
@@ -225,6 +228,8 @@ a:hover {
         </div>
     </div>
     
+@livewireScripts
+@stack('scripts')
 </body>
 <!-- Bootstrap4 js-->
 <script src="{{ asset('assets/js/vendors/bootstrap.bundle.min.js') }}"></script>
