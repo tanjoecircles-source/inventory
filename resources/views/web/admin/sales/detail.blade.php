@@ -115,7 +115,7 @@
                 <div class="mr-auto text-left">
                     <h5 class="mb-1 font-weight-semibold flex-grow-1"><i class="fe fe-shopping-bag mr-1"></i> Total</h5>
                 </div>
-                @if($invoice->inv_status == 'Draft' && $invoice->inv_total != '')
+                @if($invoice->inv_total != '')
                 <div class="ml-auto text-right">
                     <a href="{{url('sales-set/'.$invoice->id)}}"><i class="fe fe-settings fs-18"></i></a>
                 </div>
