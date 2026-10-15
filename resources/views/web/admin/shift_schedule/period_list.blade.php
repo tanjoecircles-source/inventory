@@ -34,23 +34,24 @@
                             <h6 class="m-4">No matching records found</h6>
                         @endif
                         @foreach ($periods as $period)
+                        <a href="{{url('shift-period-detail/'.$period->id)}}">
                         <div class="card mb-2">
                             <div class="card-body px-2 py-2">
                                 <div class="d-flex title-bar">
                                     <div class="mr-auto text-left">
                                         <p class="mb-1 font-weight-bold">{{$period->name}}</p>
-                                        <p class="mb-1 text-muted">{{$period->month}} - {{$period->week}}</p>
+                                        {{-- <p class="mb-1 text-muted">{{$period->month}} - {{$period->week}}</p> --}}
                                         <p class="mb-0 small">{{date('d M Y', strtotime($period->start_date))}} - {{date('d M Y', strtotime($period->end_date))}}</p>
                                     </div>
                                     <div class="ml-auto text-right">
                                         <div class="mt-2">
-                                            <a href="{{url('shift-period-detail/'.$period->id)}}" class="btn btn-sm btn-outline-success mr-1">
-                                                <i class="fe fe-clock"></i> Shift
+                                            <a href="{{url('shift-period-duplicate/'.$period->id)}}" class="btn btn-sm btn-dark mr-1" title="Duplikat periode">
+                                                <i class="fe fe-copy"></i>
                                             </a>
-                                            <a href="{{url('shift-period-edit/'.$period->id)}}" class="btn btn-sm btn-outline-primary mr-1">
-                                                <i class="fe fe-edit"></i>
+                                            <a href="{{url('shift-period-edit/'.$period->id)}}" class="btn btn-sm btn-white mr-1">
+                                                <i class="fe fe-edit-2"></i>
                                             </a>
-                                            <a href="{{url('shift-period-delete/'.$period->id)}}" class="btn btn-sm btn-outline-danger btn-confirm" data-title="{{$period->name}}">
+                                            <a href="{{url('shift-period-delete/'.$period->id)}}" class="btn btn-sm btn-primary btn-confirm" data-title="{{$period->name}}">
                                                 <i class="fe fe-trash"></i>
                                             </a>
                                         </div>
@@ -58,6 +59,7 @@
                                 </div>
                             </div>
                         </div>
+                        </a>
                         @endforeach
                         {{$periods->links()}}
                     </div>

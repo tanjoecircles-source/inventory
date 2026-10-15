@@ -570,6 +570,8 @@ Route::middleware(['auth:web'])->group(function(){
     Route::post('shift-period-create', 'ShiftPeriodController@create');
     Route::get('shift-period-detail/{id}', 'ShiftPeriodController@detail');
     Route::post('shift-period-store-shift/{id}', 'ShiftPeriodController@storeShift');
+    Route::get('shift-period-duplicate/{id}', 'ShiftPeriodController@duplicateForm');
+    Route::post('shift-period-duplicate/{id}', 'ShiftPeriodController@duplicateStore');
     Route::get('shift-period-edit/{id}', 'ShiftPeriodController@edit');
     Route::post('shift-period-update/{id}', 'ShiftPeriodController@update');
     Route::get('shift-period-delete/{id}', 'ShiftPeriodController@delete');

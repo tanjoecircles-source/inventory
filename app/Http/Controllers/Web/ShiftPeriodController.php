@@ -134,6 +134,110 @@ class ShiftPeriodController extends Controller
         return redirect('shift-period-detail/'.$periodId)->with('success', 'Shift untuk '.date('d M Y', strtotime($shiftDate)).' berhasil disimpan.');
     }
 
+    public function duplicateForm($id)
+    {
+        if (Gate::denies('isAdmin')) return view('error_authorize');
+
+        $source = ShiftPeriod::findOrFail($id);
+        $periodes = DB::table('periode')->orderBy('start_date', 'desc')->get();
+        $weeks = ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'];
+
+        // Saran periode berikutnya: mulai sehari setelah periode lama berakhir, durasi sama
+        $start = new \DateTime($source->start_date);
+        $end = new \DateTime($source->end_date);
+        $duration = (int) $start->diff($end)->format('%a') + 1;
+        $nextStart = (clone $end)->modify('+1 day');
+        $nextEnd = (clone $nextStart)->modify('+'.($duration - 1).' days');
+
+        // Saran minggu: naik 1 tingkat (Minggu 4 -> kembali ke Minggu 1)
+        $weekNum = 1;
+        if (preg_match('/(\d+)/', $source->week ?? '', $m)) {
+            $weekNum = ((int) $m[1] % 4) + 1;
+        }
+        $suggestWeek = 'Minggu '.$weekNum;
+
+        // Saran bulan: periode (tabel periode) yang memuat tanggal mulai berikutnya
+        $suggestMonth = $source->month;
+        $matchPeriode = DB::table('periode')
+            ->where('start_date', '<=', $nextStart->format('Y-m-d'))
+            ->where('end_date', '>=', $nextStart->format('Y-m-d'))
+            ->first();
+        if ($matchPeriode) {
+            $suggestMonth = $matchPeriode->name;
+        }
+
+        $shiftCount = ShiftSchedule::where('shift_period_id', $id)->count();
+
+        return view('web.admin.shift_schedule.period_duplicate', compact(
+            'source', 'periodes', 'weeks', 'suggestWeek', 'suggestMonth', 'nextStart', 'nextEnd', 'duration', 'shiftCount'
+        ));
+    }
+
+    public function duplicateStore(Request $request, $id)
+    {
+        if (Gate::denies('isAdmin')) return view('error_authorize');
+
+        $request->validate([
+            'month' => 'required|string|max:255',
+            'week' => 'required|string|max:50',
+            'start_date' => 'required',
+            'end_date' => 'required',
+        ]);
+
+        $source = ShiftPeriod::findOrFail($id);
+
+        $newStart = date('Y-m-d', strtotime(str_replace('/', '-', $request->start_date)));
+        $newEnd = date('Y-m-d', strtotime(str_replace('/', '-', $request->end_date)));
+        if ($newEnd < $newStart) {
+            return back()->withErrors(['end_date' => 'Tanggal selesai harus setelah tanggal mulai.'])->withInput();
+        }
+
+        DB::beginTransaction();
+        try {
+            $period = ShiftPeriod::create([
+                'name' => $request->month.' - '.$request->week,
+                'month' => $request->month,
+                'week' => $request->week,
+                'start_date' => $newStart,
+                'end_date' => $newEnd,
+            ]);
+
+            // Salin jadwal hari-ke-hari berurutan (offset dari tanggal mulai periode lama)
+            $schedules = ShiftSchedule::where('shift_period_id', $id)
+                ->orderBy('shift_date', 'asc')
+                ->get();
+
+            $copied = 0;
+            foreach ($schedules as $s) {
+                $offset = (int) (new \DateTime($source->start_date))->diff(new \DateTime($s->shift_date))->format('%r%a');
+                if ($offset < 0) continue;
+                $newDate = date('Y-m-d', strtotime($newStart.' +'.$offset.' days'));
+                if ($newDate > $newEnd) continue;
+                ShiftSchedule::create([
+                    'shift_period_id' => $period->id,
+                    'shift_date' => $newDate,
+                    'shift1_employee' => $s->shift1_employee,
+                    'shift1_type' => $s->shift1_type,
+                    'shift1_start' => $s->shift1_start,
+                    'shift1_end' => $s->shift1_end,
+                    'shift2_employee' => $s->shift2_employee,
+                    'shift2_type' => $s->shift2_type,
+                    'shift2_start' => $s->shift2_start,
+                    'shift2_end' => $s->shift2_end,
+                ]);
+                $copied++;
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['msg' => 'Gagal menduplikat periode: '.$e->getMessage()])->withInput();
+        }
+
+        return redirect('shift-period-detail/'.$period->id)
+            ->with('success', 'Periode berhasil diduplikat ('.$copied.' jadwal disalin).');
+    }
+
     public function edit($id)
     {
         if (Gate::denies('isAdmin')) return view('error_authorize');

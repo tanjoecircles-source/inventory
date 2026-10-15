@@ -16,7 +16,7 @@
                     @endif
                     <div class="mt-2">
                         <a href="{{url('shift-schedule-edit/'.$schedule->id)}}" class="btn btn-sm btn-outline-primary mr-1">
-                            <i class="fe fe-edit"></i>
+                            <i class="fe fe-edit-2"></i>
                         </a>
                         <a href="{{url('shift-schedule-delete/'.$schedule->id)}}" class="btn btn-sm btn-outline-danger btn-confirm" data-title="{{$schedule->employee_name}} - {{date('d M Y', strtotime($schedule->shift_date))}}">
                             <i class="fe fe-trash"></i>
