@@ -40,6 +40,17 @@
                             </div>
                         </a>
                     </div>
+                    {{-- Saving --}}
+                    <div class="col-6 p-2">
+                        <a href="{{url('saving-list')}}">
+                            <div class="card mb-0 shadow-sm border-0">
+                                <div class="card-body text-center p-4">
+                                    <span class="fs-40 text-primary"><i class="fe fe-credit-card"></i></span>
+                                    <h6 class="mt-3 font-weight-bold text-dark">Saving</h6>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

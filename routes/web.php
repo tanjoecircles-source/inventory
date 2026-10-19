@@ -205,6 +205,13 @@ Route::middleware(['auth:web'])->group(function(){
     Route::get('share-profit-publish/{app_id}', 'ShareProfitController@publish');
     Route::get('share-profit-print/{app_id}', 'ShareProfitController@print');
 
+    // Saving (Rekap Tabungan dari Bagi Hasil)
+    Route::get('saving-list', 'SavingController@list');
+    Route::get('saving-detail/{app_id}', 'SavingController@detail');
+    Route::get('saving-deduction/{app_id}', 'SavingController@deduction');
+    Route::post('saving-deduction-create/{app_id}', 'SavingController@deductionCreate');
+    Route::get('saving-deduction-delete/{app_id}', 'SavingController@deductionDelete');
+
     // Fee Barista
     Route::get('barista-fee-list', 'BaristaFeeController@list');
     Route::post('barista-fee-combo', 'BaristaFeeController@combo');
