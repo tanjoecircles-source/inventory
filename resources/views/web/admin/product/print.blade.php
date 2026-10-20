@@ -88,7 +88,7 @@
             </tr>
             <tr>
                 <td>Aceh - Indonesia</td>
-                <td class="text-right">12,5%</td>
+                <td class="text-right">12%</td>
             </tr>
         </table>
         <table class="layout">
