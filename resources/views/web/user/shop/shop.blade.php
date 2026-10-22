@@ -165,8 +165,8 @@
                     <i class="fe fe-user-check"></i>
                 </div>
                 <div>
-                    <div class="consult-title">Konsultasi Roaster & Grind Size</div>
-                    <p class="consult-desc">Butuh profil gilingan V60, Mokapot, atau French Press?</p>
+                    <div class="consult-title">Konsultasi dengan Admin kami</div>
+                    <p class="consult-desc">Butuh informasi profil green benas, roasting, grinding atau resep seduh?</p>
                 </div>
             </div>
             <a href="https://wa.me/6285974607547?text=Halo%20Roaster%20Tanjoe,%20saya%20ingin%20konsultasi%20profil%20gilingan%20dan%20beans." target="_blank" class="btn-consult-tanya">
